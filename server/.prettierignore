@@ -1,0 +1,12 @@
+dist/
+.eslintrc.json
+.prettierignore
+.prettierrc.json
+package-lock.json
+package.json
+tsconfig.json
+typedoc.json
+README.md
+node_modules/
+.vscode/
+.gitignore

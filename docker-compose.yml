@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  # Configuracion para el backend
+  backend:
+    build:
+      context: ./server
+    ports:
+      - "5001:5000"
+    environment:
+      - MONGO_URI=
+      - JWT_SECRET=
+      - PORT=
+    depends_on:
+      - mongo
+    networks:
+      - cinetrunk_network
+
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - cinetrunk_network
+
+  mongo:
+    image: mongo:5
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - cinetrunk_network
+
+volumes:
+  mongo_data:
+
+networks:
+  cinetrunk_network:

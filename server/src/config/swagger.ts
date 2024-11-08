@@ -1,0 +1,1 @@
+// Swaggers configuration for the documentation of the api
