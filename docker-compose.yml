@@ -1,37 +1,42 @@
 version: '3'
 
 services:
-  # Configuracion para el backend
+  # Backend configuration
   backend:
     build:
       context: ./server
     ports:
       - "5001:5000"
+    depends_on:
+      - database
     environment:
       - MONGO_URI=mongodb://mongo:27017/cinetrunkdb
       - JWT_SECRET=
-      - PORT=5000
-    depends_on:
-      - mongo
     networks:
       - cinetrunk_network
 
-  frontend:
-    build:
-      context: ./client
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - cinetrunk_network
-
-  mongo:
-    image: mongo:5
+  database:
+    # Database configuration
+    image: mongo:latest
+    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - cinetrunk_network
+  
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - backend
     networks:
       - cinetrunk_network
 
