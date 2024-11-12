@@ -8,9 +8,9 @@ services:
     ports:
       - "5001:5000"
     environment:
-      - MONGO_URI=
+      - MONGO_URI=mongodb://mongo:27017/cinetrunkdb
       - JWT_SECRET=
-      - PORT=
+      - PORT=5000
     depends_on:
       - mongo
     networks:

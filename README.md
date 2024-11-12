@@ -4,7 +4,7 @@ Create the file `.env`, with the form:
 ```ts
 MONGO_URI=
 JWT_SECRET=
-PORT`
+PORT=
 MOVIE_DB_API_KEY=
 ```
 
