@@ -20,7 +20,7 @@ RUN npm run build
 RUN npm install -g serve
 
 # Expone el puerto para servir la aplicación
-EXPOSE 3000
+EXPOSE 8080
 
 # Ejecuta el servidor para la aplicación compilada
 CMD ["serve", "-s", "dist"]

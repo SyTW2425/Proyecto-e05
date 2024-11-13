@@ -10,7 +10,7 @@ yarn-error.log
 .env.*.local
 
 # Build directories
-/dist
+**/dist
 /build
 
 # TypeScript
