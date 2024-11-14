@@ -1,45 +1,36 @@
+version: '3'
 services:
-  # Backend configuration
   backend:
-    build:
-      context: ./server
+    build: ./backend
     ports:
       - "5001:5000"
     depends_on:
       - database
     environment:
-      - MONGODB_URI=mongodb+srv://alu0101463018:UTKdPf3do7rqsU0s@cinetrunk.r9nmg.mongodb.net/?retryWrites=true&w=majority&appName=CineTrunk
-    networks:
-      - cinetrunk_network
+      - MONGODB_URI=mongodb://database:27017/CineTrunk
 
   database:
-    # Database configuration
-    image: mongo:5
+    image: mongo:latest
     container_name: mongodb_container
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-    networks:
-      - cinetrunk_network
-  
+      - ./backend/dist/databases/init_db.js:/docker-entrypoint-initdb.d/init_db.js:ro
+    environment:
+      MONGO_INITDB_DATABASE: CineTrunk
+
   frontend:
     build:
-      context: ./client
+      context: ./frontend
       dockerfile: Dockerfile
-    command: npm run dev
     ports:
       - "8080:8080"
     volumes:
-      - ./client:/app
+      - ./frontend:/app
       - /app/node_modules
     depends_on:
       - backend
-    networks:
-      - cinetrunk_network
 
 volumes:
   mongodb_data:
-
-networks:
-  cinetrunk_network:
