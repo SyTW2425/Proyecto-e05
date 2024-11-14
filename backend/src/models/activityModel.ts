@@ -1,10 +1,5 @@
 import mongoose from 'mongoose';
-
-export enum ActivityType {
-  REVIEW = 'review',
-  ADD_TO_LIST = 'add_to_list',
-  FOLLOW = 'follow',
-}
+import { ActivityType } from '../types/activityType';
 
 const activitySchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

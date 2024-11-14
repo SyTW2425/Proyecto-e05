@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Activity, ActivityType } from '../models/activityModel';
-
+import { Activity } from '../models/activityModel';
 
 export const activityRouter = express.Router();
 
@@ -26,7 +25,5 @@ activityRouter.get('/', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to fetch activities' });
   }
 });
-
-
 
 export default activityRouter;
