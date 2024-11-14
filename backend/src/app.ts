@@ -11,7 +11,7 @@ import listRouter from './routes/lists';
 import activityRouter from './routes/activities';
 
 
-const app = express();
+export const app = express();
 app.use(express.json());
 
 // Load env variables
@@ -33,11 +33,4 @@ app.use('api/movies', movieRouter);
 app.use('api/reviews', reviewRouter);
 app.use('api/lists', listRouter);
 app.use('api/activities', activityRouter);
-
-app.get('/', (req, res) => {
-  res.send('Welcome to CineTrunk API');
-})
-
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running in port ${PORT}`));
 
