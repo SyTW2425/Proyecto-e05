@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { Activity, ActivityType } from '../models/activityModel';
 
+
 export const activityRouter = express.Router();
 
 /**
@@ -9,6 +10,7 @@ export const activityRouter = express.Router();
  *   get:
  *     summary: Retrieve all activities
  *     description: Fetches all activities from the database.
+ *     tags: [Activities]
  *     responses:
  *       200:
  *         description: A list of activities.

@@ -9,6 +9,7 @@ export const reviewRouter = express.Router();
  *   get:
  *     summary: Retrieve all reviews
  *     description: Fetches all reviews from the database.
+ *     tags: [Reviews]
  *     responses:
  *       200:
  *         description: A list of reviews.
@@ -31,6 +32,7 @@ reviewRouter.get('/', async (req: Request, res: Response) => {
  *   post:
  *     summary: Create a new review
  *     description: Adds a new review to the database.
+ *     tags: [Reviews]
  *     requestBody:
  *       required: true
  *       content:

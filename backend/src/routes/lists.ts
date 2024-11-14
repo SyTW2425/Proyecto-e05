@@ -9,6 +9,7 @@ export const listRouter = express.Router();
  *   get:
  *     summary: Retrieve all lists
  *     description: Fetches all lists from the database.
+ *     tags: [Lists]
  *     responses:
  *       200:
  *         description: A list of user-created movie lists.
@@ -31,6 +32,7 @@ listRouter.get('/', async (req: Request, res: Response) => {
  *   post:
  *     summary: Create a new list
  *     description: Adds a new movie list to the database.
+ *     tags: [Lists]
  *     requestBody:
  *       required: true
  *       content:
