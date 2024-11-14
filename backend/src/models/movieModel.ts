@@ -1,17 +1,10 @@
-// server/src/models/movieModel.ts
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-interface Movie {
-  name: string;
-};
-
-// Define the movie schema
-const movieSchema = new Schema({
+const movieSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  genre: { type: String, required: true },
+  releaseYear: { type: Number, required: true },
+  TMDid: { type: Number, required: true }, //id in the external api
+  // we could add more fields or use the external api
 });
 
-// Define the Movie model based on the schema
-const Movie = mongoose.model<Movie>('Movie', movieSchema);
-
-export default Movie;
+export const Movie = mongoose.model('Movie', movieSchema);
