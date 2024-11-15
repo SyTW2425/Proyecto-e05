@@ -93,7 +93,7 @@ a:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('image/shadow.png'); /* Path to your shadow image */
+    background-image: url('../src/assets/image/shadow.png'); /* Path to your shadow image */
     background-size: cover;
     background-position: center;
     z-index: 1; /* Place the shadow between the background and content */
