@@ -1,5 +1,5 @@
 <template>
-  <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10 bg-gray-800">
+  <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10">
     <nav class="flex space-x-4">
       <a 
         href="#" 
@@ -36,7 +36,7 @@ export default {
 </script>
 
 <style scoped>
-/* header {
+header {
   position: relative;
   z-index: 1000;
 }
@@ -59,5 +59,5 @@ a.active {
 a:hover {
   background: #FFD700;
   border-radius: 2px;
-} */
+}
 </style>
