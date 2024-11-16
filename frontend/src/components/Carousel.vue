@@ -1,83 +1,128 @@
 <template>
-  <div class="carousel relative w-full h-screen mt-[-50px] overflow-hidden">
-    <div class="list flex">
-      <CarouselItem v-for="(item, index) in items" :key="index" :image="item.image" :name="item.name"
-        :description="item.description" />
+  <div class="carousel">
+    <div class="list">
+      <CarouselItem v-for="(item, index) in items" :key="index" :title="item.title" :name="item.name"
+        :description="item.description" :image="item.image" :active="index === activeIndex" />
     </div>
-    <div class="arrows absolute top-[80%] right-[52%] flex gap-2 items-center">
-      <button class="prev bg-yellow-500 text-white w-12 h-12 rounded-full font-bold" @click="moveToPrev">
-        ‹
-      </button>
-      <button class="next bg-yellow-500 text-white w-12 h-12 rounded-full font-bold" @click="moveToNext">
-        ›
-      </button>
-    </div>
-    <div class="timeRunning absolute w-0% h-[4px] bg-yellow-500 top-0"></div>
+    <CarouselControls @prev="showSlider('prev')" @next="showSlider('next')" />
+    <CarouselTimeRunning />
   </div>
 </template>
 
-<script>
-import CarouselItem from './CarouselItem.vue';
+<script lang="ts">
+import { defineComponent, ref } from "vue";
+import CarouselItem from "./CarouselItem.vue";
+import CarouselControls from "./CarouselControls.vue";
+import CarouselTimeRunning from "./CarouselTimeRunning.vue";
 
-export default {
+export default defineComponent({
   name: "Carousel",
-  components: {
-    CarouselItem,
+  components: { CarouselItem, CarouselControls, CarouselTimeRunning },
+  props: {
+    items: {
+      type: Array,
+      required: true,
+    },
   },
-  data() {
-    return {
-      currentIndex: 0,
-      items: [
-        {
-          image: "images/eagel1.jpg",
-          name: "EAGLE",
-          description: "Lorem ipsum dolor sit amet",
-        },
-        {
-          image: "images/owl1.jpg",
-          name: "OWL",
-          description: "Lorem ipsum dolor sit amet",
-        },
-        {
-          image: "images/crow.jpg",
-          name: "CROW",
-          description: "Lorem ipsum dolor sit amet",
-        },
-        // more items...
-      ],
+  setup() {
+    const activeIndex = ref(0);
+
+    const showSlider = (direction: "prev" | "next") => {
+      activeIndex.value = direction === "next"
+        ? (activeIndex.value + 1) % 8
+        : (activeIndex.value - 1 + 8) % 8;
     };
+
+    return { activeIndex, showSlider };
   },
-  methods: {
-    moveToNext() {
-      if (this.currentIndex < this.items.length - 1) {
-        this.currentIndex++;
-      } else {
-        this.currentIndex = 0; // Reset to first item
-      }
-    },
-    moveToPrev() {
-      if (this.currentIndex > 0) {
-        this.currentIndex--;
-      } else {
-        this.currentIndex = this.items.length - 1; // Move to last item
-      }
-    },
-  },
-};
+});
 </script>
 
 <style scoped>
-.carousel .timeRunning {
-  animation: runningTime 7s linear 1 forwards;
+/* Carousel Section */
+.carousel {
+  width: 100vw;
+  height: 100vh;
+  margin-top: -50px;
+  overflow: hidden;
+  position: relative;
 }
 
-@keyframes runningTime {
-  from {
-    width: 0%;
-  }
-
-  to {
-    width: 100%;
+/* Responsive Background Image Adjustments */
+@media screen and (max-width: 999px) {
+  .carousel {
+    background-size: contain; /* Ensures the background image is fully visible */
   }
 }
+
+@media screen and (max-width: 690px) {
+  .carousel {
+    background-size: contain; /* Same as above for smaller screens */
+  }
+}
+
+.carousel .list .item:nth-child(1),
+.carousel .list .item:nth-child(2) {
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel .list .item:nth-child(3) {
+  left: 67%;
+}
+
+.carousel .list .item:nth-child(4) {
+  left: calc(67% + 200px);
+}
+
+.carousel .list .item:nth-child(5) {
+  left: calc(67% + 400px);
+}
+
+.carousel .list .item:nth-child(6) {
+  left: calc(67% + 600px);
+}
+
+.carousel .list .item:nth-child(n + 7) {
+  left: calc(67% + 800px);
+  opacity: 0;
+}
+
+.carousel .list .item {
+  width: 180px;
+  height: 250px;
+  position: absolute;
+  top: 80%;
+  transform: translateY(-70%);
+  left: 70%;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  background-position: 50% 50%;
+  background-size: cover;
+  z-index: 100;
+  transition: 1s;
+}
+
+.list .item .content {
+  position: absolute;
+  top: 50%;
+  left: 100px;
+  transform: translateY(-50%);
+  width: 400px;
+  text-align: left;
+  color: #fff;
+  display: none;
+}
+
+.list .item:nth-child(2) .content {
+  display: block;
+}
+
+
+
+
 </style>

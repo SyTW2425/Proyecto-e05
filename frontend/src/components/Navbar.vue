@@ -1,10 +1,30 @@
 <template>
-  <header class="w-full max-w-full px-16 h-12 flex items-center relative z-10">
-    <nav>
-      <a href="#" class="active">Home</a>
-      <a href="#">Películas</a>
-      <a href="#">Mi Actividad</a>
-      <a href="#">Mi Lista</a>
+  <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10 bg-gray-800">
+    <nav class="flex space-x-4">
+      <a 
+        href="#" 
+        class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200 active:bg-yellow-500"
+      >
+        Home
+      </a>
+      <a 
+        href="#" 
+        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200"
+      >
+        Películas
+      </a>
+      <a 
+        href="#" 
+        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200"
+      >
+        Mi Actividad
+      </a>
+      <a 
+        href="#" 
+        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200"
+      >
+        Mi Lista
+      </a>
     </nav>
   </header>
 </template>
@@ -16,7 +36,7 @@ export default {
 </script>
 
 <style scoped>
-header {
+/* header {
   position: relative;
   z-index: 1000;
 }
@@ -39,5 +59,5 @@ a.active {
 a:hover {
   background: #FFD700;
   border-radius: 2px;
-}
+} */
 </style>
