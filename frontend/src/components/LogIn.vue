@@ -18,7 +18,7 @@
             <div class="relative flex items-center">
               <input name="email" type="text" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
-                placeholder="Enter email" />
+                placeholder="Introduce tu email" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
                 <path fill="none" stroke-miterlimit="10" stroke-width="40"
@@ -29,11 +29,11 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-2">Password</label>
+            <label class="text-white text-xs block mb-2">Contraseña</label>
             <div class="relative flex items-center">
               <input name="password" type="password" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
-                placeholder="Enter password" />
+                placeholder="Introduce tu contraseña" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
                 <path
@@ -47,29 +47,28 @@
             <div class="flex items-center">
               <input id="remember-me" name="remember-me" type="checkbox"
                 class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label for="remember-me" class="text-white ml-3 block text-sm">Remember me</label>
+              <label for="remember-me" class="text-white ml-3 block text-sm">Recuérdamela</label>
             </div>
             <div>
-              <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">Forgot
-                Password?</a>
+              <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">¿Olvidaste tu contraseña?</a>
             </div>
           </div>
 
           <div class="mt-12">
             <button type="button"
-              class="w-full py-3 px-6 text-sm font-semibold tracking-wider rounded-full text-white bg-gray-800 hover:bg-[#222] focus:outline-none">
-              Sign in
+              class="w-full py-3 px-6 text-sm font-semibold tracking-wider rounded-full text-white bg-gray-800 hover:bg-yellow-500 focus:outline-none">
+              Entrar
             </button>
           </div>
 
           <div class="my-6 flex items-center gap-4">
             <hr class="w-full border-gray-300" />
-            <p class="text-sm text-gray-800 text-center">or</p>
+            <p class="text-sm text-white text-center">o</p>
             <hr class="w-full border-gray-300" />
           </div>
 
           <button type="button"
-            class="w-full flex items-center justify-center gap-4 py-3 px-6 text-sm font-semibold tracking-wider text-gray-800 border border-gray-300 rounded-full bg-gray-50 hover:bg-gray-100 focus:outline-none">
+            class="w-full flex items-center justify-center gap-4 py-3 px-6 text-sm font-semibold tracking-wider text-gray-800 border border-gray-300 rounded-full bg-gray-50 hover:bg-yellow-500 focus:outline-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="20px" class="inline" viewBox="0 0 512 512">
               <path fill="#fbbd00"
                 d="M120 256c0-25.367 6.989-49.13 19.131-69.477v-86.308H52.823C18.568 144.703 0 198.922 0 256s18.568 111.297 52.823 155.785h86.308v-86.308C126.989 305.13 120 281.367 120 256z"
@@ -90,12 +89,12 @@
                 d="M256 120V0C187.62 0 123.333 26.629 74.98 74.98a259.849 259.849 0 0 0-22.158 25.235l86.308 86.308C162.883 146.72 206.376 120 256 120z"
                 data-original="#eb4132" />
             </svg>
-            Continue with google
+            Continua con google
           </button>
           <p class="text-white text-sm mt-4">
-            Don't have an account?
+            ¿No tienes cuenta todavía?
             <a href="javascript:void(0);"
-              class="text-yellow-500 font-semibold hover:underline ml-1 whitespace-nowrap">Register here</a>
+              class="text-yellow-500 font-semibold hover:underline ml-1 whitespace-nowrap">Regístrate aquí</a>
           </p>
         </form>
       </div>
