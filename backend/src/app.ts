@@ -9,6 +9,7 @@ import movieRouter from './routes/movies';
 import reviewRouter from './routes/reviews';
 import listRouter from './routes/lists';
 import activityRouter from './routes/activities';
+import tmdbRouter from './routes/tmdbRouter';
 
 
 export const app = express();
@@ -33,4 +34,4 @@ app.use('api/movies', movieRouter);
 app.use('api/reviews', reviewRouter);
 app.use('api/lists', listRouter);
 app.use('api/activities', activityRouter);
-
+app.use('/api/moviesdb', tmdbRouter);
