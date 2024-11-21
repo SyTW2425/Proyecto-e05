@@ -1,128 +1,99 @@
 <template>
-  <div class="carousel">
-    <div class="list">
-      <CarouselItem v-for="(item, index) in items" :key="index" :title="item.title" :name="item.name"
-        :description="item.description" :image="item.image" :active="index === activeIndex" />
+  <div class="carousel relative w-full h-screen overflow-hidden mt-[-50px]">
+    <div class="list flex transition-transform duration-1000 absolute top-2/4 left-3/4">
+      <div v-for="(item, index) in items" :key="index"
+        class="item relative w-[180px] h-[250px] rounded-lg shadow-lg bg-cover bg-center z-100 transition"
+        :style="{ backgroundImage: 'url(' + item.image + ')' }">
+        <div class="content absolute top-1/2 left-0 transform -translate-y-1/2 w-full text-white p-4">
+          <div class="title text-4xl font-bold">{{ item.title }}</div>
+          <div class="name text-2xl font-semibold">{{ item.name }}</div>
+          <div class="des mt-2">{{ item.description }}</div>
+          <div class="btn mt-4">
+            <button class="btn btn-primary mr-4">Ver Tráiler</button>
+            <button class="btn btn-secondary">Valorar</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <CarouselControls @prev="showSlider('prev')" @next="showSlider('next')" />
-    <CarouselTimeRunning />
+
+    <div class="arrows absolute top-2/3 left-1/2 transform -translate-x-1/2 flex space-x-4">
+      <button @click="prev" class="prev bg-yellow-500 text-white p-2 rounded-full"> &lt; </button>
+      <button @click="next" class="next bg-yellow-500 text-white p-2 rounded-full"> &gt; </button>
+    </div>
+
+    <div class="timeRunning absolute top-0 left-0 w-0 h-1 bg-yellow-500"></div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
-import CarouselItem from "./CarouselItem.vue";
-import CarouselControls from "./CarouselControls.vue";
-import CarouselTimeRunning from "./CarouselTimeRunning.vue";
+<script>
+import spiderman1 from '../assets/image/spiderman1.svg'
 
-export default defineComponent({
+export default {
   name: "Carousel",
-  components: { CarouselItem, CarouselControls, CarouselTimeRunning },
-  props: {
-    items: {
-      type: Array,
-      required: true,
+  data() {
+    return {
+      items: [
+        {
+          title: "SPIDERMAN",
+          name: "HOME COMING",
+          description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit.",
+          image: spiderman1
+        },
+        {
+          title: "SPIDERMAN",
+          name: "NO WAY HOME",
+          description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit.",
+          image: "../assets/image/spiderman2.svg"
+        },
+        // Add more items here
+      ],
+      currentIndex: 0,
+    };
+  },
+  methods: {
+    next() {
+      this.currentIndex = (this.currentIndex + 1) % this.items.length;
+    },
+    prev() {
+      this.currentIndex = (this.currentIndex - 1 + this.items.length) % this.items.length;
     },
   },
-  setup() {
-    const activeIndex = ref(0);
-
-    const showSlider = (direction: "prev" | "next") => {
-      activeIndex.value = direction === "next"
-        ? (activeIndex.value + 1) % 8
-        : (activeIndex.value - 1 + 8) % 8;
-    };
-
-    return { activeIndex, showSlider };
+  mounted() {
+    // Auto next functionality
+    setInterval(this.next, 7000);
   },
-});
+};
 </script>
 
 <style scoped>
-/* Carousel Section */
-.carousel {
-  width: 100vw;
-  height: 100vh;
-  margin-top: -50px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Responsive Background Image Adjustments */
-@media screen and (max-width: 999px) {
-  .carousel {
-    background-size: contain; /* Ensures the background image is fully visible */
-  }
-}
-
-@media screen and (max-width: 690px) {
-  .carousel {
-    background-size: contain; /* Same as above for smaller screens */
-  }
-}
-
-.carousel .list .item:nth-child(1),
-.carousel .list .item:nth-child(2) {
-  top: 0;
-  left: 0;
-  transform: translate(0, 0);
-  border-radius: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.carousel .list .item:nth-child(3) {
-  left: 67%;
-}
-
-.carousel .list .item:nth-child(4) {
-  left: calc(67% + 200px);
-}
-
-.carousel .list .item:nth-child(5) {
-  left: calc(67% + 400px);
-}
-
-.carousel .list .item:nth-child(6) {
-  left: calc(67% + 600px);
-}
-
-.carousel .list .item:nth-child(n + 7) {
-  left: calc(67% + 800px);
-  opacity: 0;
-}
-
 .carousel .list .item {
-  width: 180px;
-  height: 250px;
-  position: absolute;
-  top: 80%;
-  transform: translateY(-70%);
-  left: 70%;
-  border-radius: 20px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-  background-position: 50% 50%;
   background-size: cover;
-  z-index: 100;
-  transition: 1s;
+  background-position: center;
+  transition: transform 1s ease;
 }
 
-.list .item .content {
-  position: absolute;
-  top: 50%;
-  left: 100px;
-  transform: translateY(-50%);
-  width: 400px;
-  text-align: left;
+.carousel .arrows button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #ffd700;
   color: #fff;
-  display: none;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
 }
 
-.list .item:nth-child(2) .content {
-  display: block;
+.carousel .timeRunning {
+  animation: runningTime 7s linear 1 forwards;
 }
 
+@keyframes runningTime {
+  from {
+    width: 0%;
+  }
 
-
-
+  to {
+    width: 100%;
+  }
+}
 </style>
