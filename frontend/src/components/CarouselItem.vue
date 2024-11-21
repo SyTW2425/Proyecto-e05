@@ -1,20 +1,21 @@
 <template>
-  <div class="item" :style="{ backgroundImage: `url(../src/assets/image/${image})` }" :class="{ active }">
+  <div class="item" :style="{ backgroundImage: `url(../src/assets/image/${image}), url(../src/assets/image/shadow.png)` }" :class="{ active }">
     <div class="content">
       <div class="title">{{ title }}</div>
       <div class="name">{{ name }}</div>
       <div class="des">{{ description }}</div>
       <div class="btn">
-        <button>See More</button>
-        <button>Subscribe</button>
+        <button>Ver Tráiler</button>
+        <button>Valorar</button>
       </div>
-
     </div>
+    <CarouselItemContent :title="title" :name="name" :description="description" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import CarouselItemContent from './CarouselItemContent.vue';
 
 export default defineComponent({
   name: "CarouselItem",
@@ -31,32 +32,41 @@ export default defineComponent({
 <style scoped>
 .item {
   position: relative;
-  /* Allow positioning of the shadow and content */
+  background-image: url(../src/assets/image/${image});
   background-size: cover;
-  /* Ensure the background image covers the item */
   background-position: center;
 }
 
 .item::before {
   content: "";
-  /* Create an empty pseudo-element for the shadow */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url(../src/assets/image/shadow.png);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.7; /* Adjust opacity to make the shadow more opaque */
+  z-index: 1; /* Ensure the shadow appears behind the content */
+}
+
+/* .item::before {
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-image: url('../src/assets/image/shadow.png');
-  /* Path to your shadow image */
   background-size: cover;
   background-position: center;
   z-index: 1;
-  /* Place the shadow between the background and content */
   opacity: 0.5;
-  /* Optional: adjust the opacity of the shadow */
-}
+} */
 
 .content {
-    position: relative; /* Ensure text content stays above the shadow */
+    position: absolute; /* Ensure text content stays above the shadow */
     z-index: 2; /* Text will be on top of the shadow */
     padding: 20px;
     color: white; /* Ensure text is readable depending on your design */
@@ -68,8 +78,9 @@ export default defineComponent({
   color: #ffd700;
   font-weight: bold;
   line-height: 1;
+  font-family: 'Poppins';
 
-  opacity: 0;
+  /* opacity: 0; */
   animation: animate 1s ease-in-out 0.3s 1 forwards;
 }
 
@@ -80,7 +91,7 @@ export default defineComponent({
   line-height: 1;
   text-shadow: 3px 4px 4px rgba(255, 255, 255, 0.8);
 
-  opacity: 0;
+  /* opacity: 0; */
   animation: animate 1s ease-in-out 0.6s 1 forwards;
 }
 
@@ -90,14 +101,14 @@ export default defineComponent({
   font-size: 18px;
   margin-left: 5px;
 
-  opacity: 0;
+  /* opacity: 0; */
   animation: animate 1s ease-in-out 0.9s 1 forwards;
 }
 
 .content .btn {
   margin-left: 5px;
 
-  opacity: 0;
+  /* opacity: 0; */
   animation: animate 1s ease-in-out 1.2s 1 forwards;
 }
 

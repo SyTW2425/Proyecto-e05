@@ -47,7 +47,7 @@
             <div class="flex items-center">
               <input id="remember-me" name="remember-me" type="checkbox"
                 class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label for="remember-me" class="text-white ml-3 block text-sm">Recuérdamela</label>
+              <label for="remember-me" class="text-white ml-3 block text-sm">Recordar contraseña</label>
             </div>
             <div>
               <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">¿Olvidaste tu contraseña?</a>
