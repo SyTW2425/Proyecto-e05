@@ -23,11 +23,11 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-1">Email</label>
+            <label class="text-white text-xs block mb-1">Nombre de usuario</label>
             <div class="relative flex items-center">
               <input name="email" type="email" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
-                placeholder="Introduce tu email" />
+                placeholder="Introduce tu nombre de usuario" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
                 <path fill="none" stroke-miterlimit="10" stroke-width="40"
