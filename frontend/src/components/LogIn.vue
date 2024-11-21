@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-gray-700 font-[poppins] md:h-screen">
-    <div class="grid md:grid-cols-2 items-center h-full">
+  <div class="bg-custom-background font-[poppins] min-h-screen">
+    <div class="grid md:grid-cols-2 items-center min-h-full">
       <!-- Left section -->
-      <div class="relative h-full w-full">
+      <div class="relative h-screen w-full">
         <img src="../assets/image/films.svg" class="absolute inset-0 w-full h-full object-cover" alt="login-image" />
       </div>
 
       <!-- Right section -->
-      <div class="flex-grow flex items-center md:p-8 p-6 bg-custom-background h-full">
+      <div class="flex-grow flex items-center md:p-8 p-6 h-full">
         <form class="max-w-lg w-full mx-auto">
           <div class="mb-12">
             <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Inicia sesión</h3>
@@ -112,7 +112,7 @@ export default {
 
 <style scoped>
 .bg-custom-background {
-  background-image: url('../assets/image/shadow.png');
+  background-image: linear-gradient(to right, #0b101a, #1a2b3f);
   background-size: cover;
   background-position: center;
 }
