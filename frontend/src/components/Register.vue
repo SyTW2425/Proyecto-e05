@@ -9,12 +9,12 @@
       <!-- Right section -->
       <div class="flex-grow flex items-center md:p-8 p-6 h-full">
         <form class="max-w-lg w-full mx-auto">
-          <div class="mb-12">
+          <div class="mb-2">
             <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Regístrate</h3>
           </div>
 
           <div>
-            <label class="text-white text-xs block mb-2">Nombre completo</label>
+            <label class="text-white text-xs block mb-1">Nombre completo</label>
             <div class="relative flex items-center">
               <input name="full-name" type="text" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
@@ -23,7 +23,23 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-2">Email</label>
+            <label class="text-white text-xs block mb-1">Email</label>
+            <div class="relative flex items-center">
+              <input name="email" type="email" required
+                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                placeholder="Introduce tu email" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
+                class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
+                <path fill="none" stroke-miterlimit="10" stroke-width="40"
+                  d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z">
+                </path>
+              </svg>
+            </div>
+          </div>
+          
+
+          <div class="mt-8">
+            <label class="text-white text-xs block mb-1">Email</label>
             <div class="relative flex items-center">
               <input name="email" type="email" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
@@ -38,7 +54,7 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-2">Contraseña</label>
+            <label class="text-white text-xs block mb-1">Contraseña</label>
             <div class="relative flex items-center">
               <input name="password" type="password" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
@@ -53,7 +69,7 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-2">Confirmar Contraseña</label>
+            <label class="text-white text-xs block mb-1">Confirmar Contraseña</label>
             <div class="relative flex items-center">
               <input name="confirm-password" type="password" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
