@@ -3,20 +3,45 @@
     <div class="grid md:grid-cols-2 items-center min-h-full">
       <!-- Left section -->
       <div class="relative h-screen w-full">
-        <img src="../assets/image/films.svg" class="absolute inset-0 w-full h-full object-cover" alt="login-image" />
+        <img src="../assets/image/films.svg" class="absolute inset-0 w-full h-full object-cover" alt="register-image" />
       </div>
 
       <!-- Right section -->
       <div class="flex-grow flex items-center md:p-8 p-6 h-full">
         <form class="max-w-lg w-full mx-auto">
-          <div class="mb-12">
-            <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Inicia sesión</h3>
+          <div class="mb-2">
+            <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Regístrate</h3>
           </div>
 
           <div>
-            <label class="text-white text-xs block mb-2">Email</label>
+            <label class="text-white text-xs block mb-1">Nombre completo</label>
             <div class="relative flex items-center">
-              <input name="email" type="text" required
+              <input name="full-name" type="text" required
+                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                placeholder="Introduce tu nombre completo" />
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <label class="text-white text-xs block mb-1">Nombre de usuario</label>
+            <div class="relative flex items-center">
+              <input name="email" type="email" required
+                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                placeholder="Introduce tu nombre de usuario" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
+                class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
+                <path fill="none" stroke-miterlimit="10" stroke-width="40"
+                  d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z">
+                </path>
+              </svg>
+            </div>
+          </div>
+          
+
+          <div class="mt-8">
+            <label class="text-white text-xs block mb-1">Email</label>
+            <div class="relative flex items-center">
+              <input name="email" type="email" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
                 placeholder="Introduce tu email" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
@@ -29,7 +54,7 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-2">Contraseña</label>
+            <label class="text-white text-xs block mb-1">Contraseña</label>
             <div class="relative flex items-center">
               <input name="password" type="password" required
                 class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
@@ -43,21 +68,27 @@
             </div>
           </div>
 
+          <div class="mt-8">
+            <label class="text-white text-xs block mb-1">Confirmar Contraseña</label>
+            <div class="relative flex items-center">
+              <input name="confirm-password" type="password" required
+                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                placeholder="Confirma tu contraseña" />
+            </div>
+          </div>
+
           <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
             <div class="flex items-center">
-              <input id="remember-me" name="remember-me" type="checkbox"
+              <input id="agree-terms" name="agree-terms" type="checkbox"
                 class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label for="remember-me" class="text-white ml-3 block text-sm">Recordar contraseña</label>
-            </div>
-            <div>
-              <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">¿Olvidaste tu contraseña?</a>
+              <label for="agree-terms" class="text-white ml-3 block text-sm">Acepto los términos y condiciones</label>
             </div>
           </div>
 
           <div class="mt-12">
             <button type="button"
               class="w-full py-3 px-6 text-sm font-semibold tracking-wider rounded-full text-white bg-gray-800 hover:bg-yellow-500 focus:outline-none">
-              Entrar
+              Registrarse
             </button>
           </div>
 
@@ -86,29 +117,16 @@
                 d="m352.167 159.833 10.606 10.606 84.853-84.852-10.606-10.606C388.668 26.629 324.381 0 256 0l-60 60 60 60c36.326 0 70.479 14.146 96.167 39.833z"
                 data-original="#cf2d48" />
               <path fill="#eb4132"
-                d="M256 120V0C187.62 0 123.333 26.629 74.98 74.98a259.849 259.849 0 0 0-22.158 25.235l86.308 86.308C162.883 146.72 206.376 120 256 120z"
+                d="M256 120V0C187.62 0 123.333 26.629 74.98 68.255l-10.606 10.606 60 60C179.347 118.13 219.347 120 256 120z"
                 data-original="#eb4132" />
             </svg>
-            Continua con google
+            <span>Regístrate con Google</span>
           </button>
-          <p class="text-white text-sm mt-4">
-            ¿No tienes cuenta todavía?
-            <a href="javascript:void(0);"
-              class="text-yellow-500 font-semibold hover:underline ml-1 whitespace-nowrap">Regístrate aquí</a>
-          </p>
         </form>
       </div>
     </div>
   </div>
 </template>
-
-
-<script>
-export default {
-  name: 'LogIn',
-};
-</script>
-
 
 <style scoped>
 .bg-custom-background {
