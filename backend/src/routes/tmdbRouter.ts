@@ -97,7 +97,6 @@ tmdbRouter.get('/movie/:id', async (req, res) => {
   }
 });
 
-
 tmdbRouter.get('/search-popular', async (req, res) => {
   const { page } = req.query;
   try {

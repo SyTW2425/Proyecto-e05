@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { User } from '../models/userModel';
+import { login, register } from '../controllers/userController';
 
 export const userRouter = express.Router();
 
@@ -182,5 +183,17 @@ userRouter.post('/', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to create user' });
   }
 });
+
+/**
+ * @swagger
+ */
+// Route to log user
+userRouter.get('/login', login);
+
+/**
+ * @swagger
+ */
+// Route to create a new user
+userRouter.post('/register', register);
 
 export default userRouter;
