@@ -18,6 +18,16 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register // Register page
+  },
+  {
+    path: '/login',
+    name: 'LogIn',
+    component: LogIn, // Login page
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register // Register page
   }
 ];
 

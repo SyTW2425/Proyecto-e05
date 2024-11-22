@@ -103,9 +103,17 @@
 </template>
 
 
-<script>
-export default {
-  name: 'LogIn',
+<script setup>
+import { reg } from 'vue';
+import { useAuthStore } from '../stores/auth';
+
+const username = ref('');
+const password = ref('');
+//const rememberMe = ref(false);
+const authStore = useAuthStore();
+
+const handleSubmit = async () => {
+  await useAuthStore.login(username.value, password.value);
 };
 </script>
 

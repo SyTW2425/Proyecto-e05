@@ -128,6 +128,24 @@
   </div>
 </template>
 
+
+<script setup>
+import { ref } from 'vue';
+import { useAuthStore } from '../stores/auth';
+
+const fullName = ref('full-name');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('confirm-password');
+
+const authStore = useAuthStore();
+
+const handleSubmit = async () => {
+  await useAuthStore.register(fullName.value, email.value, password.value, confirmPassword.value);
+};
+</script>
+
+
 <style scoped>
 .bg-custom-background {
   background-image: linear-gradient(to right, #0b101a, #1a2b3f);
