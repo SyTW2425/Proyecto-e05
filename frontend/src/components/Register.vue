@@ -17,7 +17,7 @@
             <label class="text-white text-xs block mb-1">Nombre completo</label>
             <div class="relative flex items-center">
               <input name="full-name" type="text" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu nombre completo" />
             </div>
           </div>
@@ -26,14 +26,8 @@
             <label class="text-white text-xs block mb-1">Nombre de usuario</label>
             <div class="relative flex items-center">
               <input name="email" type="email" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu nombre de usuario" />
-              <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
-                class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
-                <path fill="none" stroke-miterlimit="10" stroke-width="40"
-                  d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z">
-                </path>
-              </svg>
             </div>
           </div>
           
@@ -42,7 +36,7 @@
             <label class="text-white text-xs block mb-1">Email</label>
             <div class="relative flex items-center">
               <input name="email" type="email" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu email" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
@@ -57,7 +51,7 @@
             <label class="text-white text-xs block mb-1">Contraseña</label>
             <div class="relative flex items-center">
               <input name="password" type="password" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu contraseña" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
@@ -72,8 +66,14 @@
             <label class="text-white text-xs block mb-1">Confirmar Contraseña</label>
             <div class="relative flex items-center">
               <input name="confirm-password" type="password" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Confirma tu contraseña" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
+                class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
+                <path
+                  d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z">
+                </path>
+              </svg>
             </div>
           </div>
 

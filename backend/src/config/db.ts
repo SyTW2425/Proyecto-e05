@@ -3,6 +3,9 @@ dotenv.config(); // Load environment variables
 
 import mongoose from 'mongoose';
 
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+
+
 // Connect to MongoDB
 export const connectDB = async () => {
   try {
