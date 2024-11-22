@@ -104,7 +104,7 @@
 
 
 <script setup>
-import { reg } from 'vue';
+import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 
 const username = ref('');
