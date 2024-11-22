@@ -75,10 +75,6 @@ export default defineComponent({
       this.loading = true;
       this.error = "";
       try {
-        if (this.searchQuery.trim() !== "") {
-          this.currentPage = 1;
-        }
-
         // Determine whether to fetch most popular movies or search results
         const isSearchMode = this.searchQuery.trim().length > 0;
         const endpoint = isSearchMode
@@ -127,6 +123,9 @@ export default defineComponent({
   watch: {
     searchQuery(newQuery) {
       if (!newQuery.trim()) {
+        this.fetchMovies();
+      } else {
+        this.currentPage = 1;
         this.fetchMovies();
       }
     },
