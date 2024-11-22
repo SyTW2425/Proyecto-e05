@@ -8,7 +8,7 @@
 
       <!-- Right section -->
       <div class="flex-grow flex items-center md:p-8 p-6 h-full">
-        <form class="max-w-lg w-full mx-auto">
+        <form class="max-w-lg w-full mx-auto" @submit.prevent="handleSubmit">
           <div class="mb-12">
             <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Inicia sesión</h3>
           </div>
@@ -16,7 +16,7 @@
           <div>
             <label class="text-white text-xs block mb-2">Email</label>
             <div class="relative flex items-center">
-              <input name="email" type="text" required
+              <input v-model="username" name="email" type="text" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu email" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
@@ -31,7 +31,7 @@
           <div class="mt-8">
             <label class="text-white text-xs block mb-2">Contraseña</label>
             <div class="relative flex items-center">
-              <input name="password" type="password" required
+              <input v-model="password" name="password" type="password" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu contraseña" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
@@ -55,7 +55,7 @@
           </div>
 
           <div class="mt-12">
-            <button type="button"
+            <button type="submit"
               class="w-full py-3 px-6 text-sm font-semibold tracking-wider rounded-full text-white bg-gray-800 hover:bg-yellow-500 focus:outline-none">
               Entrar
             </button>
@@ -113,7 +113,7 @@ const password = ref('');
 const authStore = useAuthStore();
 
 const handleSubmit = async () => {
-  await useAuthStore.login(username.value, password.value);
+  await authStore.login(username.value, password.value);
 };
 </script>
 

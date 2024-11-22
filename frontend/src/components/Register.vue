@@ -141,7 +141,7 @@ const confirmPassword = ref('confirm-password');
 const authStore = useAuthStore();
 
 const handleSubmit = async () => {
-  await useAuthStore.register(fullName.value, email.value, password.value, confirmPassword.value);
+  await authStore.register(fullName.value, email.value, password.value, confirmPassword.value);
 };
 </script>
 

@@ -188,7 +188,7 @@ userRouter.post('/', async (req: Request, res: Response) => {
  * @swagger
  */
 // Route to log user
-userRouter.get('/login', login);
+userRouter.post('/login', login);
 
 /**
  * @swagger

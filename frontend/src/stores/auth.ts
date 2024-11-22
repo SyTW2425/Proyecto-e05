@@ -8,7 +8,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(username: string, password: string) {
       try {
-        const response = await axios.post('/api/users/login', { username, password });
+        const response = await axios.post('http://localhost:5001/api/users/login', { username, password });
         this.token = response.data.token;
         return true;
       } catch (error) {
@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(name: string, username: string, password: string, email: string) {
       try {
-        await axios.post('/api/users/register', { name, username, password, email });
+        await axios.post('http://localhost:5001/api/users/register', { name, username, password, email });
         return true;
       } catch (error) {
         console.error(error);
