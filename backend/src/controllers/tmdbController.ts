@@ -6,7 +6,7 @@ const BASE_URL = 'https://api.themoviedb.org/3';
 
 const getAuthHeaders = () => ({
   accept: 'application/json',
-  Authorization: `Bearer ${API_KEY}`
+  Authorization: `Bearer ${API_KEY}`,
 });
 
 // Search for movies by title, defaults to first page of results
@@ -17,9 +17,9 @@ export const searchMovies = async (query: string, page: number = 1) => {
         query,
         include_adult: false,
         language: 'en-US',
-        page
+        page,
       },
-      headers: getAuthHeaders()
+      headers: getAuthHeaders(),
     });
     return response.data;
   } catch (error) {
@@ -32,11 +32,33 @@ export const searchMovies = async (query: string, page: number = 1) => {
 export const getMovieDetails = async (movieId: number) => {
   try {
     const response = await axios.get(`${BASE_URL}/movie/${movieId}`, {
-      headers: getAuthHeaders()
+      headers: getAuthHeaders(),
     });
     return response.data;
   } catch (error) {
     console.error('Error getting movie details:', error);
+    throw error;
+  }
+};
+
+// Get the latest movies from this year most popular
+export const getPopularMovies = async (page: number = 1) => {
+  const currentYear = new Date().getFullYear(); // Get the current year
+  try {
+    const response = await axios.get(`${BASE_URL}/discover/movie`, {
+      params: {
+        sort_by: 'popularity.desc',
+        include_adult: false,
+        language: 'en-US',
+        page,
+        primary_release_year: currentYear,
+        page_size: 20,
+      },
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching most popular movies:', error);
     throw error;
   }
 };
