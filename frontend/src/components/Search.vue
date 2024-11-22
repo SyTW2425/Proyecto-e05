@@ -110,6 +110,7 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     handleSearch() {
       this.currentPage = 1;
