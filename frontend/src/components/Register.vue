@@ -17,7 +17,7 @@
             <label class="text-white text-xs block mb-1">Nombre completo</label>
             <div class="relative flex items-center">
               <input name="full-name" type="text" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu nombre completo" />
             </div>
           </div>
@@ -26,7 +26,7 @@
             <label class="text-white text-xs block mb-1">Nombre de usuario</label>
             <div class="relative flex items-center">
               <input name="email" type="email" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu nombre de usuario" />
             </div>
           </div>
@@ -36,7 +36,7 @@
             <label class="text-white text-xs block mb-1">Email</label>
             <div class="relative flex items-center">
               <input name="email" type="email" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu email" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
@@ -51,7 +51,7 @@
             <label class="text-white text-xs block mb-1">Contraseña</label>
             <div class="relative flex items-center">
               <input name="password" type="password" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Introduce tu contraseña" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
@@ -66,7 +66,7 @@
             <label class="text-white text-xs block mb-1">Confirmar Contraseña</label>
             <div class="relative flex items-center">
               <input name="confirm-password" type="password" required
-                class="w-full text-sm border-b border-gray-300 focus:border-gray-800 px-2 py-3 outline-none"
+                class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
                 placeholder="Confirma tu contraseña" />
                 <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
