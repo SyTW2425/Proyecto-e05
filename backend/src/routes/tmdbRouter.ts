@@ -1,5 +1,5 @@
 import express, {Request, Response} from 'express';
-import { searchMovies, getMovieDetails, getPopularMovies} from '../controllers/tmdbController';
+import { searchMovies, getMovieDetails, getPopularMovies, getNowPlayingMovies } from '../controllers/tmdbController';
 
 const tmdbRouter = express.Router();
 
@@ -104,6 +104,17 @@ tmdbRouter.get('/search-popular', async (req, res) => {
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch latest movies' });
+  }
+});
+
+
+tmdbRouter.get('/now-playing', async (req: Request, res: Response) => {
+  const { page } = req.query;
+  try {
+    const data = await getNowPlayingMovies(parseInt(page as string, 10) || 1);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch now playing movies' });
   }
 });
 
