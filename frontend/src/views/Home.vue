@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import Carousel from '../components/Carousel.vue';
+import Carousel from '../components/Home.vue';
 import Navbar from '../components/Navbar.vue';
 
 export default {

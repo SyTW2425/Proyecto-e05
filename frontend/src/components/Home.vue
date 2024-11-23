@@ -9,8 +9,13 @@
       >
         <div class="content">
           <div class="title">{{ item.title }}</div>
-          <!-- <div class="name">{{ item.original_title }}</div> -->
-          <div class="des">{{ item.overview }}</div>
+          <!-- Truncated Overview -->
+          <div class="des">
+            {{ truncateOverview(item.overview) }}
+            <span v-if="item.overview.length > 150">
+              <a :href="`/movie/${item.title}`" class="text-yellow-500">Ver más</a>
+            </span>
+          </div>
           <div class="btn">
             <button>Ver Tráiler</button>
             <button>Valorar</button>
@@ -41,6 +46,18 @@ export default {
       timeAutoNext: 7000,
       runNextAuto: null,
     };
+  },
+  computed: {
+    // Truncate overview text to a maximum of 150 characters
+    truncateOverview() {
+      return (overview) => {
+        const maxLength = 150;
+        if (overview.length > maxLength) {
+          return overview.substring(0, maxLength) + '...';
+        }
+        return overview;
+      };
+    },
   },
   methods: {
     showSlider(type) {
@@ -76,9 +93,9 @@ export default {
     },
     fetchNowPlayingMovies() {
       axios
-        .get('http://localhost:5001/api/moviesdb/now-playing?page=1') // Ajusta la URL de tu API
+        .get('http://localhost:5001/api/moviesdb/now-playing?page=1') // Adjust the API URL
         .then(async response => {
-          const movies = response.data.results.slice(0, 15); // Límite de 15 películas
+          const movies = response.data.results.slice(0, 15); // Limit to 15 movies
           this.items = movies.map(movie => {
             const imageUrl = `https://image.tmdb.org/t/p/original${movie.poster_path}`;
             return {
@@ -149,10 +166,6 @@ a:hover {
   background: #ffd700;
   border-radius: 2px;
 }
-
-/* Header section */
-
-/* carousel */
 
 /* Carousel Section */
 .carousel {
@@ -453,5 +466,11 @@ a:hover {
     padding: 10px 15px;
     font-size: 14px;
   }
+}
+
+.bg-custom-background {
+  background-image: linear-gradient(to right, #0b101a, #1a2b3f);
+  background-size: cover;
+  background-position: center;
 }
 </style>
