@@ -62,3 +62,20 @@ export const getPopularMovies = async (page: number = 1) => {
     throw error;
   }
 };
+
+// Movies that are now in theatres
+export const getNowPlayingMovies = async (page: number = 1) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/now_playing`, {
+      params: {
+        language: 'en-US',
+        page,
+      },
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching now playing movies:', error);
+    throw error;
+  }
+};
