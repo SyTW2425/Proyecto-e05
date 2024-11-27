@@ -7,15 +7,15 @@
       </a>
       <a href="#"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        Películas
+        Films
       </a>
       <a href="#"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        Mi Actividad
+        My Activity
       </a>
       <a href="#"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        Mi Lista
+        Mi Lists
       </a>
 
 

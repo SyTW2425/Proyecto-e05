@@ -2,8 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import LogIn from '../views/LogIn.vue';
 import Register from '../views/Register.vue';
-import Search from '../views/Search.vue';
+import Films from '../views/Films.vue';
 import Profile from '../views/Profile.vue';
+import NotFound from '../components/NotFound.vue';
 
 const routes = [
   {
@@ -22,15 +23,22 @@ const routes = [
     component: Register, // Register page
   },
   {
-    path: '/search',
-    name: 'Search',
-    component: Search, // Search page
+    path: '/films',
+    name: 'Films',
+    component: Films, // Films page
   },
   {
     path: '/profile',
     name: 'Profile',
     component: Profile, // User Profile page
+  },
+  {
+    // error page
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound,
   }
+
 ];
 
 const router = createRouter({

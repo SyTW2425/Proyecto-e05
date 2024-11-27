@@ -13,12 +13,12 @@
           <div class="des">
             {{ truncateOverview(item.overview) }}
             <span v-if="item.overview.length > 150">
-              <a :href="`/movie/${item.title}`" class="text-yellow-500">Ver más</a>
+              <a :href="`/movie/${item.title}`" class="text-yellow-500">See more</a>
             </span>
           </div>
           <div class="btn">
-            <button>Ver Tráiler</button>
-            <button>Valorar</button>
+            <button>See Tráiler</button>
+            <button>Rate</button>
           </div>
         </div>
       </div>

@@ -1,17 +1,17 @@
 <template>
   <div class="bg-custom-background min-h-screen">
     <Navbar />
-    <Search />
+    <Films />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Navbar from '../components/Navbar.vue';
-import Search from '../components/Search.vue'; // Correctly import Search
+import Films from '../components/Films.vue'; // Correctly import Films 
 
 export default defineComponent({
-  components: { Navbar, Search },
+  components: { Navbar, Films },
 });
 </script>
 
