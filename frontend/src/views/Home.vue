@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-custom-background">
+  <div>
     <Navbar />
     <Carousel  />
   </div>

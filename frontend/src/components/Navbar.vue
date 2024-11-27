@@ -53,8 +53,13 @@ export default {
 </script>
 
 <style scoped>
+
+
 header {
-  position: relative;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background: transparent; 
   z-index: 1000;
 }
 

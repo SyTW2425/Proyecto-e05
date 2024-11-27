@@ -171,7 +171,6 @@ a:hover {
 .carousel {
   width: 100vw;
   height: 100vh;
-  margin-top: -50px;
   overflow: hidden;
   position: relative;
 }
