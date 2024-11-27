@@ -1,5 +1,11 @@
-import express, {Request, Response} from 'express';
-import { searchMovies, getMovieDetails, getPopularMovies, getNowPlayingMovies } from '../controllers/tmdbController';
+import express, { Request, Response } from 'express';
+import {
+  searchMovies,
+  getMovieDetails,
+  getPopularMovies,
+  getNowPlayingMovies,
+  getGenres,
+} from '../controllers/tmdbController';
 
 const tmdbRouter = express.Router();
 
@@ -44,7 +50,10 @@ const tmdbRouter = express.Router();
 tmdbRouter.get('/search', async (req, res) => {
   const { query, page } = req.query;
   try {
-    const data = await searchMovies(query as string, parseInt(page as string, 10));
+    const data = await searchMovies(
+      query as string,
+      parseInt(page as string, 10),
+    );
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to search movies' });
@@ -107,7 +116,6 @@ tmdbRouter.get('/search-popular', async (req, res) => {
   }
 });
 
-
 tmdbRouter.get('/now-playing', async (req: Request, res: Response) => {
   const { page } = req.query;
   try {
@@ -117,5 +125,16 @@ tmdbRouter.get('/now-playing', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch now playing movies' });
   }
 });
+
+// Get all genres
+tmdbRouter.get('/genres', async (req, res) => {
+  try {
+    const data = await getGenres();
+    res.json({ genres: data });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch genres' });
+  }
+});
+
 
 export default tmdbRouter;

@@ -66,7 +66,7 @@ interface Genre {
 }
 
 export default defineComponent({
-  name: "Search",
+  name: "Films",
   data() {
     return {
       searchQuery: "",
@@ -105,26 +105,16 @@ export default defineComponent({
     async fetchMovies() {
       this.loading = true;
       this.error = "";
-
-      type Params = {
-        query?: string;
-        page: number;
-        genres?: string;
-      };
-
       try {
+        // Determine whether to fetch most popular movies or search results
         const isSearchMode = this.searchQuery.trim().length > 0;
         const endpoint = isSearchMode
           ? "http://localhost:5001/api/moviesdb/search"
           : "http://localhost:5001/api/moviesdb/search-popular";
 
-        const params: Params = isSearchMode
+        const params = isSearchMode
           ? { query: this.searchQuery, page: this.currentPage }
           : { page: this.currentPage };
-
-        if (this.selectedGenres.length > 0) {
-          params.genres = this.selectedGenres.join(","); // Pass selected genres as a comma-separated string
-        }
 
         const response = await axios.get<{
           results: Movie[];
@@ -132,6 +122,10 @@ export default defineComponent({
           total_pages: number;
         }>(endpoint, { params });
 
+        // Update total pages
+        this.totalPages = response.data.total_pages;
+
+        // Update movies and pagination details
         this.movies = response.data.results.map((movie: Movie) => ({
           id: movie.id,
           title: movie.title,
@@ -147,7 +141,7 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     toggleCategory(genreId: number) {
       const index = this.selectedGenres.indexOf(genreId);
