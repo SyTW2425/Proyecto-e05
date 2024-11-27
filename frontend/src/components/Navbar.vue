@@ -1,36 +1,47 @@
 <template>
   <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10">
     <nav class="flex space-x-4">
-      <a href="#"
-        class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200 active:bg-yellow-500">
+      <!-- Router Links -->
+      <router-link
+        to="/"
+        class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200 active:bg-yellow-500"
+      >
         Home
-      </a>
-      <a href="#"
-        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
+      </router-link>
+      <router-link
+        to="/films"
+        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200"
+      >
         Films
-      </a>
-      <a href="#"
-        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
+      </router-link>
+      <router-link
+        to="/activity"
+        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200"
+      >
         My Activity
-      </a>
-      <a href="#"
-        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        Mi Lists
-      </a>
-
+      </router-link>
+      <router-link
+        to="/lists"
+        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200"
+      >
+        My Lists
+      </router-link>
 
       <!-- Sign In and Get Started Buttons (Top Right) -->
       <div class="absolute right-4 top-4 flex items-center space-x-4">
-        <button @click="signIn"
-          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded bg-yellow-500 hover:bg-yellow-400 transition duration-200">
+        <button
+          @click="signIn"
+          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded bg-yellow-500 hover:bg-yellow-400 transition duration-200"
+        >
           Sign In
         </button>
-        <button @click="getStarted"
-          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded border-2 border-yellow-500 hover:bg-yellow-500 hover:text-black transition duration-200">
+        <button
+          @click="getStarted"
+          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded border-2 border-yellow-500 hover:bg-yellow-500 hover:text-black transition duration-200"
+        >
           Get Started
         </button>
       </div>
-
     </nav>
   </header>
 </template>
