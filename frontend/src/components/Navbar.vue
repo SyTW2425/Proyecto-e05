@@ -1,6 +1,6 @@
 <template>
   <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10">
-    <nav class="flex space-x-4">
+    <nav class="flex space-x-4 mt-7">
       <!-- Router Links -->
       <router-link
         to="/"

@@ -34,7 +34,7 @@
 
 <script lang="ts">
 export default {
-  name: "NotFoundPage",
+  name: "NotFound",
 };
 </script>
 
