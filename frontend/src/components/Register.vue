@@ -156,10 +156,10 @@ const handleSubmit = async () => {
   try {
     const isSuccess = await authStore.register(name.value, username.value, email.value, password.value);
     if (isSuccess) {
-      router.push({ name: 'Home' });
+      router.push({ name: 'LogIn' });
     }
   } catch (error) {
-    alert(error.message); // Handle errors gracefully
+    alert(error.message);
   }
 };
 </script>

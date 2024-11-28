@@ -33,10 +33,9 @@ const routes = [
     component: Profile, // User Profile page
   },
   {
-    // error page
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: NotFound,
+    component: NotFound, // 404 page
   }
 
 ];

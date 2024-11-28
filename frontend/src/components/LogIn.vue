@@ -97,8 +97,9 @@
           </button>
           <p class="text-white text-sm mt-4">
             ¿No account yet?
-            <a href="javascript:void(0);"
-              class="text-yellow-500 font-semibold hover:underline ml-1 whitespace-nowrap">Register here</a>
+            <router-link to="/register" class="text-yellow-500 font-semibold hover:underline ml-1 whitespace-nowrap">
+              Register here
+            </router-link>
           </p>
         </form>
       </div>
@@ -119,10 +120,10 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const handleSubmit = async () => {
-  const isSuccess = await authStore.login(username.value, password.value); 
+  const isSuccess = await authStore.login(username.value, password.value);
 
   if (isSuccess) {
-    router.push({ name: 'Home' }); 
+    router.push({ name: 'Home' });
   }
 };
 </script>

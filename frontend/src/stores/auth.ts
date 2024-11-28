@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', {
           email,
           password,
         });
-        alertStore.success('Registration successful');
+        // alertStore.success('Registration successful');
         return true;
       } catch (error) {
         alertStore.error(
