@@ -15,11 +15,11 @@
           </div>
 
           <div>
-            <label class="text-white text-xs block mb-2">Email</label>
+            <label class="text-white text-xs block mb-2">Username</label>
             <div class="relative flex items-center">
-              <input v-model="username" name="email" type="text" required
+              <input v-model="username" name="username" type="text" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Introduce your email" />
+                placeholder="Introduce your username" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
                 <path fill="none" stroke-miterlimit="10" stroke-width="40"
@@ -110,15 +110,20 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
 import AlertComponent from './AlertComponent.vue';
 
 const username = ref('');
 const password = ref('');
-//const rememberMe = ref(false);
 const authStore = useAuthStore();
+const router = useRouter();
 
 const handleSubmit = async () => {
-  await authStore.login(username.value, password.value);
+  const isSuccess = await authStore.login(username.value, password.value); 
+
+  if (isSuccess) {
+    router.push({ name: 'Home' }); 
+  }
 };
 </script>
 
