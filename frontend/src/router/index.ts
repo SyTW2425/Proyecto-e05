@@ -9,13 +9,13 @@ import NotFound from '../components/NotFound.vue';
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home, // Home page
-  },
-  {
-    path: '/login',
     name: 'LogIn',
     component: LogIn, // Login page
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: Home, // Home page
   },
   {
     path: '/register',
