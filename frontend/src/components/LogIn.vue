@@ -43,7 +43,6 @@
               </svg>
             </div>
             <!-- Alert Section -->
-            <AlertComponent />
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
@@ -112,7 +111,6 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-import AlertComponent from './AlertComponent.vue';
 
 const username = ref('');
 const password = ref('');

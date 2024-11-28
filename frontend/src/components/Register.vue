@@ -77,8 +77,6 @@
             </div>
           </div>
 
-          <AlertComponent />
-
           <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
             <div class="flex items-center">
               <input id="agree-terms" name="agree-terms" type="checkbox"
@@ -135,8 +133,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-import AlertComponent from './AlertComponent.vue';
-
+import { useAlertStore } from '../stores/alert';
 const name = ref('');
 const username = ref('');
 const email = ref('');
@@ -149,7 +146,8 @@ const router = useRouter();
 
 const handleSubmit = async () => {
   if (password.value !== confirmPassword.value) {
-    alert('Passwords do not match'); //! alert component
+    const alertStore = useAlertStore();
+    alertStore.error('Passwords do not match'); //! alert component
     return;
   }
 

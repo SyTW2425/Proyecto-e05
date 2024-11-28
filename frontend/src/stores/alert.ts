@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useToast } from 'vue-toastification';
 
 interface Alert {
   message: string;
@@ -12,9 +13,13 @@ export const useAlertStore = defineStore({
   }),
   actions: {
     success(message: string) {
+      const toast = useToast();
+      toast.success(message);
       this.alert = { message, type: 'alert-success' };
     },
     error(message: string) {
+      const toast = useToast();
+      toast.error(message);
       this.alert = { message, type: 'alert-danger' };
     },
     clear() {

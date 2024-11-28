@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
         );
         this.token = response.data.token;
         localStorage.setItem('token', response.data.token);
-        alertStore.success(response.data.message);
+        alertStore.success("Logged in successfully");
         return true;
       } catch (error) {
         alertStore.error(
@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', {
           email,
           password,
         });
-        // alertStore.success('Registration successful');
+         alertStore.success('Registration successful');
         return true;
       } catch (error) {
         alertStore.error(
