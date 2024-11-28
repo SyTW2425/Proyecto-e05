@@ -16,7 +16,7 @@
       </router-link>
       <router-link to="/lists"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        My Lists
+        About us
       </router-link>
 
       <!-- Profile image and Log out -->
