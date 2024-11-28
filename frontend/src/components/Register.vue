@@ -141,7 +141,12 @@ const confirmPassword = ref('confirm-password');
 const authStore = useAuthStore();
 
 const handleSubmit = async () => {
-  await authStore.register(fullName.value, email.value, password.value, confirmPassword.value);
+  const isSuccess = await authStore.register(fullName.value, email.value, password.value, confirmPassword.value);
+
+  if (isSuccess) {
+    // Redirect to the login
+    router.push({ name: 'login' });
+  }
 };
 </script>
 
