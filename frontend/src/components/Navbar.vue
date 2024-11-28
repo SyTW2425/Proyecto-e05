@@ -2,7 +2,7 @@
   <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10">
     <nav class="flex space-x-4 mt-7">
       <!-- Router Links -->
-      <router-link to="/home"
+      <router-link to="/"
         class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200 active:bg-yellow-500">
         Home
       </router-link>

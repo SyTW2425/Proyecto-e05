@@ -4,7 +4,7 @@ import { useAlertStore } from './alert'; // Import the alert store
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: null as string | null,
+    token: localStorage.getItem('token') as string | null,
   }),
   actions: {
     async login(username: string, password: string) {
@@ -15,6 +15,7 @@ export const useAuthStore = defineStore('auth', {
           { username, password },
         );
         this.token = response.data.token;
+        localStorage.setItem('token', response.data.token);
         alertStore.success(response.data.message);
         return true;
       } catch (error) {
@@ -53,6 +54,7 @@ export const useAuthStore = defineStore('auth', {
     },
     logout() {
       this.token = null;
+      localStorage.removeItem('token');
       const alertStore = useAlertStore(); // Use the alert store
       alertStore.success('Logged out successfully');
     },
