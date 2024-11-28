@@ -193,8 +193,13 @@ export default defineComponent({
     goToList(listId: number) {
       // alert(`Navigating to list with ID: ${listId}`);
     },
-    onItemDeleted(itemId: number) {
-
+    // Handles the delete action for lists or reviews
+    onItemDeleted(itemId: number, type: 'list' | 'review') {
+      if (type === 'list') {
+        this.user.lists = this.user.lists.filter((list) => list.id !== itemId);
+      } else if (type === 'review') {
+        this.user.reviews = this.user.reviews.filter((review) => review.id !== itemId);
+      }
     },
     deleteList(listId: number) {
       this.user.lists = this.user.lists.filter((list) => list.id !== listId);

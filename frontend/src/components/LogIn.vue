@@ -9,6 +9,7 @@
       <!-- Right section -->
       <div class="flex-grow flex items-center md:p-8 p-6 h-full">
         <form class="max-w-lg w-full mx-auto" @submit.prevent="handleSubmit">
+
           <div class="mb-12">
             <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Log In</h3>
           </div>
@@ -41,6 +42,8 @@
                 </path>
               </svg>
             </div>
+            <!-- Alert Section -->
+            <AlertComponent />
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
@@ -50,7 +53,8 @@
               <label for="remember-me" class="text-white ml-3 block text-sm">Remember password</label>
             </div>
             <div>
-              <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">¿Have you forgot your password?</a>
+              <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">¿Have you
+                forgot your password?</a>
             </div>
           </div>
 
@@ -106,6 +110,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import AlertComponent from './AlertComponent.vue';
 
 const username = ref('');
 const password = ref('');
@@ -125,4 +130,3 @@ const handleSubmit = async () => {
   background-position: center;
 }
 </style>
-
