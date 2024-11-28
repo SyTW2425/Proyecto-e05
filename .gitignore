@@ -26,7 +26,3 @@ logs
 # Coverage reports (for Jest, etc.)
 coverage/
 .nyc_output/
-
-# Test and coverage related files
-*.test.js
-*.test.ts
