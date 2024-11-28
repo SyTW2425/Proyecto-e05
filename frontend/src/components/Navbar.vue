@@ -3,7 +3,7 @@
     <nav class="flex space-x-4 mt-7">
       <!-- Router Links -->
       <router-link
-        to="/"
+        to="/home"
         class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200 active:bg-yellow-500"
       >
         Home
