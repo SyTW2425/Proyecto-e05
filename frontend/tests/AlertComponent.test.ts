@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import Alert from '../src/components/AlertComponent.vue';
 import { createPinia, setActivePinia } from 'pinia';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { useAlertStore } from '../src/stores/alert';
 
 describe('Alert.vue', () => {

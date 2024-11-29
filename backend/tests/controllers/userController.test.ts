@@ -4,6 +4,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import {app} from '../../src/app'; 
 import { User } from '../../src/models/userModel';
 import bcrypt from 'bcrypt';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from '@jest/globals';
 
 describe('Auth Controller Tests', () => {
   let mongoServer: MongoMemoryServer;
