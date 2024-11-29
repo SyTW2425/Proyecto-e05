@@ -34,9 +34,6 @@
           allowfullscreen></iframe>
       </div>
     </div>
-
-    <!-- Time Running -->
-    <div class="timeRunning"></div>
   </div>
 
 </template>
@@ -49,8 +46,6 @@ export default {
     return {
       items: [],
       timeRunning: 3000,
-      timeAutoNext: 7000,
-      runNextAuto: null,
       showModal: false,
       trailerKey: '',
     };
@@ -84,24 +79,11 @@ export default {
       setTimeout(() => {
         carousel.classList.remove("next");
         carousel.classList.remove("prev");
-      }, this.timeRunning);
-
-      clearTimeout(this.runNextAuto);
-      this.runNextAuto = setTimeout(() => {
-        this.showSlider("next");
-      }, this.timeAutoNext);
-
-      this.resetTimeAnimation();
-    },
-    resetTimeAnimation() {
-      const runningTime = this.$el.querySelector(".timeRunning");
-      runningTime.style.animation = "none";
-      runningTime.offsetHeight; // Trigger reflow
-      runningTime.style.animation = "runningTime 7s linear 1 forwards";
+      }, this.timeRunning); 
     },
     fetchNowPlayingMovies() {
       axios
-        .get('http://localhost:5001/api/moviesdb/now-playing?page=1') // Adjust the API URL
+        .get('http://localhost:5001/api/moviesdb/now-playing?page=1')
         .then(async response => {
           const movies = response.data.results.slice(0, 15); // Limit to 15 movies
           this.items = movies.map(movie => {
@@ -111,7 +93,7 @@ export default {
               title: movie.title,
               original_title: movie.original_title,
               overview: movie.overview,
-              poster_path: imageUrl, // Directly use the URL
+              poster_path: imageUrl,
             };
           });
         })
@@ -144,13 +126,6 @@ export default {
   },
   mounted() {
     this.fetchNowPlayingMovies();
-    this.resetTimeAnimation();
-    this.runNextAuto = setTimeout(() => {
-      this.showSlider("next");
-    }, this.timeAutoNext);
-  },
-  beforeDestroy() {
-    clearTimeout(this.runNextAuto);
   },
 };
 </script>
@@ -450,27 +425,6 @@ a:hover {
   color: #000;
 }
 
-/* time running */
-.carousel .timeRunning {
-  position: absolute;
-  z-index: 1000;
-  width: 0%;
-  height: 4px;
-  background-color: #ffd700;
-  left: 0;
-  top: 0;
-  animation: runningTime 7s linear 1 forwards;
-}
-
-@keyframes runningTime {
-  from {
-    width: 0%;
-  }
-
-  to {
-    width: 100%;
-  }
-}
 
 /* Responsive Design */
 
@@ -535,15 +489,12 @@ a:hover {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   text-align: center;
   width: 90%;
-  /* Adjust modal width */
   max-width: 1200px;
-  /* Maximum width for large screens */
 }
 
 .modal-content iframe {
   width: 100%;
   height: 675px;
-  /* Adjust height to match a 16:9 ratio */
   border-radius: 8px;
 }
 
