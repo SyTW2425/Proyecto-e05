@@ -79,3 +79,18 @@ export const getNowPlayingMovies = async (page: number = 1) => {
     throw error;
   }
 };
+
+// get genres
+export const getGenres = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/genre/movie/list`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching genres:', error);
+    throw error;
+  }
+};
+
+

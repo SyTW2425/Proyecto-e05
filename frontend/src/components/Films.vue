@@ -7,6 +7,15 @@
         @input="handleSearch" />
     </div>
 
+    <!-- Category Buttons -->
+    <div class="flex justify-center gap-1 mb-6 flex-wrap">
+      <button v-for="genre in genres" :key="genre.id" @click="toggleCategory(genre.id)"
+        class="px-4 py-2 rounded-lg text-white font-poppins hover:bg-yellow-400 transition-all duration-200"
+        :class="selectedGenres.includes(genre.id) ? 'bg-yellow-500' : 'bg-gray-700 hover:bg-gray-600'">
+        {{ genre.name }}
+      </button>
+    </div>
+
     <!-- Movies Grid -->
     <div v-if="movies.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
       <div v-for="movie in movies" :key="movie.id" class="text-center">
@@ -51,8 +60,13 @@ interface Movie {
   vote_average: number;
 }
 
+interface Genre {
+  id: number;
+  name: string;
+}
+
 export default defineComponent({
-  name: "Search",
+  name: "Films",
   data() {
     return {
       searchQuery: "",
@@ -61,6 +75,8 @@ export default defineComponent({
       totalPages: 0,
       loading: false,
       error: "",
+      genres: [] as Genre[], // Store genres
+      selectedGenres: [] as number[], // Store selected genre IDs
     };
   },
   computed: {
@@ -68,9 +84,24 @@ export default defineComponent({
       const maxPages = 10;
       const total = this.totalPages < maxPages ? this.totalPages : maxPages;
       return Array.from({ length: total }, (_, i) => i + 1);
-    }
+    },
   },
   methods: {
+    async fetchGenres() {
+      try {
+        const response = await axios.get("http://localhost:5001/api/moviesdb/genres");
+
+        if (response.data && Array.isArray(response.data.genres.genres)) {
+          this.genres = response.data.genres.genres;
+        } else {
+          console.error("Invalid genres data format:", response);
+          throw new Error("Invalid genres data format");
+        }
+      } catch (err) {
+        console.error("Error fetching genres:", err);
+        this.error = "Failed to load genres.";
+      }
+    },
     async fetchMovies() {
       this.loading = true;
       this.error = "";
@@ -82,8 +113,8 @@ export default defineComponent({
           : "http://localhost:5001/api/moviesdb/search-popular";
 
         const params = isSearchMode
-          ? { query: this.searchQuery, page: this.currentPage}
-          : { page: this.currentPage};
+          ? { query: this.searchQuery, page: this.currentPage }
+          : { page: this.currentPage };
 
         const response = await axios.get<{
           results: Movie[];
@@ -112,6 +143,16 @@ export default defineComponent({
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
+    toggleCategory(genreId: number) {
+      const index = this.selectedGenres.indexOf(genreId);
+      if (index === -1) {
+        this.selectedGenres.push(genreId); // Add if not already selected
+      } else {
+        this.selectedGenres.splice(index, 1); // Remove if already selected
+      }
+      this.currentPage = 1; // Reset pagination when genre selection changes
+      this.fetchMovies(); // Refetch movies with updated genres
+    },
     handleSearch() {
       this.currentPage = 1;
       this.fetchMovies();
@@ -132,7 +173,8 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.fetchMovies();
+    this.fetchGenres(); // Fetch genres on mount
+    this.fetchMovies(); // Fetch movies on mount
   },
 });
 </script>
@@ -150,5 +192,14 @@ button {
 
 input {
   transition: box-shadow 0.3s ease;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+button {
+  margin: 0.5rem;
+  /* Adds spacing between buttons */
 }
 </style>

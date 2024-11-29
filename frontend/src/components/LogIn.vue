@@ -8,17 +8,18 @@
 
       <!-- Right section -->
       <div class="flex-grow flex items-center md:p-8 p-6 h-full">
-        <form class="max-w-lg w-full mx-auto">
+        <form class="max-w-lg w-full mx-auto" @submit.prevent="handleSubmit">
+
           <div class="mb-12">
-            <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Inicia sesión</h3>
+            <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Log In</h3>
           </div>
 
           <div>
-            <label class="text-white text-xs block mb-2">Email</label>
+            <label class="text-white text-xs block mb-2">Username</label>
             <div class="relative flex items-center">
-              <input name="email" type="text" required
+              <input v-model="username" name="username" type="text" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Introduce tu email" />
+                placeholder="Introduce your username" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
                 <path fill="none" stroke-miterlimit="10" stroke-width="40"
@@ -29,11 +30,11 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-2">Contraseña</label>
+            <label class="text-white text-xs block mb-2">Password</label>
             <div class="relative flex items-center">
-              <input name="password" type="password" required
+              <input v-model="password" name="password" type="password" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Introduce tu contraseña" />
+                placeholder="Introduce your password" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
                 <path
@@ -41,29 +42,31 @@
                 </path>
               </svg>
             </div>
+            <!-- Alert Section -->
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
             <div class="flex items-center">
               <input id="remember-me" name="remember-me" type="checkbox"
                 class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label for="remember-me" class="text-white ml-3 block text-sm">Recordar contraseña</label>
+              <label for="remember-me" class="text-white ml-3 block text-sm">Remember password</label>
             </div>
             <div>
-              <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">¿Olvidaste tu contraseña?</a>
+              <a href="javascript:void(0);" class="text-yellow-500 font-semibold text-sm hover:underline">¿Have you
+                forgot your password?</a>
             </div>
           </div>
 
           <div class="mt-12">
-            <button type="button"
+            <button type="submit"
               class="w-full py-3 px-6 text-sm font-semibold tracking-wider rounded-full text-white bg-gray-800 hover:bg-yellow-500 focus:outline-none">
-              Entrar
+              Continue
             </button>
           </div>
 
           <div class="my-6 flex items-center gap-4">
             <hr class="w-full border-gray-300" />
-            <p class="text-sm text-white text-center">o</p>
+            <p class="text-sm text-white text-center">or</p>
             <hr class="w-full border-gray-300" />
           </div>
 
@@ -89,12 +92,13 @@
                 d="M256 120V0C187.62 0 123.333 26.629 74.98 74.98a259.849 259.849 0 0 0-22.158 25.235l86.308 86.308C162.883 146.72 206.376 120 256 120z"
                 data-original="#eb4132" />
             </svg>
-            Continua con google
+            Continue with google
           </button>
           <p class="text-white text-sm mt-4">
-            ¿No tienes cuenta todavía?
-            <a href="javascript:void(0);"
-              class="text-yellow-500 font-semibold hover:underline ml-1 whitespace-nowrap">Regístrate aquí</a>
+            ¿No account yet?
+            <router-link to="/register" class="text-yellow-500 font-semibold hover:underline ml-1 whitespace-nowrap">
+              Register here
+            </router-link>
           </p>
         </form>
       </div>
@@ -106,14 +110,19 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
 
 const username = ref('');
 const password = ref('');
-//const rememberMe = ref(false);
 const authStore = useAuthStore();
+const router = useRouter();
 
 const handleSubmit = async () => {
-  await useAuthStore.login(username.value, password.value);
+  const isSuccess = await authStore.login(username.value, password.value);
+
+  if (isSuccess) {
+    router.push({ name: 'Home' });
+  }
 };
 </script>
 

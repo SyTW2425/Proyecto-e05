@@ -1,16 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 import Home from '../views/Home.vue';
 import LogIn from '../views/LogIn.vue';
 import Register from '../views/Register.vue';
-import Search from '../views/Search.vue';
+import Films from '../views/Films.vue';
 import Profile from '../views/Profile.vue';
+import NotFound from '../components/NotFound.vue';
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home, // Home page
-  },
   {
     path: '/login',
     name: 'LogIn',
@@ -22,20 +19,45 @@ const routes = [
     component: Register, // Register page
   },
   {
-    path: '/search',
-    name: 'Search',
-    component: Search, // Search page
+    path: '/',
+    name: 'Home',
+    component: Home, // Home page
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/films',
+    name: 'Films',
+    component: Films, // Films page
+    meta: { requiresAuth: true },
   },
   {
     path: '/profile',
     name: 'Profile',
     component: Profile, // User Profile page
+    meta: { requiresAuth: true },
+
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound, // 404 page
   }
+
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  if (to.meta.requiresAuth && !authStore.token) {
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 export default router;

@@ -1,126 +1,139 @@
 <template>
-  <div class="bg-custom-background min-h-screen p-8">
+  <div class="bg-custom-background min-h-screen p-8 mt-10">
     <!-- Profile Card -->
-    <div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-xl shadow-lg transition-transform transform hover:scale-105">
-      <div class="flex items-center gap-8">
+    <div
+      class="max-w-5xl mx-auto bg-gray-800 p-8 rounded-3xl shadow-2xl transform transition-transform hover:scale-105">
+      <div class="flex items-center gap-10">
         <!-- User Photo -->
-        <div class="relative">
-          <img
-            :src="user.photoUrl || '../src/assets/profile-user.png'"
-            alt="User Photo"
-            class="w-36 h-36 rounded-full object-cover border-4 border-yellow-500 transition-transform transform hover:scale-105"
-          />
-          <button
-            @click="changeProfilePhoto"
-            class="absolute bottom-0 right-0 bg-yellow-500 text-black p-3 rounded-full transform translate-x-2 translate-y-2 hover:bg-yellow-600 transition"
-          >
-            <i class="fas fa-camera"></i> <!-- You can replace with an icon -->
+        <div class="relative flex-shrink-0">
+          <img :src="user.photoUrl || '../src/assets/profile-user.png'" alt="User Photo"
+            class="w-40 h-40 rounded-full object-cover border-4 border-yellow-500 transition-transform hover:scale-110" />
+          <button @click="changeProfilePhoto"
+            class="absolute bottom-0 right-0 bg-yellow-500 text-black p-3 rounded-full transform translate-x-2 translate-y-2 hover:bg-yellow-600 transition duration-300">
+            <i class="fas fa-camera text-lg"></i>
           </button>
         </div>
-        <div class="text-white">
-          <h1 class="text-4xl font-extrabold tracking-tight">{{ user.username }}</h1>
-          <p class="text-gray-400 text-lg">{{ user.email }}</p>
-          <div class="mt-4 flex gap-8 text-lg text-gray-300">
+        <!-- User Info -->
+        <div class="text-white flex-1">
+          <h1 class="text-5xl font-extrabold tracking-tight">{{ user.username }}</h1>
+          <p class="text-gray-400 text-xl mt-2">{{ user.email }}</p>
+          <div class="mt-6 flex gap-12 text-lg text-gray-300">
             <div>
-              <strong>{{ user.followingCount }}</strong> Following
+              <strong class="text-yellow-400">{{ user.followingCount }}</strong> Following
             </div>
             <div>
-              <strong>{{ user.followersCount }}</strong> Followers
+              <strong class="text-yellow-400">{{ user.followersCount }}</strong> Followers
             </div>
           </div>
         </div>
       </div>
 
       <!-- Share Profile Button -->
-      <div class="mt-6 flex justify-center">
-        <button
-          @click="shareProfile"
-          class="px-8 py-3 rounded-xl bg-yellow-500 text-black font-semibold text-lg hover:bg-yellow-600 transition-all duration-300"
-        >
-          Share via Email
+      <div class="mt-8 flex justify-center">
+        <button @click="shareProfile"
+          class="px-8 py-4 rounded-full bg-yellow-500 text-black font-semibold text-xl hover:bg-yellow-600 transition duration-300">
+          Share Profile
         </button>
       </div>
     </div>
 
-    <div class="mt-12">
-      <h2 class="text-3xl text-white font-semibold mb-6">My Lists</h2>
-      <div v-if="user.lists.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div
-          v-for="list in user.lists"
-          :key="list.id"
-          class="bg-gray-700 p-6 rounded-xl cursor-pointer hover:scale-105 transition-all duration-300"
-          @click="goToList(list.id)"
-        >
-          <h3 class="text-xl text-yellow-400">{{ list.name }}</h3>
-          <p class="text-gray-400">{{ list.description || 'No description available' }}</p>
+    <!-- My Lists -->
+    <section class="mt-12">
+      <h2 class="text-4xl text-white font-semibold mb-8">My Lists</h2>
+      <div v-if="user.lists.length > 0" class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-for="list in user.lists" :key="list.id"
+          :class="['relative bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform cursor-pointer', { 'delete-item': list.deleted }]"
+          @click="goToList(list.id)">
+          <h3 class="text-xl font-semibold text-yellow-400">{{ list.name }}</h3>
+          <p class="text-gray-400 mt-2">{{ list.description || "No description available" }}</p>
+          <div class="absolute bottom-4 right-4">
+            <DeleteItem :itemId="list.id" :deleteAction="onItemDeleted" />
+          </div>
         </div>
       </div>
-      <div v-else class="text-center text-gray-400">You haven't created any lists yet.</div>
-    </div>
+      <div v-else class="text-center text-gray-400 mt-4">You haven't created any lists yet.</div>
+    </section>
 
-    <!-- Following Section -->
-    <div v-if="user.following.length" class="mt-12">
-      <h2 class="text-3xl text-white font-semibold mb-6">Following</h2>
-      <input
-        v-model="searchFollowing"
-        type="text"
-        placeholder="Search for a friend..."
-        class="w-full max-w-xs p-3 mb-6 rounded-lg border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-lg"
-      />
-      <div v-if="filteredFollowing.length > 0" class="carousel-container overflow-x-auto flex space-x-6 py-6">
-        <div
-          v-for="user in filteredFollowing"
-          :key="user.id"
-          class="bg-gray-700 p-6 rounded-xl hover:scale-105 transition-all duration-300 w-60"
-        >
-          <img :src="user.photoUrl || '../src/assets/profile-user.png'" class="w-24 h-24 rounded-full object-cover mb-4 mx-auto border-4 border-yellow-500" />
-          <h3 class="text-yellow-400 text-center text-xl font-semibold">{{ user.username }}</h3>
-          <button
-            @click="toggleFollow(user)"
-            :class="user.isFollowing ? 'bg-red-400' : 'bg-yellow-500'"
-            class="mt-4 px-6 py-3 rounded-full text-black font-medium hover:bg-yellow-600 transition-all duration-300 block mx-auto"
-          >
-            {{ user.isFollowing ? 'Unfollow' : 'Follow' }}
-          </button>
+    <!-- My Reviews -->
+    <section class="mt-12">
+      <h2 class="text-4xl text-white font-semibold mb-8">My Reviews</h2>
+      <div v-if="user.reviews.length > 0" class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-for="review in user.reviews" :key="review.id"
+          class="relative bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
+          <h3 class="text-xl font-semibold text-yellow-400">{{ review.movieTitle }}</h3>
+          <p class="text-gray-400 mt-2">{{ review.content }}</p>
+          <div class="text-yellow-300 mt-4">Rating: {{ review.rating }} / 5</div>
+          <div class="absolute bottom-4 right-4">
+            <DeleteItem :itemId="review.id" :deleteAction="onItemDeleted" />
+          </div>
         </div>
       </div>
-    </div>
+      <div v-else class="text-center text-gray-400 mt-4">You haven't written any reviews yet.</div>
+    </section>
 
-    <!-- Followers Section -->
-    <div v-if="user.followers.length" class="mt-12">
-      <h2 class="text-3xl text-white font-semibold mb-6">Followers</h2>
-      <input
-        v-model="searchFollowers"
-        type="text"
-        placeholder="Search for a friend..."
-        class="w-full max-w-xs p-3 mb-6 rounded-lg border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-lg"
-      />
-      <div v-if="filteredFollowers.length > 0" class="carousel-container overflow-x-auto flex space-x-6 py-6">
-        <div
-          v-for="user in filteredFollowers"
-          :key="user.id"
-          class="bg-gray-700 p-6 rounded-xl hover:scale-105 transition-all duration-300 w-60"
-        >
-          <img :src="user.photoUrl || '../src/assets/profile-user.png'" class="w-24 h-24 rounded-full object-cover mb-4 mx-auto border-4 border-yellow-500" />
-          <h3 class="text-yellow-400 text-center text-xl font-semibold">{{ user.username }}</h3>
-          <button
-            @click="toggleFollow(user)"
-            :class="user.isFollowing ? 'bg-red-400' : 'bg-yellow-500'"
-            class="mt-4 px-6 py-3 rounded-full text-black font-medium hover:bg-yellow-600 transition-all duration-300 block mx-auto"
-          >
-            {{ user.isFollowing ? 'Unfollow' : 'Follow' }}
-          </button>
+    <!-- Following and Followers Section -->
+    <section class="mt-12">
+      <h2 class="text-4xl text-white font-semibold mb-8">Following & Followers</h2>
+
+      <!-- Following List -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold text-yellow-400 mb-6">Following</h3>
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div v-for="person in user.following" :key="person.id"
+            class="flex items-center space-x-6 bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
+            <img :src="person.photoUrl || '../src/assets/profile-user.png'" alt="Person Photo"
+              class="w-16 h-16 rounded-full object-cover" />
+            <div class="text-white">
+              <h4 class="text-lg font-semibold">{{ person.username }}</h4>
+              <button @click="toggleFollow(person)"
+                class="text-yellow-400 hover:text-yellow-500 transition duration-300">
+                {{ person.isFollowing ? 'Unfollow' : 'Follow' }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- User Lists Section -->
-    
+      <!-- Followers List -->
+      <div>
+        <h3 class="text-2xl font-semibold text-yellow-400 mb-6">Followers</h3>
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div v-for="person in user.followers" :key="person.id"
+            class="flex items-center space-x-6 bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
+            <img :src="person.photoUrl || '../src/assets/profile-user.png'" alt="Person Photo"
+              class="w-16 h-16 rounded-full object-cover" />
+            <div class="text-white">
+              <h4 class="text-lg font-semibold">{{ person.username }}</h4>
+              <button @click="toggleFollow(person)"
+                class="text-yellow-400 hover:text-yellow-500 transition duration-300">
+                {{ person.isFollowing ? 'Unfollow' : 'Follow' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import DeleteItem from "./DeleteItem.vue";
+
+interface List {
+  id: number;
+  name: string;
+  description?: string;
+  deleted?: boolean; // Optional deleted property
+}
+
+interface Review {
+  id: number;
+  movieTitle: string;
+  content: string;
+  rating: number;
+  deleted?: boolean; // Optional deleted property
+}
 
 interface User {
   username: string;
@@ -130,11 +143,15 @@ interface User {
   followersCount: number;
   following: { id: number; username: string; photoUrl: string | null, isFollowing: boolean }[];
   followers: { id: number; username: string; photoUrl: string | null, isFollowing: boolean }[];
-  lists: { id: number; name: string; description?: string }[];
+  lists: List[];
+  reviews: Review[];
 }
 
 export default defineComponent({
   name: "UserProfile",
+  components: {
+    DeleteItem,
+  },
   data() {
     return {
       user: {
@@ -154,23 +171,15 @@ export default defineComponent({
         lists: [
           { id: 1, name: "My Favorite Movies", description: "A list of my all-time favorite movies" },
           { id: 2, name: "Must-Watch Films", description: "Movies I still need to watch" },
+          { id: 3, name: "Oscar Winners", description: "Oscar-winning movies worth watching" },
+        ],
+        reviews: [
+          { id: 1, movieTitle: "Inception", content: "A masterpiece of sci-fi storytelling!", rating: 5 },
+          { id: 2, movieTitle: "Interstellar", content: "Visually stunning with a touching story.", rating: 4.5 },
+          { id: 3, movieTitle: "The Dark Knight", content: "Unforgettable performances and thrilling action.", rating: 5 },
         ],
       } as User,
-      searchFollowing: "",
-      searchFollowers: "",
     };
-  },
-  computed: {
-    filteredFollowing() {
-      return this.user.following.filter(user =>
-        user.username.toLowerCase().includes(this.searchFollowing.toLowerCase())
-      );
-    },
-    filteredFollowers() {
-      return this.user.followers.filter(user =>
-        user.username.toLowerCase().includes(this.searchFollowers.toLowerCase())
-      );
-    },
   },
   methods: {
     shareProfile() {
@@ -181,20 +190,44 @@ export default defineComponent({
     changeProfilePhoto() {
       // Trigger profile photo change logic (e.g., open file picker)
     },
-    toggleFollow(user: { id: number; isFollowing: boolean }) {
-      user.isFollowing = !user.isFollowing;
-    },
     goToList(listId: number) {
-      // Navigate to the list details page
+      // alert(`Navigating to list with ID: ${listId}`);
+    },
+    // Handles the delete action for lists or reviews
+    onItemDeleted(itemId: number, type: 'list' | 'review') {
+      if (type === 'list') {
+        this.user.lists = this.user.lists.filter((list) => list.id !== itemId);
+      } else if (type === 'review') {
+        this.user.reviews = this.user.reviews.filter((review) => review.id !== itemId);
+      }
+    },
+    deleteList(listId: number) {
+      this.user.lists = this.user.lists.filter((list) => list.id !== listId);
+    },
+    deleteReview(reviewId: number) {
+      this.user.reviews = this.user.reviews.filter((review) => review.id !== reviewId);
+    },
+    toggleFollow(person: { id: number; username: string; isFollowing: boolean }) {
+      person.isFollowing = !person.isFollowing; // Toggle follow state
     },
   },
 });
 </script>
 
 <style scoped>
-.bg-custom-background {
-  background-image: linear-gradient(to right, #0b101a, #1a2b3f);
-  background-size: cover;
-  background-position: center;
+/* Apply the animation when item is deleted */
+.delete-item {
+  animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
 }
 </style>

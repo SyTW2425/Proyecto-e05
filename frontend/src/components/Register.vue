@@ -10,34 +10,34 @@
       <div class="flex-grow flex items-center md:p-8 p-6 h-full">
         <form class="max-w-lg w-full mx-auto">
           <div class="mb-2">
-            <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Regístrate</h3>
+            <h3 class="text-yellow-500 text-center text-4xl font-extrabold">Sign Up</h3>
           </div>
 
           <div>
-            <label class="text-white text-xs block mb-1">Nombre completo</label>
+            <label class="text-white text-xs block mb-1">Full name</label>
             <div class="relative flex items-center">
-              <input name="full-name" type="text" required
+              <input v-model="name" name="full-name" type="text" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Introduce tu nombre completo" />
+                placeholder="Introduce your full name" />
             </div>
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-1">Nombre de usuario</label>
+            <label class="text-white text-xs block mb-1">Username</label>
             <div class="relative flex items-center">
-              <input name="email" type="email" required
+              <input v-model="username" name="email" type="email" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Introduce tu nombre de usuario" />
+                placeholder="Introduce your username" />
             </div>
           </div>
-          
+
 
           <div class="mt-8">
             <label class="text-white text-xs block mb-1">Email</label>
             <div class="relative flex items-center">
-              <input name="email" type="email" required
+              <input v-model="email" name="email" type="email" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Introduce tu email" />
+                placeholder="Introduce your email" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
                 <path fill="none" stroke-miterlimit="10" stroke-width="40"
@@ -48,11 +48,11 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-1">Contraseña</label>
+            <label class="text-white text-xs block mb-1">Password</label>
             <div class="relative flex items-center">
-              <input name="password" type="password" required
+              <input v-model="password" name="password" type="password" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Introduce tu contraseña" />
+                placeholder="Introduce your password" />
               <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
                 <path
@@ -63,12 +63,12 @@
           </div>
 
           <div class="mt-8">
-            <label class="text-white text-xs block mb-1">Confirmar Contraseña</label>
+            <label class="text-white text-xs block mb-1">Password</label>
             <div class="relative flex items-center">
-              <input name="confirm-password" type="password" required
+              <input v-model="confirmPassword" name="confirm-password" type="password" required
                 class="w-full text-sm border-b rounded-md border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 px-2 py-3"
-                placeholder="Confirma tu contraseña" />
-                <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
+                placeholder="Confirm your password" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb"
                 class="w-[18px] h-[18px] absolute right-2 cursor-pointer" viewBox="0 0 128 128">
                 <path
                   d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z">
@@ -81,14 +81,14 @@
             <div class="flex items-center">
               <input id="agree-terms" name="agree-terms" type="checkbox"
                 class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label for="agree-terms" class="text-white ml-3 block text-sm">Acepto los términos y condiciones</label>
+              <label for="agree-terms" class="text-white ml-3 block text-sm">Accept terms & conditions</label>
             </div>
           </div>
 
           <div class="mt-12">
-            <button type="button"
+            <button type="button" @click="handleSubmit"
               class="w-full py-3 px-6 text-sm font-semibold tracking-wider rounded-full text-white bg-gray-800 hover:bg-yellow-500 focus:outline-none">
-              Registrarse
+              Sign Up
             </button>
           </div>
 
@@ -120,7 +120,7 @@
                 d="M256 120V0C187.62 0 123.333 26.629 74.98 68.255l-10.606 10.606 60 60C179.347 118.13 219.347 120 256 120z"
                 data-original="#eb4132" />
             </svg>
-            <span>Regístrate con Google</span>
+            <span>Sign up with google</span>
           </button>
         </form>
       </div>
@@ -132,16 +132,33 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
-
-const fullName = ref('full-name');
+import { useRouter } from 'vue-router';
+import { useAlertStore } from '../stores/alert';
+const name = ref('');
+const username = ref('');
 const email = ref('');
 const password = ref('');
-const confirmPassword = ref('confirm-password');
-
+const confirmPassword = ref('');
 const authStore = useAuthStore();
+const router = useRouter();
+
+
 
 const handleSubmit = async () => {
-  await useAuthStore.register(fullName.value, email.value, password.value, confirmPassword.value);
+  if (password.value !== confirmPassword.value) {
+    const alertStore = useAlertStore();
+    alertStore.error('Passwords do not match'); //! alert component
+    return;
+  }
+
+  try {
+    const isSuccess = await authStore.register(name.value, username.value, email.value, password.value);
+    if (isSuccess) {
+      router.push({ name: 'LogIn' });
+    }
+  } catch (error) {
+    alert(error.message);
+  }
 };
 </script>
 
