@@ -364,6 +364,13 @@ a:hover {
   margin-right: 15px;
 }
 
+.content .btn button:nth-child(1):hover {
+  background-color: #1f1f1a91;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+
 .content .btn button:nth-child(2) {
   background: transparent;
   color: #ffd700;
