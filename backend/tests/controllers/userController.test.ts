@@ -1,9 +1,8 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import {app} from '../../src/app'; // Assuming you have your Express app in this file
+import {app} from '../../src/app'; 
 import { User } from '../../src/models/userModel';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from '@jest/globals';
 import bcrypt from 'bcrypt';
 
 describe('Auth Controller Tests', () => {
