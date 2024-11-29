@@ -5,7 +5,6 @@ import { setupSwaggerDocs } from './config/swagger';
 
 import { connectDB } from './config/db';
 import userRouter from './routes/users';
-import movieRouter from './routes/movies';
 import reviewRouter from './routes/reviews';
 import listRouter from './routes/lists';
 import activityRouter from './routes/activities';
@@ -30,7 +29,6 @@ setupSwaggerDocs(app);
 
 // Routers
 app.use('/api/users',  userRouter);
-app.use('api/movies', movieRouter);
 app.use('api/reviews', reviewRouter);
 app.use('api/lists', listRouter);
 app.use('api/activities', activityRouter);
