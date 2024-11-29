@@ -10,7 +10,7 @@
 
       <!-- Navigation Buttons -->
       <div class="mt-8 flex justify-center gap-4">
-        <router-link to="/" class="px-6 py-2 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600">
+        <router-link to="/home" class="px-6 py-2 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600">
           Go Home
         </router-link>
         <router-link to="/contact" class="px-6 py-2 border border-yellow-500 font-semibold rounded-lg hover:bg-gray-800">
