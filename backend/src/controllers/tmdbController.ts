@@ -93,5 +93,18 @@ export const getGenres = async () => {
   }
 };
 
-
-
+// Get movie trailers
+export const getMovieTrailers = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/videos`, {
+      headers: getAuthHeaders(),
+    });
+    const trailers = response.data.results.filter(
+      (video: any) => video.type === 'Trailer',
+    );
+    return trailers;
+  } catch (error) {
+    console.error('Error fetching movie trailers:', error);
+    throw error;
+  }
+};

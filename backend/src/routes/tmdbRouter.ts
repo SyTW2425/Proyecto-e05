@@ -5,6 +5,7 @@ import {
   getPopularMovies,
   getNowPlayingMovies,
   getGenres,
+  getMovieTrailers,
 } from '../controllers/tmdbController';
 
 const tmdbRouter = express.Router();
@@ -136,5 +137,14 @@ tmdbRouter.get('/genres', async (req, res) => {
   }
 });
 
+tmdbRouter.get('/movie/:id/trailers', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const trailers = await getMovieTrailers(parseInt(id, 10));
+    res.json(trailers);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch movie trailers' });
+  }
+});
 
 export default tmdbRouter;
