@@ -25,8 +25,8 @@
       <button class="prev" @click="showSlider('prev')">
         <</button>
           <button class="next" @click="showSlider('next')">></button>
-
     </div>
+
     <div v-if="showModal" class="modal" @click.self="closeModal">
       <div class="modal-content">
         <iframe :src="`https://www.youtube.com/embed/${trailerKey}`" title="YouTube video player" frameborder="0"
@@ -177,7 +177,6 @@ a:hover {
 .carousel {
   width: 100vw;
   height: 100vh;
-  margin-top: -50px;
   overflow: hidden;
   position: relative;
 }

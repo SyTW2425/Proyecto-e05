@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import Navbar from '../src/components/Navbar.vue';
 import { createPinia, setActivePinia } from 'pinia';
 import { useRouter } from 'vue-router';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useAuthStore } from '../src/stores/auth';
 
 
@@ -54,7 +54,7 @@ describe('Navbar.vue', () => {
   it('renders the profile image and Log Out button', () => {
     const profileImage = wrapper.find('img');
     expect(profileImage.exists()).toBe(true);
-    expect(profileImage.attributes('src')).toBe('/public/default-profile.png');
+    expect(profileImage.attributes('src')).toBe('/default-profile.png');
     expect(profileImage.attributes('alt')).toBe('Profile Picture');
 
     const logOutButton = wrapper.find('button');
