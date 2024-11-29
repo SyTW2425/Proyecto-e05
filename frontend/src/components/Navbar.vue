@@ -21,7 +21,7 @@
 
       <!-- Profile image and Log out -->
       <div class="absolute right-4 top-4 flex items-center space-x-4">
-        <img src="../../public/default-profile.png" alt="Profile Picture"
+        <img src="/default-profile.png" alt="Profile Picture"
           class="w-10 h-10 rounded-full border-2 border-yellow-500 object-cover" />
 
         <button @click="logout"

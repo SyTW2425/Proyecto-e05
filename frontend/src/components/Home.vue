@@ -1,12 +1,8 @@
 <template>
   <div class="carousel">
     <div class="list">
-      <div
-        v-for="(item, index) in items"
-        :key="index"
-        class="item"
-        :style="{ backgroundImage: `url(${item.poster_path})` }"
-      >
+      <div v-for="(item, index) in items" :key="index" class="item"
+        :style="{ backgroundImage: `url(${item.poster_path})` }">
         <div class="content">
           <div class="title">{{ item.title }}</div>
           <!-- Truncated Overview -->
@@ -17,8 +13,8 @@
             </span>
           </div>
           <div class="btn">
-            <button>Ver Tráiler</button>
-            <button>Valorar</button>
+            <button @click="viewTrailer(item.id)">See Trailer</button>
+            <button>Rate</button>
           </div>
         </div>
       </div>
@@ -26,13 +22,20 @@
 
     <!-- Next/Prev Buttons -->
     <div class="arrows">
-      <button class="prev" @click="showSlider('prev')"><</button>
-      <button class="next" @click="showSlider('next')">></button>
-    </div>
+      <button class="prev" @click="showSlider('prev')">
+        <</button>
+          <button class="next" @click="showSlider('next')">></button>
 
-    <!-- Time Running -->
-    <div class="timeRunning"></div>
+    </div>
+    <div v-if="showModal" class="modal" @click.self="closeModal">
+      <div class="modal-content">
+        <iframe :src="`https://www.youtube.com/embed/${trailerKey}`" title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+    </div>
   </div>
+
 </template>
 
 <script>
@@ -43,8 +46,8 @@ export default {
     return {
       items: [],
       timeRunning: 3000,
-      timeAutoNext: 7000,
-      runNextAuto: null,
+      showModal: false,
+      trailerKey: '',
     };
   },
   computed: {
@@ -76,33 +79,21 @@ export default {
       setTimeout(() => {
         carousel.classList.remove("next");
         carousel.classList.remove("prev");
-      }, this.timeRunning);
-
-      clearTimeout(this.runNextAuto);
-      this.runNextAuto = setTimeout(() => {
-        this.showSlider("next");
-      }, this.timeAutoNext);
-
-      this.resetTimeAnimation();
-    },
-    resetTimeAnimation() {
-      const runningTime = this.$el.querySelector(".timeRunning");
-      runningTime.style.animation = "none";
-      runningTime.offsetHeight; // Trigger reflow
-      runningTime.style.animation = "runningTime 7s linear 1 forwards";
+      }, this.timeRunning); 
     },
     fetchNowPlayingMovies() {
       axios
-        .get('http://localhost:5001/api/moviesdb/now-playing?page=1') // Adjust the API URL
+        .get('http://localhost:5001/api/moviesdb/now-playing?page=1')
         .then(async response => {
           const movies = response.data.results.slice(0, 15); // Limit to 15 movies
           this.items = movies.map(movie => {
             const imageUrl = `https://image.tmdb.org/t/p/original${movie.poster_path}`;
             return {
+              id: movie.id,
               title: movie.title,
               original_title: movie.original_title,
               overview: movie.overview,
-              poster_path: imageUrl, // Directly use the URL
+              poster_path: imageUrl,
             };
           });
         })
@@ -110,16 +101,31 @@ export default {
           console.error('Error fetching now playing movies:', error);
         });
     },
+    async viewTrailer(movieId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/moviesdb/movie/${movieId}/trailers`
+        );
+        const trailers = response.data;
+        if (trailers.length > 0) {
+          const trailerKey = trailers[0].key;
+          this.showModal = true;
+          this.trailerKey = trailerKey;
+
+        } else {
+          alert('No trailers available for this movie.');
+        }
+      } catch (error) {
+        console.error('Error fetching trailer:', error);
+        alert('Failed to fetch trailer.');
+      }
+    },
+    closeModal() {
+      this.showModal = false;
+    },
   },
   mounted() {
     this.fetchNowPlayingMovies();
-    this.resetTimeAnimation();
-    this.runNextAuto = setTimeout(() => {
-      this.showSlider("next");
-    }, this.timeAutoNext);
-  },
-  beforeDestroy() {
-    clearTimeout(this.runNextAuto);
   },
 };
 </script>
@@ -179,21 +185,26 @@ a:hover {
 /* Responsive Background Image Adjustments */
 @media screen and (max-width: 999px) {
   .carousel {
-    background-size: contain; /* Ensures the background image is fully visible */
+    background-size: contain;
+    /* Ensures the background image is fully visible */
   }
 }
 
 @media screen and (max-width: 690px) {
   .carousel {
-    background-size: contain; /* Same as above for smaller screens */
+    background-size: contain;
+    /* Same as above for smaller screens */
   }
 }
 
 /* Ensure items are in a row */
 .carousel .list {
-  display: flex; /* This arranges items next to each other */
-  overflow: hidden; /* Hide the overflow for sliding effect */
-  transition: transform 0.5s ease-in-out; /* Smooth sliding effect */
+  display: flex;
+  /* This arranges items next to each other */
+  overflow: hidden;
+  /* Hide the overflow for sliding effect */
+  transition: transform 0.5s ease-in-out;
+  /* Smooth sliding effect */
 }
 
 .carousel .list .item {
@@ -212,36 +223,48 @@ a:hover {
 }
 
 .item {
-    position: relative; /* Allow positioning of the shadow and content */
-    background-size: cover; /* Ensure the background image covers the item */
-    background-position: center;
+  position: relative;
+  /* Allow positioning of the shadow and content */
+  background-size: cover;
+  /* Ensure the background image covers the item */
+  background-position: center;
 }
 
 .item::before {
-    content: ""; /* Create an empty pseudo-element for the shadow */
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('../src/assets/image/shadow.png'); /* Path to your shadow image */
-    background-size: cover;
-    background-position: center;
-    z-index: 1; /* Place the shadow between the background and content */
-    opacity: 0.5; /* Optional: adjust the opacity of the shadow */
+  content: "";
+  /* Create an empty pseudo-element for the shadow */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../src/assets/image/shadow.png');
+  /* Path to your shadow image */
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+  /* Place the shadow between the background and content */
+  opacity: 0.5;
+  /* Optional: adjust the opacity of the shadow */
 }
 
 .content {
-    position: relative; /* Ensure text content stays above the shadow */
-    z-index: 2; /* Text will be on top of the shadow */
-    padding: 20px;
-    color: white; /* Ensure text is readable depending on your design */
+  position: relative;
+  /* Ensure text content stays above the shadow */
+  z-index: 2;
+  /* Text will be on top of the shadow */
+  padding: 20px;
+  color: white;
+  /* Ensure text is readable depending on your design */
 }
 
 .list {
-  display: flex; /* Ensures the items are arranged in a row */
-  overflow: hidden; /* Hides any overflowing content */
-  transition: transform 0.5s ease-in-out; /* Smooth sliding effect */
+  display: flex;
+  /* Ensures the items are arranged in a row */
+  overflow: hidden;
+  /* Hides any overflowing content */
+  transition: transform 0.5s ease-in-out;
+  /* Smooth sliding effect */
 }
 
 
@@ -342,6 +365,13 @@ a:hover {
   margin-right: 15px;
 }
 
+.content .btn button:nth-child(1):hover {
+  background-color: #1f1f1a91;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+
 .content .btn button:nth-child(2) {
   background: transparent;
   color: #ffd700;
@@ -368,8 +398,6 @@ a:hover {
     filter: blur(0);
   }
 }
-
-/* Carousel */
 
 /* next prev arrows */
 
@@ -405,26 +433,6 @@ a:hover {
   color: #000;
 }
 
-/* time running */
-.carousel .timeRunning {
-  position: absolute;
-  z-index: 1000;
-  width: 0%;
-  height: 4px;
-  background-color: #ffd700;
-  left: 0;
-  top: 0;
-  animation: runningTime 7s linear 1 forwards;
-}
-
-@keyframes runningTime {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
-}
 
 /* Responsive Design */
 
@@ -467,6 +475,37 @@ a:hover {
     font-size: 14px;
   }
 }
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #000;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 90%;
+  max-width: 1200px;
+}
+
+.modal-content iframe {
+  width: 100%;
+  height: 675px;
+  border-radius: 8px;
+}
+
 
 .bg-custom-background {
   background-image: linear-gradient(to right, #0b101a, #1a2b3f);
