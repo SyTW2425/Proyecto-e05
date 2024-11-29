@@ -3,6 +3,8 @@ node_modules/
 npm-debug.log
 yarn-error.log
 .pnpm-debug.log
+frontend/node_modules/
+backedn/node_modules/
 
 # dotenv environment variable files
 .env
