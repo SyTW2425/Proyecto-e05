@@ -6,6 +6,7 @@ import {
   getNowPlayingMovies,
   getGenres,
   getMovieTrailers,
+  getMovieCredits,
 } from '../controllers/tmdbController';
 
 const tmdbRouter = express.Router();
@@ -146,5 +147,17 @@ tmdbRouter.get('/movie/:id/trailers', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch movie trailers' });
   }
 });
+
+
+tmdbRouter.get('/movie/:id/credits', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const data = await getMovieCredits(parseInt(id, 10));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch movie credits' });
+  }
+});
+
 
 export default tmdbRouter;

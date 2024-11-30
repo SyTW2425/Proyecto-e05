@@ -108,3 +108,17 @@ export const getMovieTrailers = async (movieId: number) => {
     throw error;
   }
 };
+
+
+// Get cast and crew
+export const getMovieCredits = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/credits`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie credits:', error);
+    throw error;
+  }
+};
