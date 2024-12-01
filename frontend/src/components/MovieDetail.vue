@@ -60,7 +60,7 @@
       <!-- Reviews Section (SE CAMBIARA POR LA DE LOS USUARIOS ALMACENADOS) -->
       <div v-if="reviews.length" class="mt-14">
         <h2 class="text-xl font-bold mb-4">Reviews</h2>
-        <div class="flex gap-4 overflow-x-auto scrollbar-hide">
+        <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="review in reviews.slice(0, 6)" :key="review.id" class="flex-none w-64 p-4 bg-gray-800 rounded-lg">
             <h3 class="text-lg font-bold">{{ review.author }}</h3>
             <p class="text-gray-300 mt-2">
@@ -88,7 +88,7 @@
       <!-- Videos Section -->
       <div v-if="videos.length" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Videos</h2>
-        <div class="flex gap-4 overflow-x-auto scrollbar-hide">
+        <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="video in videos" :key="video.key" class="flex-none w-64">
             <img :src="`https://img.youtube.com/vi/${video.key}/0.jpg`" alt="Video Thumbnail"
               class="rounded-lg shadow-md cursor-pointer" @click="viewVideo(video.key)" />
@@ -100,7 +100,7 @@
       <!-- Images Section -->
       <div v-if="images.backdrops.length" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Images</h2>
-        <div class="flex gap-4 overflow-x-auto scrollbar-hide">
+        <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="image in images.backdrops" :key="image.file_path" class="flex-none w-64">
             <img :src="`https://image.tmdb.org/t/p/w500${image.file_path}`" alt="Movie Image"
               class="rounded-lg shadow-md cursor-pointer" @click="viewImage(image.file_path)" />
@@ -121,7 +121,7 @@
       <!-- Similar Movies -->
       <div v-if="similarMovies.length" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Similar Movies</h2>
-        <div class="flex gap-4 overflow-x-auto scrollbar-hide">
+        <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="movie in similarMovies.slice(0, 10)" :key="movie.id" class="flex-none w-40 text-center">
             <router-link :to="`/movie/${movie.id}`">
               <img
@@ -393,13 +393,18 @@ export default {
   border-radius: 8px;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px; 
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888; /* Thumb color */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }
 
 /* Add smooth fade-in effect for dropdown */
