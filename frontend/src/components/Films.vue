@@ -19,14 +19,25 @@
     <!-- Movies Grid -->
     <div v-if="movies.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
       <div v-for="movie in movies" :key="movie.id" class="text-center">
-        <img
-          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '../src/assets/image/no-image.svg'"
-          alt="Movie Poster" class="w-full rounded-md shadow-lg hover:scale-105 transition-transform" />
-        <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
-        <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
-        <p class="text-yellow-400 font-bold">⭐ {{ movie.vote_average.toFixed(1) || 'N/A' }}</p>
+        <router-link :to="`/movie/${movie.id}`">
+          <img
+            :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '../src/assets/image/no-image.svg'"
+            alt="Movie Poster" class="w-full rounded-md shadow-lg hover:scale-105 transition-transform" />
+          <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
+          <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
+
+          <!-- Average Rating Section -->
+          <div class="flex items-center gap-2 justify-center">
+            <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="currentColor" aria-hidden="true">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+            </svg>
+            <span class="text-xl text-white font-bold">{{ movie.vote_average.toFixed(1) || 'N/A' }}</span>
+          </div>
+        </router-link>
       </div>
     </div>
+
 
     <!-- No Movies Found -->
     <div v-else-if="!loading && !error" class="text-center text-gray-400">No movies found. Try another search!</div>
@@ -173,8 +184,8 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.fetchGenres(); // Fetch genres on mount
-    this.fetchMovies(); // Fetch movies on mount
+    this.fetchGenres();
+    this.fetchMovies();
   },
 });
 </script>
