@@ -173,23 +173,25 @@ export default defineComponent({
     },
     changePage(page: number) {
       this.currentPage = page;
+      this.$router.push({ query: { ...this.$route.query, page: page.toString() } });
       this.fetchMovies();
-    },
+    }
   },
   watch: {
-    searchQuery(newQuery) {
-      if (!newQuery.trim()) {
-        this.fetchMovies();
-      } else {
-        this.currentPage = 1;
+    '$route.query.page'(newPage) {
+      const page = parseInt(newPage as string, 10);
+      if (!isNaN(page) && page > 0 && page !== this.currentPage) {
+        this.currentPage = page;
         this.fetchMovies();
       }
     },
   },
   mounted() {
+    const pageFromQuery = parseInt(this.$route.query.page as string, 10);
+    this.currentPage = !isNaN(pageFromQuery) && pageFromQuery > 0 ? pageFromQuery : 1;
     this.fetchGenres();
     this.fetchMovies();
-  },
+  }
 });
 </script>
 
