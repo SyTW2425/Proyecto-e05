@@ -13,7 +13,18 @@
 
         <!-- Movie Info -->
         <div class="flex flex-col gap-4">
-          <h1 class="text-2xl md:text-3xl font-bold">{{ movie.title }}</h1>
+          <div class="flex justify-between items-center gap-2">
+            <h1 class="text-2xl md:text-3xl font-bold">{{ movie.title }}</h1>
+
+            <!-- Average Rating Section -->
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                fill="currentColor" aria-hidden="true">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+              </svg>
+              <span class="text-xl font-bold">{{ movie.vote_average.toFixed(1) }}</span>
+            </div>
+          </div>
           <p class="text-gray-300 text-sm md:text-base">
             <strong>Release Date:</strong> {{ movie.release_date }}
           </p>
@@ -21,11 +32,25 @@
             <strong>Genres:</strong> {{ movie.genres.map((g) => g.name).join(", ") }}
           </p>
           <p class="text-gray-200 text-sm md:text-base">{{ movie.overview }}</p>
+
+
           <div class="flex gap-4">
             <button @click="viewTrailer(movie.id)" class="bg-yellow-500 text-black p-2 rounded-lg">See Trailer</button>
             <button @click="rateMovie(movie.id)"
               class="border-2 border-white text-yellow-500 p-2 rounded-lg">Rate</button>
-            <button @click="addToWatchlist()" class="bg-green-500 text-white p-2 rounded-lg">Add to List</button>
+            <button @click="toggleDropdown" class="bg-green-500 text-white p-3 px-6 rounded-lg transition ease-in-out duration-150 transform hover:bg-green600 focus:outline-none focus:ring-2 focus:ring-green-400">
+              Add to List
+            </button>
+
+            <div v-if="isDropdownOpen"
+              class="absolute mt-2 ml-80 w-48 bg-[#1a2b3f] border border-gray-200 rounded-lg shadow-lg z-10 transition-opacity opacity-0 animate-fadeIn">
+              <ul class="py-2">
+                <li v-for="list in userLists" :key="list.id" class="px-4 py-2 hover:bg-[#2a3a50] cursor-pointer transition-colors ease-in-out duration-150"
+                  @click="addToList(list)">
+                  {{ list.name }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -139,6 +164,12 @@ export default {
         backgroundImage: "none",
         backgroundColor: "bg-custom-background",
       },
+      isDropdownOpen: false,
+      userLists: [
+        { id: 1, name: "Watchlist" },
+        { id: 2, name: "Favorites" },
+        { id: 3, name: "Watched" },
+      ],
     };
   },
   methods: {
@@ -225,8 +256,12 @@ export default {
     rateMovie(movieId) {
       alert(`Rated movie with ID: ${movieId}`);
     },
-    addToWatchlist() {
-      alert("Added to Watchlist!");
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    },
+    addToList(list) {
+      alert(`Added to ${list.name}`);
+      this.isDropdownOpen = false;
     },
     closeModal() {
       this.showModal = false;
@@ -359,5 +394,26 @@ export default {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Add smooth fade-in effect for dropdown */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 </style>
