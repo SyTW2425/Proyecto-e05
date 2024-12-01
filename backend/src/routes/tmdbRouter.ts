@@ -11,6 +11,7 @@ import {
   getMovieReviews,
   getSimilarMovies,
   getMovieVideos,
+  getMoviesByGenres,
 } from '../controllers/tmdbController';
 
 const tmdbRouter = express.Router();
@@ -142,6 +143,21 @@ tmdbRouter.get('/genres', async (req, res) => {
   }
 });
 
+// Get movies by genres
+tmdbRouter.get('/genres/:id', async (req, res) => {
+  const { id } = req.params;
+  const { page } = req.query;
+
+  try {
+    const data = await getMoviesByGenres([parseInt(id, 10)], parseInt(page as string, 10) || 1);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch movies by genre' });
+  }
+});
+
+
+// Get movie trailers
 tmdbRouter.get('/movie/:id/trailers', async (req, res) => {
   const { id } = req.params;
   try {
@@ -152,6 +168,7 @@ tmdbRouter.get('/movie/:id/trailers', async (req, res) => {
   }
 });
 
+// Get movie credits
 tmdbRouter.get('/movie/:id/credits', async (req, res) => {
   const { id } = req.params;
   try {
@@ -162,6 +179,7 @@ tmdbRouter.get('/movie/:id/credits', async (req, res) => {
   }
 });
 
+// Get movie images
 tmdbRouter.get('/movie/:id/images', async (req, res) => {
   const { id } = req.params;
   try {
@@ -172,6 +190,7 @@ tmdbRouter.get('/movie/:id/images', async (req, res) => {
   }
 });
 
+// Get movie reviews
 tmdbRouter.get('/movie/:id/reviews', async (req, res) => {
   const { id } = req.params;
   try {
@@ -192,7 +211,7 @@ tmdbRouter.get('/movie/:id/similar', async (req, res) => {
   }
 });
 
-
+// Get movie videos
 tmdbRouter.get('/movie/:id/videos', async (req, res) => {
   const { id } = req.params;
   try {
@@ -202,7 +221,5 @@ tmdbRouter.get('/movie/:id/videos', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch movie videos' });
   }
 });
-
-
 
 export default tmdbRouter;

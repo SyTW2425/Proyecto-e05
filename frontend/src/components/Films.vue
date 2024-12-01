@@ -1,7 +1,7 @@
 <template>
   <div class="bg-custom-background min-h-screen p-8">
     <!-- Search Bar -->
-    <div class="flex justify-center items-center gap-4 mb-8">
+    <div class="flex justify-center items-center gap-4 mt-6 mb-8">
       <input v-model="searchQuery" type="text" placeholder="Search for a movie..."
         class="w-3/4 md:w-1/3 px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 text-sm font-[poppins]"
         @input="handleSearch" />
@@ -20,9 +20,12 @@
     <div v-if="movies.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
       <div v-for="movie in movies" :key="movie.id" class="text-center">
         <router-link :to="`/movie/${movie.id}`">
-          <img
-            :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '../src/assets/image/no-image.svg'"
-            alt="Movie Poster" class="w-full rounded-md shadow-lg hover:scale-105 transition-transform" />
+          <img :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/default-poster.jpg'"
+            alt="Movie Poster" :class="{
+              'w-full rounded-md shadow-lg hover:scale-105 transition-transform': true,
+              'h-[331px]': !movie.poster_path,  // Increase height if no poster path
+              'h-auto': movie.poster_path        // Auto height if there's a poster path
+            }" />
           <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
           <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
 
@@ -37,7 +40,6 @@
         </router-link>
       </div>
     </div>
-
 
     <!-- No Movies Found -->
     <div v-else-if="!loading && !error" class="text-center text-gray-400">No movies found. Try another search!</div>
@@ -124,8 +126,8 @@ export default defineComponent({
           : "http://localhost:5001/api/moviesdb/search-popular";
 
         const params = isSearchMode
-          ? { query: this.searchQuery, page: this.currentPage }
-          : { page: this.currentPage };
+          ? { query: this.searchQuery, page: this.currentPage, genres: this.selectedGenres.join(',') }
+          : { page: this.currentPage, genres: this.selectedGenres.join(',') };
 
         const response = await axios.get<{
           results: Movie[];
@@ -144,6 +146,7 @@ export default defineComponent({
           release_date: movie.release_date,
           vote_average: movie.vote_average,
         }));
+
         this.totalPages = response.data.total_pages;
       } catch (err) {
         console.error("Error fetching movies:", err);
@@ -157,12 +160,12 @@ export default defineComponent({
     toggleCategory(genreId: number) {
       const index = this.selectedGenres.indexOf(genreId);
       if (index === -1) {
-        this.selectedGenres.push(genreId); // Add if not already selected
+        this.selectedGenres.push(genreId);
       } else {
-        this.selectedGenres.splice(index, 1); // Remove if already selected
+        this.selectedGenres.splice(index, 1);
       }
-      this.currentPage = 1; // Reset pagination when genre selection changes
-      this.fetchMovies(); // Refetch movies with updated genres
+      this.currentPage = 1;
+      this.fetchMovies();
     },
     handleSearch() {
       this.currentPage = 1;
@@ -211,6 +214,5 @@ input {
 
 button {
   margin: 0.5rem;
-  /* Adds spacing between buttons */
 }
 </style>

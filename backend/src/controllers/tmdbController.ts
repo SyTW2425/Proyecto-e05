@@ -93,6 +93,27 @@ export const getGenres = async () => {
   }
 };
 
+// Get movies with specifics genres (one or more genres)
+export const getMoviesByGenres = async (
+  genreIds: number[],
+  page: number = 1,
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/discover/movie`, {
+      params: {
+        with_genres: genreIds.join(','),
+        include_adult: false,
+        page: page,
+      },
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movies by genre:', error);
+    throw error;
+  }
+};
+
 // Get movie trailers
 export const getMovieTrailers = async (movieId: number) => {
   try {
@@ -177,8 +198,4 @@ export const getMovieVideos = async (movieId: number) => {
     console.error('Error fetching movie videos:', error);
     throw error;
   }
-}
-
-
-
-
+};

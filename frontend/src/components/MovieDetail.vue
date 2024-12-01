@@ -8,7 +8,7 @@
     <div v-if="movie" class="relative z-10 max-w-5xl mx-auto p-6 rounded-lg text-white">
       <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
         <!-- Movie Poster -->
-        <img :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/default-poster.png'"
+        <img :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/default-poster.jpg'"
           alt="Movie Poster" class="rounded-lg shadow-lg w-full md:w-1/3 z-10" />
 
         <!-- Movie Info -->
@@ -38,14 +38,16 @@
             <button @click="viewTrailer(movie.id)" class="bg-yellow-500 text-black p-2 rounded-lg">See Trailer</button>
             <button @click="rateMovie(movie.id)"
               class="border-2 border-white text-yellow-500 p-2 rounded-lg">Rate</button>
-            <button @click="toggleDropdown" class="bg-green-500 text-white p-3 px-6 rounded-lg transition ease-in-out duration-150 transform hover:bg-green600 focus:outline-none focus:ring-2 focus:ring-green-400">
+            <button @click="toggleDropdown"
+              class="bg-green-500 text-white p-3 px-6 rounded-lg transition ease-in-out duration-150 transform hover:bg-green600 focus:outline-none focus:ring-2 focus:ring-green-400">
               Add to List
             </button>
 
             <div v-if="isDropdownOpen"
               class="absolute mt-2 ml-80 w-48 bg-[#1a2b3f] border border-gray-200 rounded-lg shadow-lg z-10 transition-opacity opacity-0 animate-fadeIn">
               <ul class="py-2">
-                <li v-for="list in userLists" :key="list.id" class="px-4 py-2 hover:bg-[#2a3a50] cursor-pointer transition-colors ease-in-out duration-150"
+                <li v-for="list in userLists" :key="list.id"
+                  class="px-4 py-2 hover:bg-[#2a3a50] cursor-pointer transition-colors ease-in-out duration-150"
                   @click="addToList(list)">
                   {{ list.name }}
                 </li>
@@ -123,8 +125,12 @@
           <div v-for="movie in similarMovies.slice(0, 10)" :key="movie.id" class="flex-none w-40 text-center">
             <router-link :to="`/movie/${movie.id}`">
               <img
-                :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : '/default-poster.png'"
-                alt="Movie Poster" class="rounded-lg shadow-md" />
+                :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : '/default-poster.jpg'"
+                alt="Movie Poster" :class="{
+                  'w-full rounded-md shadow-lg hover:scale-105 transition-transform': true,
+                  'h-[240px]': !movie.poster_path,  // Increase height if no poster path
+                  'h-auto': movie.poster_path        // Auto height if there's a poster path
+                }" />
             </router-link>
             <p class="text-gray-300 mt-2">{{ movie.title }}</p>
           </div>
@@ -208,7 +214,7 @@ export default {
           };
         } else {
           this.movieBackgroundStyle.backgroundImage =
-            "url('/default-background.jpg')";
+            "linear-gradient(to right, #0b101a, #1a2b3f)";
         }
 
         const { data: similarMovies } = await axios.get(
