@@ -7,6 +7,10 @@ import {
   getGenres,
   getMovieTrailers,
   getMovieCredits,
+  getMovieImages,
+  getMovieReviews,
+  getSimilarMovies,
+  getMovieVideos,
 } from '../controllers/tmdbController';
 
 const tmdbRouter = express.Router();
@@ -148,7 +152,6 @@ tmdbRouter.get('/movie/:id/trailers', async (req, res) => {
   }
 });
 
-
 tmdbRouter.get('/movie/:id/credits', async (req, res) => {
   const { id } = req.params;
   try {
@@ -158,6 +161,48 @@ tmdbRouter.get('/movie/:id/credits', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch movie credits' });
   }
 });
+
+tmdbRouter.get('/movie/:id/images', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const data = await getMovieImages(parseInt(id, 10));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch movie images' });
+  }
+});
+
+tmdbRouter.get('/movie/:id/reviews', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const data = await getMovieReviews(parseInt(id, 10));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch movie reviews' });
+  }
+});
+
+tmdbRouter.get('/movie/:id/similar', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const data = await getSimilarMovies(parseInt(id, 10));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch similar movies' });
+  }
+});
+
+
+tmdbRouter.get('/movie/:id/videos', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const data = await getMovieVideos(parseInt(id, 10));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch movie videos' });
+  }
+});
+
 
 
 export default tmdbRouter;

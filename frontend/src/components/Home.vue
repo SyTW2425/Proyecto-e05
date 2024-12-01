@@ -9,7 +9,7 @@
           <div class="des">
             {{ truncateOverview(item.overview) }}
             <span v-if="item.overview.length > 150">
-              <a :href="`/movie/${item.title}`" class="text-yellow-500">See more</a>
+              <router-link :to="`/movie/${item.id}`" class="text-yellow-500">See more</router-link>
             </span>
           </div>
           <div class="btn">
@@ -79,7 +79,7 @@ export default {
       setTimeout(() => {
         carousel.classList.remove("next");
         carousel.classList.remove("prev");
-      }, this.timeRunning); 
+      }, this.timeRunning);
     },
     fetchNowPlayingMovies() {
       axios

@@ -109,7 +109,6 @@ export const getMovieTrailers = async (movieId: number) => {
   }
 };
 
-
 // Get cast and crew
 export const getMovieCredits = async (movieId: number) => {
   try {
@@ -122,3 +121,64 @@ export const getMovieCredits = async (movieId: number) => {
     throw error;
   }
 };
+
+// Get movie images
+export const getMovieImages = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/images`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie images:', error);
+    throw error;
+  }
+};
+
+export const getMovieReviews = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/reviews`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie reviews:', error);
+    throw error;
+  }
+};
+
+// get similar movies
+export const getSimilarMovies = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/similar`, {
+      headers: getAuthHeaders(),
+    });
+
+    // Sort movies by release date (newest first)
+    const sortedMovies = response.data.results.sort(
+      (a: { release_date: string }, b: { release_date: string }) =>
+        new Date(b.release_date).getTime() - new Date(a.release_date).getTime(),
+    );
+
+    return sortedMovies;
+  } catch (error) {
+    console.error('Error fetching similar movies:', error);
+    throw error;
+  }
+};
+
+export const getMovieVideos = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/videos`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie videos:', error);
+    throw error;
+  }
+}
+
+
+
+
