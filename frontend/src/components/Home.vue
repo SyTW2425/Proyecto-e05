@@ -9,8 +9,8 @@
           <div class="des">
             {{ truncateOverview(item.overview) }}
             <span v-if="item.overview.length > 150">
-              <router-link :to="`/movie/${item.id}`" class="text-yellow-500">See more</router-link>
             </span>
+            <router-link :to="`/movie/${item.id}`" class="text-yellow-500">See more</router-link>
           </div>
           <div class="btn">
             <button @click="viewTrailer(item.id)">See Trailer</button>
