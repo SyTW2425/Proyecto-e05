@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-900 text-white flex font-[poppins]">
     <!-- Sidebar -->
-    <aside class="w-72 bg-gray-800 p-6 mt-16 flex flex-col gap-8">
+    <aside class="w-72 bg-gray-800 p-6 mt-20 flex flex-col gap-8">
 
       <!-- Profile Section -->
       <div class="bg-gray-700 p-6 rounded-lg text-center relative overflow-hidden">
@@ -69,7 +69,7 @@
     <!-- Main Feed -->
     <main class="flex-1 p-6">
       <!-- Post Input -->
-      <div class="bg-gray-800 p-4 rounded-lg mt-10 mb-6 relative">
+      <div class="bg-gray-800 p-4 rounded-lg mt-14 mb-6 relative">
         <div class="flex items-center gap-4">
           <img src="/alex.png" alt="User" class="w-12 h-12 rounded-full" />
           <textarea v-model="postContent" placeholder="What's on your mind?"
@@ -121,7 +121,7 @@
     </main>
 
     <!-- Right Sidebar -->
-    <aside class="w-72 bg-gray-800 p-6 mt-16 flex flex-col gap-8">
+    <aside class="w-72 bg-gray-800 p-6 mt-20 flex flex-col gap-8">
       <!-- Recent Activity -->
       <div>
         <h3 class="text-lg font-semibold mb-4">My Activity</h3>

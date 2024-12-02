@@ -21,8 +21,15 @@
 
       <!-- Profile image and Log out -->
       <div class="absolute right-4 top-4 flex items-center space-x-4">
-        <img src="/default-profile.png" alt="Profile Picture"
-          class="w-10 h-10 rounded-full border-2 border-yellow-500 object-cover" />
+        <router-link to="/profile" class="profile-link">
+          <div
+            class="relative group w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 border-transparent hover:border-yellow-500 transition duration-300">
+            <!-- Profile Image -->
+            <img src="/default-profile.png" alt="Profile Picture" class="w-full h-full object-cover" />
+            <!-- Dark Overlay -->
+            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+          </div>
+        </router-link>
 
         <button @click="logout"
           class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded bg-red-500 hover:bg-red-400 transition duration-200">
@@ -82,6 +89,11 @@ a.active {
 a:hover {
   background: #FFD700;
   border-radius: 2px;
+}
+
+/* Prevent hover effect on profile */
+header nav .profile-link:hover {
+  background: transparent;
 }
 
 button:hover {
