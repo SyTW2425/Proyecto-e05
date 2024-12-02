@@ -8,11 +8,17 @@
     </div>
 
     <!-- Category Buttons -->
-    <div class="flex justify-center gap-1 mb-6 flex-wrap">
+    <div class="flex justify-center gap-2 mb-6 flex-wrap items-center">
       <button v-for="genre in genres" :key="genre.id" @click="toggleCategory(genre.id)"
         class="px-4 py-2 rounded-lg text-white font-poppins hover:bg-yellow-400 transition-all duration-200"
         :class="selectedGenres.includes(genre.id) ? 'bg-yellow-500' : 'bg-gray-700 hover:bg-gray-600'">
         {{ genre.name }}
+      </button>
+
+      <!-- Clear Filters Button -->
+      <button v-if="selectedGenres.length > 0 || searchQuery.trim() !== ''" @click="clearFilters"
+        class="px-4 py-2 rounded-lg bg-red-600 text-white font-poppins hover:bg-red-500 transition-all duration-200">
+        Clear Filters
       </button>
     </div>
 
@@ -24,7 +30,7 @@
             alt="Movie Poster" :class="{
               'w-full rounded-md shadow-lg hover:scale-105 transition-transform': true,
               'h-[331px]': !movie.poster_path,
-              'h-auto': movie.poster_path 
+              'h-auto': movie.poster_path
             }" />
           <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
           <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
@@ -119,26 +125,30 @@ export default defineComponent({
       this.loading = true;
       this.error = "";
       try {
-        // Determine whether to fetch most popular movies or search results
         const isSearchMode = this.searchQuery.trim().length > 0;
-        const endpoint = isSearchMode
-          ? "http://localhost:5001/api/moviesdb/search"
-          : "http://localhost:5001/api/moviesdb/search-popular";
 
-        const params = isSearchMode
-          ? { query: this.searchQuery, page: this.currentPage, genres: this.selectedGenres.join(',') }
-          : { page: this.currentPage, genres: this.selectedGenres.join(',') };
+        let endpoint: string;
+        let params: Record<string, any> = { page: this.currentPage };
 
+        // Decide the endpoint and parameters
+        if (isSearchMode) {
+          endpoint = "http://localhost:5001/api/moviesdb/search";
+          params.query = this.searchQuery;
+        } else if (this.selectedGenres.length > 0) {
+          endpoint = "http://localhost:5001/api/moviesdb/movies-by-genres";
+          params.genres = this.selectedGenres.join(",");
+        } else {
+          endpoint = "http://localhost:5001/api/moviesdb/search-popular";
+        }
+
+        // Fetch data from the endpoint
         const response = await axios.get<{
           results: Movie[];
           page: number;
           total_pages: number;
         }>(endpoint, { params });
 
-        // Update total pages
-        this.totalPages = response.data.total_pages;
-
-        // Update movies and pagination details
+        // Update movies and pagination
         this.movies = response.data.results.map((movie: Movie) => ({
           id: movie.id,
           title: movie.title,
@@ -155,8 +165,9 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
+
     toggleCategory(genreId: number) {
       const index = this.selectedGenres.indexOf(genreId);
       if (index === -1) {
@@ -175,7 +186,13 @@ export default defineComponent({
       this.currentPage = page;
       this.$router.push({ query: { ...this.$route.query, page: page.toString() } });
       this.fetchMovies();
-    }
+    },
+    clearFilters() {
+      this.searchQuery = "";
+      this.selectedGenres = [];
+      this.currentPage = 1;
+      this.fetchMovies();
+    },
   },
   watch: {
     '$route.query.page'(newPage) {
@@ -194,6 +211,7 @@ export default defineComponent({
   }
 });
 </script>
+
 
 <style scoped>
 .bg-custom-background {

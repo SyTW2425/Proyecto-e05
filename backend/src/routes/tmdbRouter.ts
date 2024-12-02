@@ -222,4 +222,22 @@ tmdbRouter.get('/movie/:id/videos', async (req, res) => {
   }
 });
 
+// Get movies by one or more genres
+tmdbRouter.get('/movies-by-genres', async (req, res) => {
+  const { genres, page } = req.query;
+
+  try {
+    const genreIds = genres
+      ? (genres as string).split(',').map((id) => parseInt(id.trim(), 10))
+      : [];
+
+    const data = await getMoviesByGenres(genreIds, parseInt(page as string, 10) || 1);
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching movies by genres:', error);
+    res.status(500).json({ error: 'Failed to fetch movies by genres' });
+  }
+});
+
+
 export default tmdbRouter;
