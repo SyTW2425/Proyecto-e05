@@ -18,7 +18,7 @@
       <!-- Clear Filters Button -->
       <button v-if="selectedGenres.length > 0 || searchQuery.trim() !== ''" @click="clearFilters"
         class="px-4 py-2 rounded-lg bg-red-600 text-white font-poppins hover:bg-red-500 transition-all duration-200">
-        Clear Filters
+        Clear
       </button>
     </div>
 
