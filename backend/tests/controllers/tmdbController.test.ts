@@ -2,8 +2,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import axios from 'axios';
-import { searchMovies, getMovieDetails, getPopularMovies, getNowPlayingMovies, getGenres } from '../../src/controllers/tmdbController';
-
+import {
+  searchMovies,
+  getMovieDetails,
+  getPopularMovies,
+  getNowPlayingMovies,
+  getGenres,
+  getMoviesByGenres,
+  getMovieTrailers,
+  getMovieCredits,
+  getMovieImages,
+} from '../../src/controllers/tmdbController';
+import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -38,7 +48,7 @@ describe('Movie API Functions', () => {
             accept: 'application/json',
             Authorization: `Bearer ${API_KEY}`,
           },
-        }
+        },
       );
       expect(result).toEqual(mockData);
     });
@@ -59,7 +69,7 @@ describe('Movie API Functions', () => {
             accept: 'application/json',
             Authorization: `Bearer ${API_KEY}`,
           },
-        }
+        },
       );
       expect(result).toEqual(mockData);
     });
@@ -88,7 +98,7 @@ describe('Movie API Functions', () => {
             accept: 'application/json',
             Authorization: `Bearer ${API_KEY}`,
           },
-        }
+        },
       );
       expect(result).toEqual(mockData);
     });
@@ -112,7 +122,7 @@ describe('Movie API Functions', () => {
             accept: 'application/json',
             Authorization: `Bearer ${API_KEY}`,
           },
-        }
+        },
       );
       expect(result).toEqual(mockData);
     });
@@ -132,9 +142,103 @@ describe('Movie API Functions', () => {
             accept: 'application/json',
             Authorization: `Bearer ${API_KEY}`,
           },
-        }
+        },
       );
       expect(result).toEqual(mockData);
     });
   });
+
+  describe('getMoviesByGenres', () => {
+    it('should return movies by genre', async () => {
+      const genreId = 1;
+      const mockData = { results: [{ title: 'Action Movie' }] };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+
+      const result = await getMoviesByGenres([genreId]);
+
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/discover/movie`,
+        {
+          params: {
+            page: 1,
+            with_genres: genreId.toString(),
+            include_adult: false,
+          },
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        },
+      );
+      expect(result).toEqual(mockData);
+    });
+    it('should return movies by genre and page', async () => {
+      const genreId = 1;
+      const page = 2;
+      const mockData = { results: [{ title: 'Action Movie' }] };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+
+      const result = await getMoviesByGenres([genreId], page);
+
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/discover/movie`,
+        {
+          params: {
+            page,
+            with_genres: genreId.toString(),
+            include_adult: false,
+          },
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        },
+      );
+      expect(result).toEqual(mockData);
+    }); 
+  });
+
+  describe('getMovieCredits', () => {
+    it ('should return movie credits by ID', async () => {
+      const movieId = 12345;
+      const mockData = { id: movieId, title: 'Gladiator' };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+
+      const result = await getMovieCredits(movieId);
+
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/movie/${movieId}/credits`,
+        {
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        },
+      );
+      expect(result).toEqual(mockData);
+    }); 
+  });
+
+  describe('getMovieImages', () => {
+    it ('should return movie images by ID', async () => {
+      const movieId = 12345;
+      const mockData = { id: movieId, title: 'Gladiator' };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+
+      const result = await getMovieImages(movieId);
+
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/movie/${movieId}/images`,
+        {
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        },
+      );
+      expect(result).toEqual(mockData);
+    });
+  });
+
+
 });
