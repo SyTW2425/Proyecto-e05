@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar class="bg-custom-background"/>
+    <Navbar />
     <Profile />
   </div>
 </template>

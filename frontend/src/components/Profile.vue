@@ -1,233 +1,200 @@
 <template>
-  <div class="bg-custom-background min-h-screen p-8 mt-10">
-    <!-- Profile Card -->
-    <div
-      class="max-w-5xl mx-auto bg-gray-800 p-8 rounded-3xl shadow-2xl transform transition-transform hover:scale-105">
-      <div class="flex items-center gap-10">
-        <!-- User Photo -->
-        <div class="relative flex-shrink-0">
-          <img :src="user.photoUrl || '../src/assets/profile-user.png'" alt="User Photo"
-            class="w-40 h-40 rounded-full object-cover border-4 border-yellow-500 transition-transform hover:scale-110" />
-          <button @click="changeProfilePhoto"
-            class="absolute bottom-0 right-0 bg-yellow-500 text-black p-3 rounded-full transform translate-x-2 translate-y-2 hover:bg-yellow-600 transition duration-300">
-            <i class="fas fa-camera text-lg"></i>
+  <div class="min-h-screen bg-gray-900 text-white flex font-[poppins]">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-gray-800 p-6 mt-16 flex flex-col gap-8">
+
+      <!-- Profile Section -->
+      <div class="bg-gray-700 p-6 rounded-lg text-center relative overflow-hidden">
+        <!-- Background Image -->
+        <div class="absolute top-0 left-0 w-full h-20 bg-cover bg-center"
+          style="background-image: url('/background-pattern.png');"></div>
+
+        <!-- Profile Picture -->
+        <div class="relative w-24 h-24 mx-auto flex justify-center items-center mt-8">
+          <img src="/alex.png" alt="User" class="rounded-lg border-2 border-yellow-400" />
+        </div>
+
+        <!-- Follower and Following Stats -->
+        <div class="flex justify-between text-sm mt-4">
+          <div class="flex flex-col items-center">
+            <span class="text-yellow-400 text-lg">1984</span>
+            <span class="text-gray-400">Followers</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-yellow-400 text-lg">1002</span>
+            <span class="text-gray-400">Following</span>
+          </div>
+        </div>
+
+        <!-- Profile Details -->
+        <h2 class="mt-4 text-lg font-semibold">AlExMDi</h2>
+        <p class="text-sm text-gray-400">@alexmdi</p>
+        <p class="mt-2 text-sm text-gray-300">
+          ✨ Hi, I'm a movie lover! ✨
+        </p>
+      </div>
+
+      <!-- Reviews -->
+      <div>
+        <h3 class="text-lg text-yellow-500 font-semibold mb-2">Reviews</h3>
+        <ul>
+          <li class="flex items-center gap-3 mb-3">
+            <img src="/gladiator.jpg" alt="Gladiator II" class="w-8 h-8 rounded-full object-cover" />
+            <span>Gladiator II</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <img src="/avengers.jpg" alt="Gladiator II" class="w-8 h-8 rounded-full object-cover" />
+            <span>The avengers: Endgame</span>
+          </li>
+        </ul>
+
+        <!-- Lists -->
+        <div>
+          <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
+          <ul>
+            <li class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <span>To Watch</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <span>Not Recommended</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Main Feed -->
+    <main class="flex-1 p-6">
+      <!-- Post Input -->
+      <div class="bg-gray-800 p-4 rounded-lg mt-10 mb-6 relative">
+        <div class="flex items-center gap-4">
+          <img src="/alex.png" alt="User" class="w-12 h-12 rounded-full" />
+          <textarea v-model="postContent" placeholder="What's on your mind?"
+            class="w-full bg-gray-700 p-3 rounded-lg text-white text-sm resize-none"></textarea>
+        </div>
+
+        <div class="flex justify-center items-center mt-3 space-x-4">
+          <button
+            class="flex items-center gap-2 bg-neutral-800 text-white px-5 py-2 rounded-lg font-medium hover:bg-yellow-500 transition">
+            <img src="/camera.svg" class="w-5 h-5" alt="Smiley" />
+            Photo
+          </button>
+          <button
+            class="flex items-center gap-2 bg-neutral-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-500 transition">
+            <img src="/video.svg" class="w-5 h-5" />
+            Video
+          </button>
+          <button
+            class="flex items-center gap-2 bg-neutral-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition">
+            <img src="/poll.svg" class="w-5 h-5" />
+            Poll
           </button>
         </div>
-        <!-- User Info -->
-        <div class="text-white flex-1">
-          <h1 class="text-5xl font-extrabold tracking-tight">{{ user.username }}</h1>
-          <p class="text-gray-400 text-xl mt-2">{{ user.email }}</p>
-          <div class="mt-6 flex gap-12 text-lg text-gray-300">
-            <div>
-              <strong class="text-yellow-400">{{ user.followingCount }}</strong> Following
-            </div>
-            <div>
-              <strong class="text-yellow-400">{{ user.followersCount }}</strong> Followers
-            </div>
-          </div>
+
+        <div class="absolute right-4 bottom-4">
+          <button class="bg-yellow-400 px-6 py-2 text-black rounded-lg">
+            Post
+          </button>
         </div>
       </div>
 
-      <!-- Share Profile Button -->
-      <div class="mt-8 flex justify-center">
-        <button @click="shareProfile"
-          class="px-8 py-4 rounded-full bg-yellow-500 text-black font-semibold text-xl hover:bg-yellow-600 transition duration-300">
-          Share Profile
-        </button>
-      </div>
-    </div>
-
-    <!-- My Lists -->
-    <section class="mt-12">
-      <h2 class="text-4xl text-white font-semibold mb-8">My Lists</h2>
-      <div v-if="user.lists.length > 0" class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <div v-for="list in user.lists" :key="list.id"
-          :class="['relative bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform cursor-pointer', { 'delete-item': list.deleted }]"
-          @click="goToList(list.id)">
-          <h3 class="text-xl font-semibold text-yellow-400">{{ list.name }}</h3>
-          <p class="text-gray-400 mt-2">{{ list.description || "No description available" }}</p>
-          <div class="absolute bottom-4 right-4">
-            <DeleteItem :itemId="list.id" :deleteAction="onItemDeleted" />
+      <!-- Posts -->
+      <div v-for="post in posts" :key="post.id" class="bg-gray-800 p-4 rounded-lg mb-6">
+        <div class="flex items-center gap-4 mb-4">
+          <img :src="post.userImage" alt="User" class="w-12 h-12 rounded-full" />
+          <div>
+            <h3 class="font-semibold">{{ post.userName }}</h3>
+            <p class="text-sm text-gray-400">{{ post.time }}</p>
           </div>
         </div>
-      </div>
-      <div v-else class="text-center text-gray-400 mt-4">You haven't created any lists yet.</div>
-    </section>
-
-    <!-- My Reviews -->
-    <section class="mt-12">
-      <h2 class="text-4xl text-white font-semibold mb-8">My Reviews</h2>
-      <div v-if="user.reviews.length > 0" class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <div v-for="review in user.reviews" :key="review.id"
-          class="relative bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
-          <h3 class="text-xl font-semibold text-yellow-400">{{ review.movieTitle }}</h3>
-          <p class="text-gray-400 mt-2">{{ review.content }}</p>
-          <div class="text-yellow-300 mt-4">Rating: {{ review.rating }} / 5</div>
-          <div class="absolute bottom-4 right-4">
-            <DeleteItem :itemId="review.id" :deleteAction="onItemDeleted" />
-          </div>
+        <p class="text-gray-300">{{ post.content }}</p>
+        <img v-if="post.image" :src="post.image" alt="Post" class="mt-4 rounded-lg" />
+        <div class="flex items-center gap-8 text-gray-500 mt-4">
+          <span>❤️ {{ post.likes }}</span>
+          <span>💬 {{ post.comments }}</span>
+          <span>🔄 {{ post.shares }}</span>
         </div>
       </div>
-      <div v-else class="text-center text-gray-400 mt-4">You haven't written any reviews yet.</div>
-    </section>
+    </main>
 
-    <!-- Following and Followers Section -->
-    <section class="mt-12">
-      <h2 class="text-4xl text-white font-semibold mb-8">Following & Followers</h2>
-
-      <!-- Following List -->
-      <div class="mb-8">
-        <h3 class="text-2xl font-semibold text-yellow-400 mb-6">Following</h3>
-        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div v-for="person in user.following" :key="person.id"
-            class="flex items-center space-x-6 bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
-            <img :src="person.photoUrl || '../src/assets/profile-user.png'" alt="Person Photo"
-              class="w-16 h-16 rounded-full object-cover" />
-            <div class="text-white">
-              <h4 class="text-lg font-semibold">{{ person.username }}</h4>
-              <button @click="toggleFollow(person)"
-                class="text-yellow-400 hover:text-yellow-500 transition duration-300">
-                {{ person.isFollowing ? 'Unfollow' : 'Follow' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Followers List -->
+    <!-- Right Sidebar -->
+    <aside class="w-72 bg-gray-800 p-6 mt-16 flex flex-col gap-8">
+      <!-- Recent Activity -->
       <div>
-        <h3 class="text-2xl font-semibold text-yellow-400 mb-6">Followers</h3>
-        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div v-for="person in user.followers" :key="person.id"
-            class="flex items-center space-x-6 bg-gray-700 p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
-            <img :src="person.photoUrl || '../src/assets/profile-user.png'" alt="Person Photo"
-              class="w-16 h-16 rounded-full object-cover" />
-            <div class="text-white">
-              <h4 class="text-lg font-semibold">{{ person.username }}</h4>
-              <button @click="toggleFollow(person)"
-                class="text-yellow-400 hover:text-yellow-500 transition duration-300">
-                {{ person.isFollowing ? 'Unfollow' : 'Follow' }}
-              </button>
+        <h3 class="text-lg font-semibold mb-4">My Activity</h3>
+        <ul class="space-y-4">
+          <li v-for="activity in activities" :key="activity.id" class="bg-gray-700 p-4 rounded-lg flex flex-col">
+            <div>
+              <p class="text-sm font-semibold">{{ activity.name }}</p>
+              <p class="text-sm text-gray-400">{{ activity.time }}</p>
             </div>
-          </div>
-        </div>
+            <!-- Move action text below the user info -->
+            <p class="text-sm text-yellow-400 mt-2">
+              {{ activity.action }}
+            </p>
+          </li>
+        </ul>
       </div>
-    </section>
+    </aside>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import DeleteItem from "./DeleteItem.vue";
-
-interface List {
-  id: number;
-  name: string;
-  description?: string;
-  deleted?: boolean; // Optional deleted property
-}
-
-interface Review {
-  id: number;
-  movieTitle: string;
-  content: string;
-  rating: number;
-  deleted?: boolean; // Optional deleted property
-}
-
-interface User {
-  username: string;
-  email: string;
-  photoUrl: string | null;
-  followingCount: number;
-  followersCount: number;
-  following: { id: number; username: string; photoUrl: string | null, isFollowing: boolean }[];
-  followers: { id: number; username: string; photoUrl: string | null, isFollowing: boolean }[];
-  lists: List[];
-  reviews: Review[];
-}
-
-export default defineComponent({
-  name: "UserProfile",
-  components: {
-    DeleteItem,
-  },
+<script>
+export default {
   data() {
     return {
-      user: {
-        username: "JohnDoe",
-        email: "john.doe@example.com",
-        photoUrl: null,
-        followingCount: 123,
-        followersCount: 456,
-        following: [
-          { id: 1, username: "Alex", photoUrl: '../src/assets/alex.png', isFollowing: true },
-          { id: 2, username: "Dani", photoUrl: '../src/assets/dani.png', isFollowing: false },
-        ],
-        followers: [
-          { id: 3, username: "David", photoUrl: '../src/assets/david.png', isFollowing: false },
-          { id: 4, username: "Lucas", photoUrl: '../src/assets/lucas.png', isFollowing: true },
-        ],
-        lists: [
-          { id: 1, name: "My Favorite Movies", description: "A list of my all-time favorite movies" },
-          { id: 2, name: "Must-Watch Films", description: "Movies I still need to watch" },
-          { id: 3, name: "Oscar Winners", description: "Oscar-winning movies worth watching" },
-        ],
-        reviews: [
-          { id: 1, movieTitle: "Inception", content: "A masterpiece of sci-fi storytelling!", rating: 5 },
-          { id: 2, movieTitle: "Interstellar", content: "Visually stunning with a touching story.", rating: 4.5 },
-          { id: 3, movieTitle: "The Dark Knight", content: "Unforgettable performances and thrilling action.", rating: 5 },
-        ],
-      } as User,
-    };
+      stories: [
+        { id: 1, name: "Lucas", image: "/lucas.png" },
+        { id: 2, name: "David", image: "/david.png" },
+      ],
+      posts: [
+        {
+          id: 1,
+          userName: "Daniel Garvi",
+          time: "1 hr ago",
+          content: "In some cases, you may see...",
+          image: "/dune.jpeg",
+          userImage: "/dani.png",
+          likes: 20,
+          comments: 5,
+          shares: 2,
+        },
+      ],
+      activities: [
+        {
+          id: 1,
+          time: "3 min ago",
+          action: "Watched the film 'Inception'"
+        },
+        {
+          id: 2,
+          time: "1 hr ago",
+          action: "Like the film 'The Matrix'"
+        },
+        {
+          id: 3,
+          time: "2 hrs ago",
+          action: "Disliked the film 'Avatar'"
+        },
+        {
+          id: 4,
+          time: "5 hrs ago",
+          action: "Post about the film 'Dune II'"
+        }
+      ],
+      postContent: "",
+    }
   },
-  methods: {
-    shareProfile() {
-      const subject = "Check out my movie profile!";
-      const body = `Hi, check out my movie profile: ${window.location.href}`;
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    },
-    changeProfilePhoto() {
-      // Trigger profile photo change logic (e.g., open file picker)
-    },
-    goToList(listId: number) {
-      // alert(`Navigating to list with ID: ${listId}`);
-    },
-    // Handles the delete action for lists or reviews
-    onItemDeleted(itemId: number, type: 'list' | 'review') {
-      if (type === 'list') {
-        this.user.lists = this.user.lists.filter((list) => list.id !== itemId);
-      } else if (type === 'review') {
-        this.user.reviews = this.user.reviews.filter((review) => review.id !== itemId);
-      }
-    },
-    deleteList(listId: number) {
-      this.user.lists = this.user.lists.filter((list) => list.id !== listId);
-    },
-    deleteReview(reviewId: number) {
-      this.user.reviews = this.user.reviews.filter((review) => review.id !== reviewId);
-    },
-    toggleFollow(person: { id: number; username: string; isFollowing: boolean }) {
-      person.isFollowing = !person.isFollowing; // Toggle follow state
-    },
-  },
-});
+};
 </script>
 
 <style scoped>
-/* Apply the animation when item is deleted */
-.delete-item {
-  animation: fadeOut 0.5s forwards;
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
+textarea {
+  word-wrap: break-word;
+  word-break: break-word;
+  resize: none;
 }
 </style>
