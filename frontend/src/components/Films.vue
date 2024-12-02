@@ -175,37 +175,58 @@ export default defineComponent({
       } else {
         this.selectedGenres.splice(index, 1);
       }
-      this.currentPage = 1;
+      this.updateQueryParams();
       this.fetchMovies();
     },
     handleSearch() {
       this.currentPage = 1;
+      this.updateQueryParams();
       this.fetchMovies();
     },
     changePage(page: number) {
       this.currentPage = page;
-      this.$router.push({ query: { ...this.$route.query, page: page.toString() } });
+      this.updateQueryParams();
       this.fetchMovies();
     },
     clearFilters() {
       this.searchQuery = "";
       this.selectedGenres = [];
       this.currentPage = 1;
+      this.updateQueryParams();
       this.fetchMovies();
+    },
+    updateQueryParams() {
+      this.$router.push({
+        path: this.$route.path,
+        query: {
+          page: this.currentPage.toString(),
+          genres: this.selectedGenres.join(","),
+          query: this.searchQuery.trim() || undefined, // Remove `query` if empty
+        },
+      });
     },
   },
   watch: {
-    '$route.query.page'(newPage) {
-      const page = parseInt(newPage as string, 10);
-      if (!isNaN(page) && page > 0 && page !== this.currentPage) {
-        this.currentPage = page;
-        this.fetchMovies();
-      }
+    '$route.query'(newQuery) {
+      this.currentPage = parseInt(newQuery.page as string, 10) || 1;
+      this.selectedGenres = newQuery.genres
+        ? (newQuery.genres as string).split(",").map((id) => parseInt(id.trim(), 10))
+        : [];
+      this.searchQuery = newQuery.query ? (newQuery.query as string) : "";
+
+      this.fetchMovies();
     },
   },
   mounted() {
-    const pageFromQuery = parseInt(this.$route.query.page as string, 10);
-    this.currentPage = !isNaN(pageFromQuery) && pageFromQuery > 0 ? pageFromQuery : 1;
+    // Extract state from query parameters
+    const { page, genres, query } = this.$route.query;
+
+    this.currentPage = parseInt(page as string, 10) || 1;
+    this.selectedGenres = genres
+      ? (genres as string).split(",").map((id) => parseInt(id.trim(), 10))
+      : [];
+    this.searchQuery = query ? (query as string) : "";
+
     this.fetchGenres();
     this.fetchMovies();
   }
