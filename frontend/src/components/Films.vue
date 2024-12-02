@@ -23,8 +23,8 @@
           <img :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/default-poster.jpg'"
             alt="Movie Poster" :class="{
               'w-full rounded-md shadow-lg hover:scale-105 transition-transform': true,
-              'h-[331px]': !movie.poster_path,  // Increase height if no poster path
-              'h-auto': movie.poster_path        // Auto height if there's a poster path
+              'h-[331px]': !movie.poster_path,
+              'h-auto': movie.poster_path 
             }" />
           <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
           <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
