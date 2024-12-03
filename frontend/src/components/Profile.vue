@@ -38,32 +38,42 @@
       <div>
         <h3 class="text-lg text-yellow-500 font-semibold mb-2">Reviews</h3>
         <ul>
-          <li class="flex items-center gap-3 mb-3">
-            <img src="/gladiator.jpg" alt="Gladiator II" class="w-8 h-8 rounded-full object-cover" />
-            <span>Gladiator II</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <img src="/avengers.jpg" alt="Gladiator II" class="w-8 h-8 rounded-full object-cover" />
-            <span>The avengers: Endgame</span>
+          <li v-for="review in reviews" :key="review.id" class="flex items-center gap-3 mb-3 cursor-pointer"
+            @click="showReviewPopup(review)">
+            <!-- Circular Movie Poster -->
+            <img :src="review.moviePoster" alt="Movie Poster" class="w-12 h-12 rounded-full object-cover" />
+            <div>
+              <h4 class="text-white">{{ review.movieTitle }}</h4>
+            </div>
           </li>
         </ul>
-
-        <!-- Lists -->
-        <div>
-          <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
-          <ul>
-            <li class="flex items-center gap-3 mb-3">
-              <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <span>To Watch</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <span>Not Recommended</span>
-            </li>
-          </ul>
-        </div>
-
       </div>
+
+      <!-- Full Review Pop-up -->
+      <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-96">
+          <h3 class="text-2xl text-yellow-500 mb-4">{{ selectedReview.movieTitle }}</h3>
+          <p class="text-white mb-4">Rating: {{ selectedReview.rating }}</p>
+          <p class="text-white mb-4">{{ selectedReview.body }}</p>
+          <button @click="closeModal" class="text-yellow-400 mt-4 hover:underline">Close</button>
+        </div>
+      </div>
+
+      <!-- Lists -->
+      <div>
+        <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
+        <ul>
+          <li class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
+            <span>To Watch</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
+            <span>Not Recommended</span>
+          </li>
+        </ul>
+      </div>
+
     </aside>
 
     <!-- Main Feed -->
@@ -146,6 +156,9 @@
 export default {
   data() {
     return {
+      showModal: false,
+      selectedReview: {},
+      images: [],
       stories: [
         { id: 1, name: "Lucas", image: "/lucas.png" },
         { id: 2, name: "David", image: "/david.png" },
@@ -186,7 +199,54 @@ export default {
         }
       ],
       postContent: "",
+      reviews: [],
     }
+  },
+
+  methods: {
+    async fetchReviews() {
+      try {
+        const userId = localStorage.getItem("userId");
+        const response = await fetch("http://localhost:5001/api/reviews/user/reviews?userId=" + userId);
+        const data = await response.json();
+
+        // Loop through the reviews and fetch movie posters for each review
+        const reviewsWithImages = await Promise.all(data.map(async (review, index) => {
+          const movieResponse = await fetch(`http://localhost:5001/api/moviesdb/movie/${review.movie.TMDid}/images`);
+          const movieData = await movieResponse.json();
+
+          const moviePoster = `https://image.tmdb.org/t/p/w200${movieData.backdrops?.[0]?.file_path || ''}`;
+
+          return {
+            id: index,
+            movieTitle: review.movie.title,
+            rating: review.rating,
+            body: review.body,
+            moviePoster,
+          };
+        }));
+
+        // Assign the updated reviews with movie posters to the data
+        this.reviews = reviewsWithImages;
+
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    showReviewPopup(review) {
+      this.selectedReview = review;
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+    submitPost() {
+      console.log(this.postContent);
+    },
+  },
+  mounted() {
+    this.fetchReviews()
   },
 };
 </script>

@@ -26,8 +26,11 @@ export const createReview = async (
 };
 
 // get all reviews from a user
-export const getReviewsByUserId = async (userId: mongoose.Types.ObjectId) => {
-  return await Review.find({ user: userId }).populate('movie');
+export const getReviewsByUserId = async (userId: string) => {
+  // Ensure userId is properly converted to ObjectId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  return await Review.find({ user: userObjectId });
 };
 
 // update review
@@ -103,11 +106,11 @@ export const addReviewToMovie = async (req: Request, res: Response) => {
 };
 
 export const getUserReviews = async (req: Request, res: Response) => {
-  const { userId } = req.body;
+  const { userId } = req.query;
+  console.log(`userId: ${userId}`);
   try {
-    const reviews = await getReviewsByUserId(
-      new mongoose.Types.ObjectId(userId),
-    );
+    const reviews = await getReviewsByUserId(userId!.toString());
+    console.log(`${userId} reviews: ${reviews}`);
     res.status(200).json(reviews);
   } catch (error) {
     res
