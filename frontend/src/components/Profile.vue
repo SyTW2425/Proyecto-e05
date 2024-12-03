@@ -36,17 +36,56 @@
 
       <!-- Reviews -->
       <div>
-        <h3 class="text-lg text-yellow-500 font-semibold mb-2">Reviews</h3>
+        <h3 class="text-sm text-yellow-500 font-semibold mb-2">Reviews</h3>
         <ul>
-          <li v-for="review in reviews" :key="review.id" class="flex items-center gap-3 mb-3 cursor-pointer"
-            @click="showReviewPopup(review)">
+          <li v-for="review in reviews" :key="review.id" class="flex items-center gap-3 mb-3 cursor-pointer">
             <!-- Circular Movie Poster -->
-            <img :src="review.moviePoster" alt="Movie Poster" class="w-12 h-12 rounded-full object-cover" />
+            <img :src="review.moviePoster" alt="Movie Poster" class="w-10 h-10 rounded-full object-cover" />
             <div>
-              <h4 class="text-white">{{ review.movieTitle }}</h4>
+              <h4 class="text-white text-sm">{{ review.movieTitle }}</h4>
+              <div class="flex gap-3">
+                <!-- Button to view movie details -->
+                <router-link :to="`/movie/${review.movieId}`">
+                  <button
+                    class="bg-gray-700 text-black py-1 px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
+                    Details
+                  </button>
+                </router-link>
+                <!-- Button to show review popup -->
+                <button @click="showReviewPopup(review)"
+                  class="bg-yellow-500 text-black py-1 px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
+                  Review
+                </button>
+              </div>
             </div>
           </li>
         </ul>
+      </div>
+
+      <!-- Full Review Pop-up -->
+      <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-96">
+          <h3 class="text-xl text-yellow-500 mb-4">{{ selectedReview.movieTitle }}</h3>
+          <p class="text-white text-sm mb-4">Rating: {{ selectedReview.rating }}</p>
+          <p class="text-white text-sm mb-4">{{ selectedReview.body }}</p>
+          <button @click="closeModal"
+            class="bg-yellow-500 text-black py-1 px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
+            Close
+          </button>
+        </div>
+      </div>
+
+      <!-- Full Review Pop-up -->
+      <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-96">
+          <h3 class="text-2xl text-yellow-500 mb-4">{{ selectedReview.movieTitle }}</h3>
+          <p class="text-white mb-4">Rating: {{ selectedReview.rating }}</p>
+          <p class="text-white mb-4">{{ selectedReview.body }}</p>
+          <button @click="closeModal"
+            class="bg-yellow-500 text-black py-2 px-4 rounded-lg hover:bg-yellow-400 transition duration-200">
+            Close
+          </button>
+        </div>
       </div>
 
       <!-- Full Review Pop-up -->
@@ -219,6 +258,7 @@ export default {
 
           return {
             id: index,
+            movieId: review.movie.TMDid,
             movieTitle: review.movie.title,
             rating: review.rating,
             body: review.body,
@@ -228,6 +268,7 @@ export default {
 
         // Assign the updated reviews with movie posters to the data
         this.reviews = reviewsWithImages;
+        console.log(this.reviews);
 
       } catch (error) {
         console.error(error);
