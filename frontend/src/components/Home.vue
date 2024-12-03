@@ -14,7 +14,11 @@
           </div>
           <div class="btn">
             <button @click="viewTrailer(item.id)">See Trailer</button>
-            <button>Rate</button>
+            <router-link :to="`/movie/${item.id}`" class="no-hover">
+              <button id="view-details" class="transition duration-300 ease-in-out">
+                View Details
+              </button>
+            </router-link>
           </div>
         </div>
       </div>
@@ -40,6 +44,7 @@
 
 <script>
 import axios from 'axios';
+import router from '../router';
 
 export default {
   data() {
@@ -155,6 +160,16 @@ header {
 }
 
 header nav a {
+  color: #fff;
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  transition: 0.2s;
+  text-decoration: none;
+}
+
+/* make the view-details not have the hover */
+header nav a.view-details {
   color: #fff;
   margin-right: 5px;
   padding: 5px 10px;
@@ -505,6 +520,12 @@ a:hover {
   border-radius: 8px;
 }
 
+.no-hover:hover {
+  background: none;
+  /* Or reset the hover effect you don't want */
+  color: inherit;
+  /* Keep the text color unaffected */
+}
 
 .bg-custom-background {
   background-image: linear-gradient(to right, #0b101a, #1a2b3f);
