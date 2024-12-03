@@ -39,24 +39,15 @@
         <h3 class="text-sm text-yellow-500 font-semibold mb-2">Reviews</h3>
         <ul>
           <li v-for="review in reviews" :key="review.id" class="flex items-center gap-3 mb-3 cursor-pointer">
-            <!-- Circular Movie Poster -->
             <img :src="review.moviePoster" alt="Movie Poster" class="w-10 h-10 rounded-full object-cover" />
-            <div>
-              <h4 class="text-white text-sm">{{ review.movieTitle }}</h4>
-              <div class="flex gap-3">
-                <!-- Button to view movie details -->
-                <router-link :to="`/movie/${review.movieId}`">
-                  <button
-                    class="bg-gray-700 text-black py-1 px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
-                    Details
-                  </button>
-                </router-link>
-                <!-- Button to show review popup -->
-                <button @click="showReviewPopup(review)"
-                  class="bg-yellow-500 text-black py-1 px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
-                  Review
-                </button>
-              </div>
+            <div class="flex justify-between w-full">
+              <router-link :to="`/movie/${review.movieId}`">
+                <h4 class="text-white text-sm">{{ review.movieTitle }}</h4>
+              </router-link>
+              <button @click="showReviewPopup(review)"
+                class="bg-yellow-500 text-black px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
+                Review
+              </button>
             </div>
           </li>
         </ul>
