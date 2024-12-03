@@ -14,8 +14,10 @@ export const useAuthStore = defineStore('auth', {
           'http://localhost:5001/api/users/login',
           { username, password },
         );
+        
         this.token = response.data.token;
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userId', response.data.userId);
         alertStore.success("Logged in successfully");
         return true;
       } catch (error) {

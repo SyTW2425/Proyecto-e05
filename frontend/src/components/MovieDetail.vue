@@ -36,12 +36,43 @@
 
           <div class="flex gap-4">
             <button @click="viewTrailer(movie.id)" class="bg-yellow-500 text-black p-2 rounded-lg">See Trailer</button>
-            <button @click="rateMovie(movie.id)"
-              class="border-2 border-white text-yellow-500 p-2 rounded-lg">Rate</button>
+            <button @click="toggleRatePopup" class="border-2 border-white text-yellow-500 p-2 rounded-lg">
+              Rate
+            </button>
             <button @click="toggleDropdown"
               class="bg-green-500 text-white p-3 px-6 rounded-lg transition ease-in-out duration-150 transform hover:bg-green600 focus:outline-none focus:ring-2 focus:ring-green-400">
               Add to List
             </button>
+
+            <div v-if="openRatePopup"
+              class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+              
+              <div class="bg-gray-800 text-white p-6 rounded-lg max-w-sm w-full">
+                <h2 class="text-xl font-bold mb-4">Rate: {{ movie.title }}</h2>
+
+                <!-- Review Input -->
+                <textarea v-model="userReview" placeholder="Write your review here..."
+                  class="w-full h-24 p-2 rounded-lg bg-gray-900 text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500"></textarea>
+
+                <!-- Rating Input -->
+                <div class="mt-4">
+                  <label for="rating" class="block mb-2">Your Rating:</label>
+                  <select v-model="userRating" id="rating" class="w-full p-2 rounded-lg bg-gray-900 text-gray-200">
+                    <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
+                  </select>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-4 mt-6">
+                  <button @click="submitReview" class="bg-yellow-500 text-black px-4 py-2 rounded-lg">
+                    Submit
+                  </button>
+                  <button @click="closeRatePopup" class="bg-gray-600 px-4 py-2 rounded-lg">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <div v-if="isDropdownOpen"
               class="absolute mt-2 ml-80 w-48 bg-[#1a2b3f] border border-gray-200 rounded-lg shadow-lg z-10 transition-opacity opacity-0 animate-fadeIn">
@@ -152,6 +183,8 @@
 
 <script>
 import axios from "axios";
+import { useUserStore } from "../stores/userStore";
+import { useAlertStore } from "../stores/alert";
 
 export default {
   data() {
@@ -171,6 +204,15 @@ export default {
         backgroundColor: "bg-custom-background",
       },
       isDropdownOpen: false,
+      // isRatePopupOpen: false,
+      openRatePopup: false,
+      userReview: "",
+      userRating: null,
+      reviewForm: {
+        title: "",
+        body: "",
+        rating: 0,
+      },
       userLists: [
         { id: 1, name: "Watchlist" },
         { id: 2, name: "Favorites" },
@@ -230,6 +272,53 @@ export default {
 
       } catch (error) {
         console.error("Error fetching movie data:", error);
+      }
+    },
+    toggleRatePopup() {
+      this.openRatePopup = !this.openRatePopup;
+    },
+    closeRatePopup() {
+      this.openRatePopup = false;
+      this.userReview = "";
+      this.userRating = 0;
+    },
+    async submitReview() {
+      const alertStore = useAlertStore();
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alertStore.error("You must be logged in to submit a review.");
+          return;
+        }
+
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+          alertStore.error("User ID not found.");
+          return;
+        }
+
+        console.log("user: ", userId);
+
+        const reviewData = {
+          title: this.movie.title,
+          body: this.userReview,
+          rating: this.userRating,
+          userId: userId,
+          movieId: this.movie.id,
+        };
+
+        console.log("reviewData: ", reviewData);
+        await axios.post('http://localhost:5001/api/reviews/add-review', reviewData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        alertStore.success("Review submitted successfully.");
+        this.closeRatePopup();
+      } catch (error) {
+        console.error("Error submitting review:", error);
+        alertStore.error("Failed to submit review.");
       }
     },
     async viewImage(imagePath) {
@@ -395,11 +484,12 @@ export default {
 
 
 .custom-scrollbar::-webkit-scrollbar {
-  height: 8px; 
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #888; /* Thumb color */
+  background-color: #888;
+  /* Thumb color */
   border-radius: 4px;
 }
 

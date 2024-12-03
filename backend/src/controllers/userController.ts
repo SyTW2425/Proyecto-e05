@@ -50,7 +50,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // Generate a JWT
     const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, userId: user._id });
   } catch (err) {
     res.status(500).json({ message: 'Error logging in', error: err.message });
   }
