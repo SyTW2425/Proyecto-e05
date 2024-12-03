@@ -14,7 +14,7 @@
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         My Activity
       </router-link> -->
-      <router-link to="/lists"
+      <router-link to="/about-us"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         About us
       </router-link>

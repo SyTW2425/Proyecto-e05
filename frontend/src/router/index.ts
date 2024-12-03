@@ -7,6 +7,7 @@ import Films from '../views/Films.vue';
 import Profile from '../views/Profile.vue';
 import NotFound from '../components/NotFound.vue';
 import MovieDetail from '../components/MovieDetail.vue';
+import AboutUs from '../components/AboutUs.vue';
 
 const routes = [
   {
@@ -42,6 +43,11 @@ const routes = [
     name: 'MovieDetail',
     component: MovieDetail, // MovieDetail component
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/about-us',
+    name: 'AboutUs',
+    component: AboutUs, // AboutUs page
   },
   {
     path: '/:pathMatch(.*)*',
