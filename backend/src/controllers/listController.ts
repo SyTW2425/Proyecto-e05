@@ -1,11 +1,16 @@
 import { Request, Response } from 'express';
 import { createMovie, getMovieByTMDid } from '../controllers/movieController';
 import { List } from '../models/listModel';
+import mongoose from 'mongoose';
 
 
 export const createListController = async (req: Request, res: Response): Promise<void> => {
   const { name, userId } = req.body;
   try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({ message: 'Invalid userId format' });
+      return;
+    }
     const list = new List({ name, user: userId });
     await list.save();
     res.status(201).json(list);
@@ -16,8 +21,12 @@ export const createListController = async (req: Request, res: Response): Promise
 
 // Get all lists for a user
 export const getUserListsController = async (req: Request, res: Response): Promise<void> => {
-  const { userId } = req.query;
+  const { userId } = req.params;
   try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({ message: 'Invalid userId format' });
+      return;
+    }
     const lists = await List.find({ user: userId }).populate('movies');
     res.status(200).json(lists);
   } catch(error) {
@@ -44,8 +53,12 @@ export const getList = async (req: Request, res: Response): Promise<void> => {
 
 // Delete a list
 export const deleteListController = async (req: Request, res: Response): Promise<void> => {
-  const { listId } = req.query;
+  const { listId } = req.params;
   try {
+    if (!mongoose.Types.ObjectId.isValid(listId)) {
+      res.status(400).json({ message: 'Invalid listId format' });
+      return;
+    }
     await List.findOneAndDelete({ _id: listId });
     res.status(200).json({ message: 'List deleted successfully' });
   } catch(error) {
@@ -58,9 +71,14 @@ export const deleteListController = async (req: Request, res: Response): Promise
 export const addMovieToListController = async (req: Request, res: Response): Promise<void> => {
   const { listId, title, releaseYear, TMDid } = req.body;
   try {
+    if (!mongoose.Types.ObjectId.isValid(listId)) {
+      res.status(400).json({ message: 'Invalid listId format' });
+      return;
+    }
     const list = await List.findOne({ _id: listId });
     if (!list) {
       res.status(404).json({ message: 'List not found' });
+      return;
     }
     let movie = await getMovieByTMDid(TMDid);
     if (!movie) {
@@ -81,9 +99,18 @@ export const addMovieToListController = async (req: Request, res: Response): Pro
 export const removeMovieFromListController = async (req: Request, res: Response): Promise<void> => {
   const { listId, movieId } = req.body;
   try {
+    if (!mongoose.Types.ObjectId.isValid(listId)) {
+      res.status(400).json({ message: 'Invalid listId format' });
+      return;
+    }
+    if (!mongoose.Types.ObjectId.isValid(movieId)) {
+      res.status(400).json({ message: 'Invalid movieId format' });
+      return;
+    }
     const list = await List.findById(listId);
     if (!list) {
       res.status(404).json({ message: 'List not found' });
+      return;
     }
     list.movies = list.movies.filter((movie) => movie.toString() !== movieId);
     await list.save();

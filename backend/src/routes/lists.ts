@@ -8,10 +8,10 @@ import { createListController,
 
 const listRouter = express.Router();
 
-listRouter.post('/create-list', createListController);
+listRouter.post('/create', createListController);
 listRouter.get('/user-lists/:userId', getUserListsController);
-listRouter.delete('/delete-list/:listId', deleteListController);
-listRouter.post('/add-movie-to-list', addMovieToListController);
-listRouter.delete('/remove-movie-from-list', removeMovieFromListController);
+listRouter.delete('/delete/:listId', deleteListController);
+listRouter.post('/add-movie', addMovieToListController);
+listRouter.delete('/remove-movie', removeMovieFromListController);
 
 export default listRouter;
