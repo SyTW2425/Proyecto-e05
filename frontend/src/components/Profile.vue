@@ -42,7 +42,8 @@
             <img :src="review.moviePoster" alt="Movie Poster" class="w-10 h-10 rounded-full object-cover" />
             <div class="flex justify-between w-full">
               <router-link :to="`/movie/${review.movieId}`">
-                <h4 class="text-white text-sm hover:opacity-75 transition-opacity duration-200">{{ review.movieTitle }}</h4>
+                <h4 class="text-white text-sm hover:opacity-75 transition-opacity duration-200">{{ review.movieTitle }}
+                </h4>
               </router-link>
               <button @click="showReviewPopup(review)"
                 class="bg-yellow-500 text-black px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
@@ -93,17 +94,38 @@
       <div>
         <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
         <ul>
-          <li class="flex items-center gap-3 mb-3">
-            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
-            <span>To Watch</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
-            <span>Not Recommended</span>
+          <li v-for="list in lists" :key="list.id" @click="showListMovies(list)"
+            class="flex items-center gap-3 mb-3 cursor-pointer">
+            <!-- Use a Font Awesome icon as the default image or the movie poster if available -->
+            <div v-if="!list.movies?.length"
+              class="w-8 h-8 rounded-full flex justify-center items-center bg-gray-600 text-white">
+              <i class="fas fa-list"></i> <!-- Font Awesome list icon -->
+            </div>
+            <img v-else :src="list.movies[0].moviePoster" alt="List Image" class="w-8 h-8 rounded-full object-cover" />
+            <span>{{ list.name }}</span>
           </li>
         </ul>
       </div>
 
+
+      <!-- Movie List Modal -->
+      <div v-if="showMovieListModal && selectedListMovies.length > 0"
+        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-96">
+          <h3 class="text-2xl text-yellow-500 mb-4">{{ selectedList.name }} Movies</h3>
+          <ul>
+            <li v-for="movie in selectedListMovies" :key="movie.id" class="flex items-center gap-3 mb-3">
+              <img :src="movie.moviePoster || '/default-movie-poster.jpg'" alt="Movie Poster"
+                class="w-10 h-10 rounded-full object-cover" />
+              <span>{{ movie.title }}</span>
+            </li>
+          </ul>
+          <button @click="showMovieListModal = false"
+            class="bg-yellow-500 text-black py-1 px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
+            Close
+          </button>
+        </div>
+      </div>
     </aside>
 
     <!-- Main Feed -->
@@ -188,11 +210,10 @@ export default {
     return {
       showModal: false,
       selectedReview: {},
+      showMovieListModal: false,
+      selectedList: {},
+      selectedListMovies: [],
       images: [],
-      stories: [
-        { id: 1, name: "Lucas", image: "/lucas.png" },
-        { id: 2, name: "David", image: "/david.png" },
-      ],
       posts: [
         {
           id: 1,
@@ -230,6 +251,7 @@ export default {
       ],
       postContent: "",
       reviews: [],
+      lists: [],
     }
   },
 
@@ -259,26 +281,88 @@ export default {
 
         // Assign the updated reviews with movie posters to the data
         this.reviews = reviewsWithImages;
-        console.log(this.reviews);
 
       } catch (error) {
         console.error(error);
       }
     },
+    async fetchLists() {
+      try {
+        const userId = localStorage.getItem("userId");
+        const response = await fetch("http://localhost:5001/api/lists/user-lists/" + userId);
+        const data = await response.json();
 
+        // Fetch movie posters for each list
+        const listsWithImages = await Promise.all(data.map(async (list) => {
+          const moviesWithPosters = await Promise.all(list.movies.map(async (movie) => {
+            const movieResponse = await fetch(`http://localhost:5001/api/moviesdb/movie/${movie.TMDid}/images`);
+            const movieData = await movieResponse.json();
+
+            // Get the poster image or use a default if none found
+            const moviePoster = `https://image.tmdb.org/t/p/w200${movieData.backdrops?.[0]?.file_path || movie.poster || '/default-movie-poster.jpg'}`;
+
+            return {
+              ...movie,
+              moviePoster,
+            };
+          }));
+
+          return {
+            id: list.id,
+            name: list.name,
+            movies: moviesWithPosters, // Updated movies array with posters
+          };
+        }));
+
+        // Assign the updated lists with movie posters
+        this.lists = listsWithImages;
+        console.log(this.lists);
+
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    showListMovies(list) {
+      this.selectedList = list;
+      this.selectedListMovies = list.movies;
+      this.showMovieListModal = true;
+    },
+    async addToList() {
+      try {
+        const response = await fetch(`http://localhost:5001/api/lists/${listId}/add-movie`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            movieId: movieId,
+          }),
+        });
+
+        if (response.ok) {
+          this.fetchLists();
+        } else {
+          console.error("Failed to add movie to list");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     showReviewPopup(review) {
       this.selectedReview = review;
       this.showModal = true;
     },
     closeModal() {
       this.showModal = false;
+      this.showMovieListModal = false;
     },
     submitPost() {
       console.log(this.postContent);
     },
   },
   mounted() {
-    this.fetchReviews()
+    this.fetchReviews();
+    this.fetchLists();
   },
 };
 </script>
