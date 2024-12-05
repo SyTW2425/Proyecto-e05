@@ -1,20 +1,22 @@
 <template>
   <div class="relative bg-custom-background font-[poppins]">
     <!-- Background Image -->
-    <div v-if="movie" class="absolute inset-0 w-full h-[550px] bg-cover bg-center" :style="movieBackgroundStyle"></div>
-    <div v-if="movie" class="absolute inset-0 bg-black opacity-60"></div>
+    <div v-if="movieDetailStore.movie" class="absolute inset-0 w-full h-[550px] bg-cover bg-center"
+      :style="movieDetailStore.movieBackgroundStyle"></div>
+    <div v-if="movieDetailStore.movie" class="absolute inset-0 bg-black opacity-60"></div>
 
     <!-- Movie Detail Content -->
-    <div v-if="movie" class="relative z-10 max-w-5xl mx-auto p-6 rounded-lg text-white">
+    <div v-if="movieDetailStore.movie" class="relative z-10 max-w-5xl mx-auto p-6 rounded-lg text-white">
       <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
         <!-- Movie Poster -->
-        <img :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/default-poster.jpg'"
+        <img
+          :src="movieDetailStore.movie.poster_path ? `https://image.tmdb.org/t/p/w500${movieDetailStore.movie.poster_path}` : '/default-poster.jpg'"
           alt="Movie Poster" class="rounded-lg shadow-lg w-full md:w-1/3 z-10" />
 
         <!-- Movie Info -->
         <div class="flex flex-col gap-4">
           <div class="flex justify-between items-center gap-2">
-            <h1 class="text-2xl md:text-3xl font-bold">{{ movie.title }}</h1>
+            <h1 class="text-2xl md:text-3xl font-bold">{{ movieDetailStore.movie.title }}</h1>
 
             <!-- Average Rating Section -->
             <div class="flex items-center gap-2">
@@ -22,63 +24,75 @@
                 fill="currentColor" aria-hidden="true">
                 <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
               </svg>
-              <span class="text-xl font-bold">{{ movie.vote_average.toFixed(1) }}</span>
+              <span class="text-xl font-bold">{{ movieDetailStore.movie.vote_average.toFixed(1) }}</span>
             </div>
           </div>
           <p class="text-gray-300 text-sm md:text-base">
-            <strong>Release Date:</strong> {{ movie.release_date }}
+            <strong>Release Date:</strong> {{ movieDetailStore.movie.release_date }}
           </p>
           <p class="text-gray-300 text-sm md:text-base">
-            <strong>Genres:</strong> {{ movie.genres.map((g) => g.name).join(", ") }}
+            <strong>Genres:</strong> {{ movieDetailStore.movie.genres.map((g: any) => g.name).join(", ") }}
           </p>
-          <p class="text-gray-200 text-sm md:text-base">{{ movie.overview }}</p>
-
+          <p class="text-gray-200 text-sm md:text-base">{{ movieDetailStore.movie.overview }}</p>
 
           <div class="flex gap-4">
-            <button @click="viewTrailer(movie.id)" class="bg-yellow-500 text-black p-2 rounded-lg">See Trailer</button>
-            <button @click="toggleRatePopup" class="border-2 border-white text-yellow-500 p-2 rounded-lg">
+            <button @click="movieDetailStore.viewTrailer(movieDetailStore.movie.id)"
+              class="bg-yellow-500 text-black p-2 rounded-lg">See Trailer</button>
+            <button @click="reviewStore.toggleRateAndSetReviewMovieId"
+              class="border-2 border-white text-yellow-500 p-2 rounded-lg">
               Rate
             </button>
-            <button @click="toggleDropdown"
-              class="bg-green-500 text-white p-3 px-6 rounded-lg transition ease-in-out duration-150 transform hover:bg-green600 focus:outline-none focus:ring-2 focus:ring-green-400">
-              Add to List
-            </button>
 
-            <div v-if="isDropdownOpen" class="dropdown">
-              <ul>
-                <li v-for="list in userLists" :key="list._id">
-                  <button @click="selectList(list._id)">
-                    {{ list.name }}
-                  </button>
-                </li>
-              </ul>
+
+            <div class="relative inline-block">
+              <!-- Add to List Button -->
+              <button @click="movieDetailStore.toggleDropdown"
+                class="bg-green-500 text-white py-2 px-4 rounded-lg transition ease-in-out duration-150 transform hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">
+                Add to List
+              </button>
+
+              <!-- Dropdown -->
+              <div v-if="movieDetailStore.isDropdownOpen"
+                class="absolute top-0 left-full ml-2 mt-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg transition ease-in-out duration-150 transform">
+                <ul class="py-1">
+                  <li v-for="list in listStore.lists" :key="list.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
+                    <button
+                      @click="() => listStore.selectList(list.id, movieDetailStore.movie, () => movieDetailStore.isDropdownOpen = false)"
+                      class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      {{ list.name }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
 
 
-            <div v-if="openRatePopup"
+            <div v-if="movieDetailStore.openRatePopup"
               class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
 
               <div class="bg-gray-800 text-white p-6 rounded-lg max-w-sm w-full">
-                <h2 class="text-xl font-bold mb-4">Rate: {{ movie.title }}</h2>
+                <h2 class="text-xl font-bold mb-4">Rate: {{ movieDetailStore.movie.title }}</h2>
 
                 <!-- Review Input -->
-                <textarea v-model="userReview" placeholder="Write your review here..."
+                <textarea v-model="reviewStore.newReviewContent" placeholder="Write your review here..."
                   class="w-full h-24 p-2 rounded-lg bg-gray-900 text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500"></textarea>
+
 
                 <!-- Rating Input -->
                 <div class="mt-4">
                   <label for="rating" class="block mb-2">Your Rating:</label>
-                  <select v-model="userRating" id="rating" class="w-full p-2 rounded-lg bg-gray-900 text-gray-200">
+                  <select v-model="reviewStore.newReviewRating" id="rating"
+                    class="w-full p-2 rounded-lg bg-gray-900 text-gray-200">
                     <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
                   </select>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex justify-end gap-4 mt-6">
-                  <button @click="submitReview" class="bg-yellow-500 text-black px-4 py-2 rounded-lg">
+                  <button @click="reviewStore.handleSubmit" class="bg-yellow-500 text-black px-4 py-2 rounded-lg">
                     Submit
                   </button>
-                  <button @click="closeRatePopup" class="bg-gray-600 px-4 py-2 rounded-lg">
+                  <button @click="movieDetailStore.closeRatePopup" class="bg-gray-600 px-4 py-2 rounded-lg">
                     Cancel
                   </button>
                 </div>
@@ -88,11 +102,12 @@
         </div>
       </div>
 
-      <!-- Reviews Section (SE CAMBIARA POR LA DE LOS USUARIOS ALMACENADOS) -->
-      <div v-if="reviews.length" class="mt-14">
+      <!-- Reviews Section -->
+      <div v-if="movieDetailStore.reviews.length" class="mt-14">
         <h2 class="text-xl font-bold mb-4">Reviews</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
-          <div v-for="review in reviews.slice(0, 6)" :key="review.id" class="flex-none w-64 p-4 bg-gray-800 rounded-lg">
+          <div v-for="review in movieDetailStore.reviews.slice(0, 6)" :key="review.id"
+            class="flex-none w-64 p-4 bg-gray-800 rounded-lg">
             <h3 class="text-lg font-bold">{{ review.author }}</h3>
             <p class="text-gray-300 mt-2">
               {{ review.content.slice(0, 100) }}...
@@ -103,10 +118,10 @@
       </div>
 
       <!-- Cast Section -->
-      <div v-if="cast.length" class="mt-6">
+      <div v-if="movieDetailStore.cast.length" class="mt-6">
         <h2 class="text-xl font-bold">Cast</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-4">
-          <div v-for="actor in cast.slice(0, 10)" :key="actor.id" class="text-center">
+          <div v-for="actor in movieDetailStore.cast.slice(0, 10)" :key="actor.id" class="text-center">
             <img
               :src="actor.profile_path ? `https://image.tmdb.org/t/p/w200${actor.profile_path}` : '/default-profile.png'"
               alt="Actor Photo" class="rounded-lg shadow-md" />
@@ -117,32 +132,32 @@
 
 
       <!-- Videos Section -->
-      <div v-if="videos.length" class="mt-6">
+      <div v-if="movieDetailStore.videos.length" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Videos</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
-          <div v-for="video in videos" :key="video.key" class="flex-none w-64">
+          <div v-for="video in movieDetailStore.videos" :key="video.key" class="flex-none w-64">
             <img :src="`https://img.youtube.com/vi/${video.key}/0.jpg`" alt="Video Thumbnail"
-              class="rounded-lg shadow-md cursor-pointer" @click="viewVideo(video.key)" />
+              class="rounded-lg shadow-md cursor-pointer" @click="movieDetailStore.viewVideo(video.key)" />
           </div>
         </div>
       </div>
 
 
       <!-- Images Section -->
-      <div v-if="images.backdrops" class="mt-6">
+      <div v-if="movieDetailStore.images.backdrops" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Images</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
-          <div v-for="image in images.backdrops" :key="image.file_path" class="flex-none w-64">
+          <div v-for="image in movieDetailStore.images.backdrops" :key="image.file_path" class="flex-none w-64">
             <img :src="`https://image.tmdb.org/t/p/w500${image.file_path}`" alt="Movie Image"
-              class="rounded-lg shadow-md cursor-pointer" @click="viewImage(image.file_path)" />
+              class="rounded-lg shadow-md cursor-pointer" @click="movieDetailStore.viewImage(image.file_path)" />
           </div>
         </div>
       </div>
 
       <!-- Image Modal -->
-      <div v-if="showImageModal" class="modal" @click.self="closeImageModal">
+      <div v-if="movieDetailStore.showImageModal" class="modal" @click.self="movieDetailStore.closeImageModal">
         <div class="modal-content">
-          <img :src="`https://image.tmdb.org/t/p/original${selectedImagePath}`" alt="Movie Image"
+          <img :src="`https://image.tmdb.org/t/p/original${movieDetailStore.selectedImagePath}`" alt="Movie Image"
             class="w-full h-auto" />
         </div>
       </div>
@@ -150,17 +165,18 @@
 
 
       <!-- Similar Movies -->
-      <div v-if="similarMovies.length" class="mt-6">
+      <div v-if="movieDetailStore.similarMovies.length" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Similar Movies</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
-          <div v-for="movie in similarMovies.slice(0, 10)" :key="movie.id" class="flex-none w-40 text-center">
+          <div v-for="movie in movieDetailStore.similarMovies.slice(0, 10)" :key="movie.id"
+            class="flex-none w-40 text-center">
             <router-link :to="`/movie/${movie.id}`">
               <img
                 :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : '/default-poster.jpg'"
                 alt="Movie Poster" :class="{
                   'w-full rounded-md shadow-lg hover:scale-105 transition-transform': true,
-                  'h-[240px]': !movie.poster_path,  // Increase height if no poster path
-                  'h-auto': movie.poster_path        // Auto height if there's a poster path
+                  'h-[240px]': !movie.poster_path,
+                  'h-auto': movie.poster_path
                 }" />
             </router-link>
             <p class="text-gray-300 mt-2">{{ movie.title }}</p>
@@ -171,9 +187,10 @@
 
 
     <!-- Trailer Modal -->
-    <div v-if="showModal" class="modal" @click.self="closeModal">
+    <div v-if="movieDetailStore.showModal" class="modal" @click.self="movieDetailStore.closeModal">
       <div class="modal-content">
-        <iframe :src="`https://www.youtube.com/embed/${trailerKey}`" title="YouTube video player" frameborder="0"
+        <iframe :src="`https://www.youtube.com/embed/${movieDetailStore.trailerKey}`" title="YouTube video player"
+          frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
       </div>
@@ -181,242 +198,32 @@
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import { useUserStore } from "../stores/userStore";
-import { useAlertStore } from "../stores/alert";
+<script setup lang="ts">
+import { onMounted, watch } from "vue";
+import { useListStore } from "../stores/listsStore";
+import { useMovieDetailStore } from "../stores/movieDetailStore";
+import { useRoute } from "vue-router";
+import { useReviewStore } from "../stores/reviewStore";
 
-export default {
-  data() {
-    return {
-      movie: null,
-      cast: [],
-      similarMovies: [],
-      reviews: [],
-      images: [],
-      videos: [],
-      showModal: false,
-      trailerKey: "",
-      selectedImagePath: "",
-      showImageModal: false,
-      movieBackgroundStyle: {
-        backgroundImage: "none",
-        backgroundColor: "bg-custom-background",
-      },
-      isDropdownOpen: false,
-      openRatePopup: false,
-      userReview: "",
-      userRating: null,
-      reviewForm: {
-        title: "",
-        body: "",
-        rating: 0,
-      },
-      userLists: [],
-      selectedListId: null,
-    };
-  },
-  methods: {
-    async fetchMovieData() {
-      const movieId = this.$route.params.id;
-      try {
-        const { data: movie } = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}`
-        );
-        this.movie = movie;
 
-        const { data: credits } = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}/credits`
-        );
-        this.cast = credits.cast;
+const route = useRoute();
+const listStore = useListStore();
+const movieDetailStore = useMovieDetailStore();
+const reviewStore = useReviewStore();
 
-        // Fetch movie images for background
-        const { data: images } = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}/images`
-        );
-        this.images = images;
+const movieId = route.params.id;
 
-        // get videos
-        const { data: videos } = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}/videos`
-        );
-        this.videos = videos.results;
 
-        if (images.backdrops.length) {
-          const backdrop = images.backdrops[0].file_path;
-          this.movieBackgroundStyle = {
-            backgroundImage: `url(https://image.tmdb.org/t/p/original${backdrop})`,
-            backgroundSize: "cover", // Ensures the background spans the width
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          };
-        } else {
-          this.movieBackgroundStyle.backgroundImage =
-            "linear-gradient(to right, #0b101a, #1a2b3f)";
-        }
+watch(() => route.params.id, (newId) => {
+  movieDetailStore.fetchMovieData(newId);
+});
 
-        const { data: similarMovies } = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}/similar`
-        );
-        this.similarMovies = similarMovies || [];
+onMounted(() => {
+  movieDetailStore.fetchMovieData(movieId);
+  listStore.fetchLists();
 
-        // Fetch movie reviews
-        const { data: reviews } = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}/reviews`
-        );
-        this.reviews = reviews.results || [];
-
-      } catch (error) {
-        console.error("Error fetching movie data:", error);
-      }
-    },
-    async fetchLists() {
-      try {
-        const userId = localStorage.getItem("userId");
-        const response = await fetch("http://localhost:5001/api/lists/user-lists/" + userId);
-        const data = await response.json();
-
-        // get user list
-        this.userLists = data;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    selectList(listId) {
-      this.selectedListId = listId;
-      console.log("Selected list ID:", listId);
-      this.isDropdownOpen = false;
-
-      this.addToList();
-    },
-    toggleRatePopup() {
-      this.openRatePopup = !this.openRatePopup;
-    },
-    closeRatePopup() {
-      this.openRatePopup = false;
-      this.userReview = "";
-      this.userRating = 0;
-    },
-    async submitReview() {
-      const alertStore = useAlertStore();
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          alertStore.error("You must be logged in to submit a review.");
-          return;
-        }
-
-        const userId = localStorage.getItem("userId");
-        if (!userId) {
-          alertStore.error("User ID not found.");
-          return;
-        }
-
-        const reviewData = {
-          title: this.movie.title,
-          body: this.userReview,
-          rating: this.userRating,
-          userId: userId,
-          movieId: this.movie.id,
-        };
-
-        await axios.post('http://localhost:5001/api/reviews/add-review', reviewData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        alertStore.success("Review submitted successfully.");
-        this.closeRatePopup();
-      } catch (error) {
-        console.error("Error submitting review:", error);
-        alertStore.error("Failed to submit review.");
-      }
-    },
-    async viewImage(imagePath) {
-      this.selectedImagePath = imagePath;
-      this.showImageModal = true;
-    },
-
-    async viewVideo(videoKey) {
-      this.showModal = true;
-      this.trailerKey = videoKey;
-    },
-    async viewTrailer(movieId) {
-      try {
-        const response = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}/trailers`
-        );
-        const trailers = response.data;
-        if (trailers.length > 0) {
-          const trailerKey = trailers[0].key;
-          this.showModal = true;
-          this.trailerKey = trailerKey;
-        } else {
-          alert('No trailers available for this movie.');
-        }
-      } catch (error) {
-        console.error('Error fetching trailer:', error);
-        alert('Failed to fetch trailer.');
-      }
-    },
-    rateMovie(movieId) {
-      alert(`Rated movie with ID: ${movieId}`);
-    },
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
-    },
-    async addToList() {
-      if (!this.selectedListId) {
-        const alertStore = useAlertStore();
-        alertStore.error("Please select a list to add the movie to.");
-        return;
-      }
-
-      console.log("FILM: ", this.movie);
-
-      try {
-        const response = await fetch(`http://localhost:5001/api/lists/add-movie`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            listId: this.selectedListId,
-            title: this.movie.title,
-            releaseYear: this.movie.release_date.split("-")[0],
-            TMDid: this.movie.id,
-          }),
-        });
-
-        if (response.ok) {
-          this.fetchLists();
-        } else {
-          console.error("Failed to add movie to list");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    closeModal() {
-      this.showModal = false;
-    },
-    closeImageModal() {
-      this.showImageModal = false;
-    },
-  },
-  mounted() {
-    this.fetchMovieData();
-    this.fetchLists();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  },
-  watch: {
-    '$route.params.id': function () {
-      this.fetchMovieData();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    },
-  }
-};
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 </script>
 
 <style scoped>
