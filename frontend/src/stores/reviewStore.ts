@@ -112,7 +112,7 @@ export const useReviewStore = defineStore('reviews', {
         useAlertStore().error('Failed to create review');
       }
     },
-    removeReview(reviewId: any) {
+    removeReview(reviewId) {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -136,7 +136,7 @@ export const useReviewStore = defineStore('reviews', {
 
             // Remove the deleted review from the local reviews state using _id
             this.reviews = this.reviews.filter(
-              (review) => review._id !== reviewId._id, // Correct comparison
+              (review) => review._id !== reviewId._id, // Corrected comparison to use _id
             );
 
             useAlertStore().success('Review deleted successfully');
