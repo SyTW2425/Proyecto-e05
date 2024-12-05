@@ -371,10 +371,18 @@ export default {
       }
     },
     async deleteMovie(listId, movieId) {
+    console.log(listId, movieId);
       try {
         // Send delete request to the server
-        await fetch(`http://localhost:5001/api/lists/${listId}/movie/${movieId}`, {
+        await fetch(`http://localhost:5001/api/lists/remove-movie/`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            listId,
+            movieId,
+          }),
         });
 
         // Update local state
