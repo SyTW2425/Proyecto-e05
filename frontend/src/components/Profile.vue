@@ -160,7 +160,9 @@
             <li v-for="movie in listsStore.selectedListMovies" :key="movie._id" class="flex items-center gap-3 mb-3">
               <img :src="movie.moviePoster || '/default-movie-poster.jpg'" alt="Movie Poster"
                 class="w-10 h-10 rounded-full object-cover" />
-              <span class="flex-1">{{ movie.title }}</span>
+              <router-link :to="`/movie/${movie.TMDid}`">
+                <span class="flex-1">{{ movie.title }}</span>
+              </router-link>
               <button @click.stop="listsStore.deleteMovie(listsStore.selectedList.id, movie._id)"
                 class="bg-red-500 text-white py-1 px-3 text-xs rounded-lg hover:bg-red-400 transition duration-200">
                 Delete
@@ -255,6 +257,7 @@
 import { onMounted } from "vue";
 import { useListStore } from "../stores/listsStore";
 import { useReviewStore } from "../stores/reviewStore";
+import router from "../router";
 
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
