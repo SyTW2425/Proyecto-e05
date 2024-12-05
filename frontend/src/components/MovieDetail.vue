@@ -44,9 +44,20 @@
               Add to List
             </button>
 
+            <div v-if="isDropdownOpen" class="dropdown">
+              <ul>
+                <li v-for="list in userLists" :key="list._id">
+                  <button @click="selectList(list._id)">
+                    {{ list.name }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+
             <div v-if="openRatePopup"
               class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-              
+
               <div class="bg-gray-800 text-white p-6 rounded-lg max-w-sm w-full">
                 <h2 class="text-xl font-bold mb-4">Rate: {{ movie.title }}</h2>
 
@@ -72,17 +83,6 @@
                   </button>
                 </div>
               </div>
-            </div>
-
-            <div v-if="isDropdownOpen"
-              class="absolute mt-2 ml-80 w-48 bg-[#1a2b3f] border border-gray-200 rounded-lg shadow-lg z-10 transition-opacity opacity-0 animate-fadeIn">
-              <ul class="py-2">
-                <li v-for="list in userLists" :key="list.id"
-                  class="px-4 py-2 hover:bg-[#2a3a50] cursor-pointer transition-colors ease-in-out duration-150"
-                  @click="addToList(list)">
-                  {{ list.name }}
-                </li>
-              </ul>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@
 
 
       <!-- Images Section -->
-      <div v-if="images.backdrops.length" class="mt-6">
+      <div v-if="images.backdrops" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Images</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="image in images.backdrops" :key="image.file_path" class="flex-none w-64">
@@ -204,7 +204,6 @@ export default {
         backgroundColor: "bg-custom-background",
       },
       isDropdownOpen: false,
-      // isRatePopupOpen: false,
       openRatePopup: false,
       userReview: "",
       userRating: null,
@@ -213,11 +212,8 @@ export default {
         body: "",
         rating: 0,
       },
-      userLists: [
-        { id: 1, name: "Watchlist" },
-        { id: 2, name: "Favorites" },
-        { id: 3, name: "Watched" },
-      ],
+      userLists: [],
+      selectedListId: null,
     };
   },
   methods: {
@@ -274,6 +270,25 @@ export default {
         console.error("Error fetching movie data:", error);
       }
     },
+    async fetchLists() {
+      try {
+        const userId = localStorage.getItem("userId");
+        const response = await fetch("http://localhost:5001/api/lists/user-lists/" + userId);
+        const data = await response.json();
+
+        // get user list
+        this.userLists = data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    selectList(listId) {
+      this.selectedListId = listId;
+      console.log("Selected list ID:", listId);
+      this.isDropdownOpen = false;
+
+      this.addToList();
+    },
     toggleRatePopup() {
       this.openRatePopup = !this.openRatePopup;
     },
@@ -297,8 +312,6 @@ export default {
           return;
         }
 
-        console.log("user: ", userId);
-
         const reviewData = {
           title: this.movie.title,
           body: this.userReview,
@@ -307,7 +320,6 @@ export default {
           movieId: this.movie.id,
         };
 
-        console.log("reviewData: ", reviewData);
         await axios.post('http://localhost:5001/api/reviews/add-review', reviewData, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -354,9 +366,37 @@ export default {
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
-    addToList(list) {
-      alert(`Added to ${list.name}`);
-      this.isDropdownOpen = false;
+    async addToList() {
+      if (!this.selectedListId) {
+        const alertStore = useAlertStore();
+        alertStore.error("Please select a list to add the movie to.");
+        return;
+      }
+
+      console.log("FILM: ", this.movie);
+
+      try {
+        const response = await fetch(`http://localhost:5001/api/lists/add-movie`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            listId: this.selectedListId,
+            title: this.movie.title,
+            releaseYear: this.movie.release_date.split("-")[0],
+            TMDid: this.movie.id,
+          }),
+        });
+
+        if (response.ok) {
+          this.fetchLists();
+        } else {
+          console.error("Failed to add movie to list");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
     closeModal() {
       this.showModal = false;
@@ -367,6 +407,7 @@ export default {
   },
   mounted() {
     this.fetchMovieData();
+    this.fetchLists();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
   watch: {

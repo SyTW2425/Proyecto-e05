@@ -326,28 +326,7 @@ export default {
       this.selectedList = list;
       this.selectedListMovies = list.movies;
       this.showMovieListModal = true;
-    },
-    async addToList() {
-      try {
-        const response = await fetch(`http://localhost:5001/api/lists/${listId}/add-movie`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            movieId: movieId,
-          }),
-        });
-
-        if (response.ok) {
-          this.fetchLists();
-        } else {
-          console.error("Failed to add movie to list");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
+    }, 
     showReviewPopup(review) {
       this.selectedReview = review;
       this.showModal = true;
