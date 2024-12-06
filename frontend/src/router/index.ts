@@ -21,7 +21,7 @@ const routes = [
     component: Register, // Register page
   },
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
     component: Home, // Home page
     meta: { requiresAuth: true },
@@ -45,7 +45,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/about-us',
+    path: '/',
     name: 'AboutUs',
     component: AboutUs, // AboutUs page
   },

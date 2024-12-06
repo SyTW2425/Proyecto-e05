@@ -8,9 +8,14 @@
           A social network for movie buffs where you can share your reviews, manage your movie lists and
           discover new content.
         </p>
-        <router-link to="/login">
+        <router-link to="/register">
           <button class="cta-button" aria-label="Únete a CineTrunk">
             Join now
+          </button>
+        </router-link>
+        <router-link to="/login">
+          <button class="cta-button" aria-label="Inicia sesión en CineTrunk">
+            Log in
           </button>
         </router-link>
       </div>
@@ -263,6 +268,7 @@ export default {
 }
 
 .cta-button {
+  margin-right: 1rem;
   background: #ffd700;
   color: #0b101a;
   border: none;
