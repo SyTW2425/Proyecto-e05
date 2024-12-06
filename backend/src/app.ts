@@ -29,7 +29,7 @@ setupSwaggerDocs(app);
 
 // Routers
 app.use('/api/users',  userRouter);
-app.use('api/reviews', reviewRouter);
-app.use('api/lists', listRouter);
-app.use('api/activities', activityRouter);
+app.use('/api/reviews', reviewRouter);
+app.use('/api/lists', listRouter);
+app.use('/api/activities', activityRouter);
 app.use('/api/moviesdb', tmdbRouter);

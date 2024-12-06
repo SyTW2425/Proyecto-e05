@@ -6,6 +6,8 @@ import Register from '../views/Register.vue';
 import Films from '../views/Films.vue';
 import Profile from '../views/Profile.vue';
 import NotFound from '../components/NotFound.vue';
+import MovieDetail from '../components/MovieDetail.vue';
+import AboutUs from '../components/AboutUs.vue';
 
 const routes = [
   {
@@ -19,7 +21,7 @@ const routes = [
     component: Register, // Register page
   },
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
     component: Home, // Home page
     meta: { requiresAuth: true },
@@ -35,14 +37,23 @@ const routes = [
     name: 'Profile',
     component: Profile, // User Profile page
     meta: { requiresAuth: true },
-
+  },
+  {
+    path: '/movie/:id',
+    name: 'MovieDetail',
+    component: MovieDetail, // MovieDetail component
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/',
+    name: 'AboutUs',
+    component: AboutUs, // AboutUs page
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound, // 404 page
-  }
-
+  },
 ];
 
 const router = createRouter({
@@ -50,8 +61,7 @@ const router = createRouter({
   routes,
 });
 
-
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   const authStore = useAuthStore();
   if (to.meta.requiresAuth && !authStore.token) {
     next('/login');

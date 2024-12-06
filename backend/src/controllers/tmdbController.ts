@@ -93,18 +93,114 @@ export const getGenres = async () => {
   }
 };
 
+// Get movies with specifics genres (one or more genres)
+export const getMoviesByGenres = async (
+  genreIds: number[],
+  page: number = 1,
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/discover/movie`, {
+      params: {
+        with_genres: genreIds.join(','),
+        include_adult: false,
+        page: page,
+      },
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movies by genre:', error);
+    throw error;
+  }
+};
+
 // Get movie trailers
 export const getMovieTrailers = async (movieId: number) => {
   try {
     const response = await axios.get(`${BASE_URL}/movie/${movieId}/videos`, {
+      params: {
+        language: 'en-US',
+      },
       headers: getAuthHeaders(),
     });
+    console.log("response: ", response.data);
     const trailers = response.data.results.filter(
       (video: any) => video.type === 'Trailer',
     );
+    console.log("trailer: ", trailers);
     return trailers;
   } catch (error) {
     console.error('Error fetching movie trailers:', error);
+    throw error;
+  }
+};
+
+// Get cast and crew
+export const getMovieCredits = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/credits`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie credits:', error);
+    throw error;
+  }
+};
+
+// Get movie images
+export const getMovieImages = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/images`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie images:', error);
+    throw error;
+  }
+};
+
+export const getMovieReviews = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/reviews`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie reviews:', error);
+    throw error;
+  }
+};
+
+// get similar movies
+export const getSimilarMovies = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/similar`, {
+      headers: getAuthHeaders(),
+    });
+
+    // Sort movies by release date (newest first)
+    const sortedMovies = response.data.results.sort(
+      (a: { release_date: string }, b: { release_date: string }) =>
+        new Date(b.release_date).getTime() - new Date(a.release_date).getTime(),
+    );
+
+    return sortedMovies;
+  } catch (error) {
+    console.error('Error fetching similar movies:', error);
+    throw error;
+  }
+};
+
+export const getMovieVideos = async (movieId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/videos`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie videos:', error);
     throw error;
   }
 };

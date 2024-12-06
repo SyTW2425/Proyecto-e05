@@ -1,30 +1,49 @@
 <template>
   <div class="bg-custom-background min-h-screen p-8">
     <!-- Search Bar -->
-    <div class="flex justify-center items-center gap-4 mb-8">
+    <div class="flex justify-center items-center gap-4 mt-6 mb-8">
       <input v-model="searchQuery" type="text" placeholder="Search for a movie..."
         class="w-3/4 md:w-1/3 px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 text-sm font-[poppins]"
         @input="handleSearch" />
     </div>
 
     <!-- Category Buttons -->
-    <div class="flex justify-center gap-1 mb-6 flex-wrap">
+    <div class="flex justify-center gap-2 mb-6 flex-wrap items-center">
       <button v-for="genre in genres" :key="genre.id" @click="toggleCategory(genre.id)"
         class="px-4 py-2 rounded-lg text-white font-poppins hover:bg-yellow-400 transition-all duration-200"
         :class="selectedGenres.includes(genre.id) ? 'bg-yellow-500' : 'bg-gray-700 hover:bg-gray-600'">
         {{ genre.name }}
+      </button>
+
+      <!-- Clear Filters Button -->
+      <button v-if="selectedGenres.length > 0 || searchQuery.trim() !== ''" @click="clearFilters"
+        class="px-4 py-2 rounded-lg bg-red-600 text-white font-poppins hover:bg-red-500 transition-all duration-200">
+        Clear
       </button>
     </div>
 
     <!-- Movies Grid -->
     <div v-if="movies.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
       <div v-for="movie in movies" :key="movie.id" class="text-center">
-        <img
-          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '../src/assets/image/no-image.svg'"
-          alt="Movie Poster" class="w-full rounded-md shadow-lg hover:scale-105 transition-transform" />
-        <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
-        <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
-        <p class="text-yellow-400 font-bold">⭐ {{ movie.vote_average.toFixed(1) || 'N/A' }}</p>
+        <router-link :to="`/movie/${movie.id}`">
+          <img :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/default-poster.jpg'"
+            alt="Movie Poster" :class="{
+              'w-full rounded-md shadow-lg hover:scale-105 transition-transform': true,
+              'h-[331px]': !movie.poster_path,
+              'h-auto': movie.poster_path
+            }" />
+          <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
+          <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
+
+          <!-- Average Rating Section -->
+          <div class="flex items-center gap-2 justify-center">
+            <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="currentColor" aria-hidden="true">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+            </svg>
+            <span class="text-xl text-white font-bold">{{ movie.vote_average.toFixed(1) || 'N/A' }}</span>
+          </div>
+        </router-link>
       </div>
     </div>
 
@@ -106,26 +125,30 @@ export default defineComponent({
       this.loading = true;
       this.error = "";
       try {
-        // Determine whether to fetch most popular movies or search results
         const isSearchMode = this.searchQuery.trim().length > 0;
-        const endpoint = isSearchMode
-          ? "http://localhost:5001/api/moviesdb/search"
-          : "http://localhost:5001/api/moviesdb/search-popular";
 
-        const params = isSearchMode
-          ? { query: this.searchQuery, page: this.currentPage }
-          : { page: this.currentPage };
+        let endpoint: string;
+        let params: Record<string, any> = { page: this.currentPage };
 
+        // Decide the endpoint and parameters
+        if (isSearchMode) {
+          endpoint = "http://localhost:5001/api/moviesdb/search";
+          params.query = this.searchQuery;
+        } else if (this.selectedGenres.length > 0) {
+          endpoint = "http://localhost:5001/api/moviesdb/movies-by-genres";
+          params.genres = this.selectedGenres.join(",");
+        } else {
+          endpoint = "http://localhost:5001/api/moviesdb/search-popular";
+        }
+
+        // Fetch data from the endpoint
         const response = await axios.get<{
           results: Movie[];
           page: number;
           total_pages: number;
         }>(endpoint, { params });
 
-        // Update total pages
-        this.totalPages = response.data.total_pages;
-
-        // Update movies and pagination details
+        // Update movies and pagination
         this.movies = response.data.results.map((movie: Movie) => ({
           id: movie.id,
           title: movie.title,
@@ -133,6 +156,7 @@ export default defineComponent({
           release_date: movie.release_date,
           vote_average: movie.vote_average,
         }));
+
         this.totalPages = response.data.total_pages;
       } catch (err) {
         console.error("Error fetching movies:", err);
@@ -141,43 +165,74 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
+
     toggleCategory(genreId: number) {
       const index = this.selectedGenres.indexOf(genreId);
       if (index === -1) {
-        this.selectedGenres.push(genreId); // Add if not already selected
+        this.selectedGenres.push(genreId);
       } else {
-        this.selectedGenres.splice(index, 1); // Remove if already selected
+        this.selectedGenres.splice(index, 1);
       }
-      this.currentPage = 1; // Reset pagination when genre selection changes
-      this.fetchMovies(); // Refetch movies with updated genres
+      this.updateQueryParams();
+      this.fetchMovies();
     },
     handleSearch() {
       this.currentPage = 1;
+      this.updateQueryParams();
       this.fetchMovies();
     },
     changePage(page: number) {
       this.currentPage = page;
+      this.updateQueryParams();
       this.fetchMovies();
+    },
+    clearFilters() {
+      this.searchQuery = "";
+      this.selectedGenres = [];
+      this.currentPage = 1;
+      this.updateQueryParams();
+      this.fetchMovies();
+    },
+    updateQueryParams() {
+      this.$router.push({
+        path: this.$route.path,
+        query: {
+          page: this.currentPage.toString(),
+          genres: this.selectedGenres.join(","),
+          query: this.searchQuery.trim() || undefined, // Remove `query` if empty
+        },
+      });
     },
   },
   watch: {
-    searchQuery(newQuery) {
-      if (!newQuery.trim()) {
-        this.fetchMovies();
-      } else {
-        this.currentPage = 1;
-        this.fetchMovies();
-      }
+    '$route.query'(newQuery) {
+      this.currentPage = parseInt(newQuery.page as string, 10) || 1;
+      this.selectedGenres = newQuery.genres
+        ? (newQuery.genres as string).split(",").map((id) => parseInt(id.trim(), 10))
+        : [];
+      this.searchQuery = newQuery.query ? (newQuery.query as string) : "";
+
+      this.fetchMovies();
     },
   },
   mounted() {
-    this.fetchGenres(); // Fetch genres on mount
-    this.fetchMovies(); // Fetch movies on mount
-  },
+    // Extract state from query parameters
+    const { page, genres, query } = this.$route.query;
+
+    this.currentPage = parseInt(page as string, 10) || 1;
+    this.selectedGenres = genres
+      ? (genres as string).split(",").map((id) => parseInt(id.trim(), 10))
+      : [];
+    this.searchQuery = query ? (query as string) : "";
+
+    this.fetchGenres();
+    this.fetchMovies();
+  }
 });
 </script>
+
 
 <style scoped>
 .bg-custom-background {
@@ -200,6 +255,5 @@ input {
 
 button {
   margin: 0.5rem;
-  /* Adds spacing between buttons */
 }
 </style>

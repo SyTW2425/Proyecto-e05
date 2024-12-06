@@ -37,6 +37,7 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.10.0",
+    "mongodb-memory-server": "^10.1.2",
     "mongoose": "^8.8.1",
     "pinia": "^2.2.6",
     "pinia-plugin-persistedstate": "^4.1.3",

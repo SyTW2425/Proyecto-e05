@@ -1,35 +1,38 @@
 <template>
   <div class="carousel">
     <div class="list">
-      <div v-for="(item, index) in items" :key="index" class="item"
+      <div v-for="(item, index) in carouselStore.items" :key="index" class="item"
         :style="{ backgroundImage: `url(${item.poster_path})` }">
         <div class="content">
           <div class="title">{{ item.title }}</div>
-          <!-- Truncated Overview -->
           <div class="des">
-            {{ truncateOverview(item.overview) }}
+            {{ carouselStore.truncateOverview(item.overview) }}
             <span v-if="item.overview.length > 150">
-              <a :href="`/movie/${item.title}`" class="text-yellow-500">See more</a>
             </span>
+            <router-link :to="`/movie/${item.id}`" class="text-yellow-500">See more</router-link>
           </div>
           <div class="btn">
-            <button @click="viewTrailer(item.id)">See Trailer</button>
-            <button>Rate</button>
+            <button @click="handleViewTrailer(item)">See Trailer</button>
+            <router-link :to="`/movie/${item.id}`" class="no-hover">
+              <button id="view-details" class="transition duration-300 ease-in-out">
+                View Details
+              </button>
+            </router-link>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Next/Prev Buttons -->
     <div class="arrows">
       <button class="prev" @click="showSlider('prev')">
         <</button>
           <button class="next" @click="showSlider('next')">></button>
     </div>
 
-    <div v-if="showModal" class="modal" @click.self="closeModal">
+    <div v-if="movieDetailStore.showModal" class="modal" @click.self="movieDetailStore.closeModal">
       <div class="modal-content">
-        <iframe :src="`https://www.youtube.com/embed/${trailerKey}`" title="YouTube video player" frameborder="0"
+        <iframe :src="`https://www.youtube.com/embed/${movieDetailStore.trailerKey}`" title="YouTube video player"
+          frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
       </div>
@@ -38,96 +41,49 @@
 
 </template>
 
-<script>
-import axios from 'axios';
+<script lang="ts">
+import { defineComponent, onMounted } from 'vue';
+import { useCarouselStore } from '../stores/carouselStore';
+import { useMovieDetailStore } from '../stores/movieDetailStore';
 
-export default {
-  data() {
-    return {
-      items: [],
-      timeRunning: 3000,
-      showModal: false,
-      trailerKey: '',
+
+export default defineComponent({
+  setup() {
+    const carouselStore = useCarouselStore();
+    const movieDetailStore = useMovieDetailStore();
+
+    onMounted(() => {
+      carouselStore.fetchNowPlayingMovies();
+    });
+
+    const handleViewTrailer = async (item: any) => {
+      await movieDetailStore.viewTrailer(item.id);
+
     };
-  },
-  computed: {
-    // Truncate overview text to a maximum of 150 characters
-    truncateOverview() {
-      return (overview) => {
-        const maxLength = 150;
-        if (overview.length > maxLength) {
-          return overview.substring(0, maxLength) + '...';
-        }
-        return overview;
-      };
-    },
-  },
-  methods: {
-    showSlider(type) {
-      const list = this.$el.querySelector(".list");
-      const sliderItems = list.querySelectorAll(".item");
-      const carousel = this.$el.querySelector(".carousel");
 
-      if (type === "next") {
+    const showSlider = (type: string) => {
+      const list = document.querySelector('.list') as HTMLElement;
+      const sliderItems = list.querySelectorAll('.item') as NodeListOf<HTMLElement>;
+      const carousel = document.querySelector('.carousel') as HTMLElement;
+
+      if (type === 'next') {
         list.appendChild(sliderItems[0]);
-        carousel.classList.add("next");
+        carousel.classList.add('next');
       } else {
         list.prepend(sliderItems[sliderItems.length - 1]);
-        carousel.classList.add("prev");
+        carousel.classList.add('prev');
       }
+    };
 
-      setTimeout(() => {
-        carousel.classList.remove("next");
-        carousel.classList.remove("prev");
-      }, this.timeRunning); 
-    },
-    fetchNowPlayingMovies() {
-      axios
-        .get('http://localhost:5001/api/moviesdb/now-playing?page=1')
-        .then(async response => {
-          const movies = response.data.results.slice(0, 15); // Limit to 15 movies
-          this.items = movies.map(movie => {
-            const imageUrl = `https://image.tmdb.org/t/p/original${movie.poster_path}`;
-            return {
-              id: movie.id,
-              title: movie.title,
-              original_title: movie.original_title,
-              overview: movie.overview,
-              poster_path: imageUrl,
-            };
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching now playing movies:', error);
-        });
-    },
-    async viewTrailer(movieId) {
-      try {
-        const response = await axios.get(
-          `http://localhost:5001/api/moviesdb/movie/${movieId}/trailers`
-        );
-        const trailers = response.data;
-        if (trailers.length > 0) {
-          const trailerKey = trailers[0].key;
-          this.showModal = true;
-          this.trailerKey = trailerKey;
-
-        } else {
-          alert('No trailers available for this movie.');
-        }
-      } catch (error) {
-        console.error('Error fetching trailer:', error);
-        alert('Failed to fetch trailer.');
-      }
-    },
-    closeModal() {
-      this.showModal = false;
-    },
+    return {
+      carouselStore,
+      movieDetailStore,
+      truncateOverview: carouselStore.truncateOverview,
+      showSlider,
+      handleViewTrailer,
+    };
   },
-  mounted() {
-    this.fetchNowPlayingMovies();
-  },
-};
+});
 </script>
 
 
@@ -155,6 +111,16 @@ header {
 }
 
 header nav a {
+  color: #fff;
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  transition: 0.2s;
+  text-decoration: none;
+}
+
+/* make the view-details not have the hover */
+header nav a.view-details {
   color: #fff;
   margin-right: 5px;
   padding: 5px 10px;
@@ -505,6 +471,12 @@ a:hover {
   border-radius: 8px;
 }
 
+.no-hover:hover {
+  background: none;
+  /* Or reset the hover effect you don't want */
+  color: inherit;
+  /* Keep the text color unaffected */
+}
 
 .bg-custom-background {
   background-image: linear-gradient(to right, #0b101a, #1a2b3f);
