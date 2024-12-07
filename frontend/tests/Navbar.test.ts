@@ -44,7 +44,7 @@ describe('Navbar.vue', () => {
   it('renders the navigation links', () => {
     const homeLink = wrapper.find('router-link[to="/"]');
     expect(homeLink.exists()).toBe(true);
-    expect(homeLink.text()).toBe('Home');
+    expect(homeLink.text()).toBe('About us');
 
     const filmsLink = wrapper.find('router-link[to="/films"]');
     expect(filmsLink.exists()).toBe(true);
