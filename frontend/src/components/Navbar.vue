@@ -2,7 +2,7 @@
   <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10">
     <nav class="flex space-x-4 mt-7">
       <!-- Router Links -->
-      <router-link to="/"
+      <router-link to="/home"
         class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200 active:bg-yellow-500">
         Home
       </router-link>
@@ -14,7 +14,7 @@
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         My Activity
       </router-link> -->
-      <router-link to="/about-us"
+      <router-link to="/"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         About us
       </router-link>
