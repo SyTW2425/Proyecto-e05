@@ -1,7 +1,8 @@
 <template>
-  <div class="relative bg-custom-background font-[poppins]">
+  <Navbar />
+  <div class="bg-custom-background font-[poppins]">
     <!-- Background Image -->
-    <div v-if="movieDetailStore.movie" class="absolute inset-0 w-full h-[550px] bg-cover bg-center"
+    <div v-if="movieDetailStore.movie" class="absolute inset-0 w-full h-[570px] bg-cover bg-center"
       :style="movieDetailStore.movieBackgroundStyle"></div>
     <div v-if="movieDetailStore.movie" class="absolute inset-0 bg-black opacity-60"></div>
 
@@ -204,6 +205,7 @@ import { useListStore } from "../stores/listsStore";
 import { useMovieDetailStore } from "../stores/movieDetailStore";
 import { useRoute } from "vue-router";
 import { useReviewStore } from "../stores/reviewStore";
+import Navbar from "./Navbar.vue";
 
 
 const route = useRoute();

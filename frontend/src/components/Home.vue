@@ -185,6 +185,23 @@ a:hover {
   background-size: cover;
   z-index: 100;
   transition: 1s;
+  overflow: hidden;
+}
+
+.carousel .list .item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.carousel .list .item .content {
+  position: relative;
+  z-index: 2;
 }
 
 .item {
