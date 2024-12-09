@@ -196,4 +196,32 @@ userRouter.post('/login', login);
 // Route to create a new user
 userRouter.post('/register', register);
 
+userRouter.put('/profile-picture', async (req: Request, res: Response) => {
+  const { profilePicture } = req.body;
+
+  try {
+    const userId = req.body.userId;
+    const updateUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePicture },
+      { new: true },
+    );
+    res.status(200).json(updateUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update user' });
+  }
+});
+
+userRouter.get('/:userId', async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch user' });
+  }
+});
+
 export default userRouter;
