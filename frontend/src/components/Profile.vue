@@ -10,8 +10,57 @@
           style="background-image: url('/background-pattern.png');"></div>
 
         <!-- Profile Picture -->
-        <div class="relative w-24 h-24 mx-auto flex justify-center items-center mt-8">
-          <img src="/alex.png" alt="User" class="rounded-lg border-2 border-yellow-400" />
+        <div class="relative w-24 h-24 mx-auto flex justify-center items-center mt-8 group">
+          <!-- Avatar Image or Placeholder (Resized and formatted) -->
+          <img :src="userProfilePicture" alt="User"
+            class="w-full h-full object-cover rounded-full border-2 border-yellow-400" />
+
+          <!-- Display button only on hover (default or profile picture set) -->
+          <div v-if="userProfilePicture === '/default-profile.png'"
+            class="absolute top-0 right-0 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button @click="showAvatarModal = true"
+              class="bg-yellow-500 text-black p-2 rounded-full hover:bg-yellow-400 transition duration-200">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+
+          <div v-else
+            class="absolute top-0 right-0 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button @click="showAvatarModal = true"
+              class="bg-yellow-500 text-black p-2 rounded-full hover:bg-yellow-400 transition duration-200">
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Avatar Modal -->
+        <div v-if="showAvatarModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg w-[600px] max-w-full">
+            <h3 class="text-2xl text-yellow-500 mb-6 text-center">Choose Your Profile Picture</h3>
+            <div class="overflow-y-auto h-96"> <!-- Set height and enable vertical scroll -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Adjusted the gap between avatars -->
+                <!-- Avatar Grid -->
+                <div v-for="avatar in avatars" :key="avatar" @click="selectAvatar(avatar)"
+                  class="flex justify-center items-center w-28 h-28 p-2 rounded-lg cursor-pointer overflow-hidden transition-transform transform relative group">
+                  <!-- Increased image size and reduced padding -->
+                  <img :src="avatar" alt="Avatar"
+                    class="object-cover w-full h-full rounded-lg transition-all duration-300 ease-in-out group-hover:scale-110"
+                    :class="{
+                      'border-4 border-yellow-500 scale-105': userProfilePicture === avatar
+                    }" />
+                  <!-- Optional shadow effect on hover -->
+                  <div
+                    class="absolute inset-0 bg-transparent group-hover:shadow-xl rounded-lg transition-shadow duration-300">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button @click="showAvatarModal = false"
+              class="bg-yellow-500 text-black py-2 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-6 w-full sm:w-auto mx-auto block">
+              Cancel
+            </button>
+          </div>
         </div>
 
         <!-- Follower and Following Stats -->
@@ -36,7 +85,7 @@
 
       <!-- Reviews -->
       <div>
-        <h3 class="text-sm text-yellow-500 font-semibold mb-2">Reviews</h3>
+        <h3 class="text-lg text-yellow-500 font-semibold mb-2">Reviews</h3>
         <ul>
           <li v-for="review in reviewStore.reviews" :key="review.id"
             class="flex items-center gap-3 mb-3 cursor-pointer">
@@ -253,18 +302,105 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useListStore } from "../stores/listsStore";
 import { useReviewStore } from "../stores/reviewStore";
-import router from "../router";
+import { useUserStore } from "../stores/userStore";
+import axios from "axios";
 
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
+const userStore = useUserStore();
 
+const userId = localStorage.getItem("userId");
+const userName = ref("");
+const userUsername = ref("");
+const userProfilePicture = ref("");
+
+// Show modal to select avatar
+const showAvatarModal = ref(false);
+
+// List of avatars
+const avatars = ref([
+  "/avatars/avatar1.jpg",
+  "/avatars/avatar2.jpeg",
+  "/avatars/avatar3.jpg",
+  "/avatars/avatar4.png",
+  "/avatars/avatar5.jpg",
+  "/avatars/avatar6.jpeg",
+  "/avatars/avatar7.jpeg",
+  "/avatars/avatar8.jpg",
+  "/avatars/avatar9.png",
+  "/avatars/avatar10.jpeg",
+  "/avatars/avatar11.jpeg",
+  "/avatars/avatar12.jpeg",
+  "/avatars/avatar13.jpeg",
+]);
+
+// Select avatar and store it in localStorage
+const selectAvatar = async (avatar: string) => {
+  try {
+    userProfilePicture.value = avatar;
+    showAvatarModal.value = false;
+
+    // Save the selected avatar to localStorage with userId as key
+    localStorage.setItem(`userAvatar-${userId}`, avatar);
+
+    // Update the avatar in the backend
+    const response = await axios.put("http://localhost:5001/api/users/profile-picture", {
+      profilePicture: avatar,
+      userId: userId,
+    });
+
+    if (response.status === 200) {
+      console.log("Avatar updated successfully.");
+      // Update the user store with the new profile picture
+      if (userStore.user) {
+        userStore.setUser({ ...userStore.user, profilePicture: avatar });
+      }
+    } else {
+      console.error("Failed to update avatar in the backend.");
+    }
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+  }
+};
+
+// On mount, check if there's a stored avatar in localStorage
 onMounted(() => {
-  reviewStore.fetchReviews();
-  listsStore.fetchLists();
+  if (userId) {
+    const storedAvatar = localStorage.getItem(`userAvatar-${userId}`);
+    console.log("Stored Avatar from localStorage: ", storedAvatar); // Debugging line
+
+    if (storedAvatar) {
+      userProfilePicture.value = storedAvatar;
+    } else {
+      axios.get(`http://localhost:5001/api/users/${userId}`)
+        .then(response => {
+          const userData = response.data;
+          console.log("User data fetched from backend: ", userData); // Debugging line
+
+          if (userData.profilePicture) {
+            userProfilePicture.value = userData.profilePicture;
+            localStorage.setItem(`userAvatar-${userId}`, userData.profilePicture);
+            console.log("User Profile Picture: ", userData.profilePicture); // Debugging line
+          } else {
+            userProfilePicture.value = "/default-profile.png";
+          }
+
+          userName.value = userData.name;
+          userUsername.value = userData.username;
+
+          userStore.setUser(userData);
+        })
+        .catch(error => {
+          console.error("Error fetching user data", error);
+        });
+
+    }
+  }
 });
 </script>
 

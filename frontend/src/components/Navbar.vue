@@ -10,10 +10,6 @@
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         Films
       </router-link>
-      <!-- <router-link to="/activity"
-        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        My Activity
-      </router-link> -->
       <router-link to="/"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         About us

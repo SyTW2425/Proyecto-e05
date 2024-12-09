@@ -106,6 +106,9 @@ export const useReviewStore = defineStore('reviews', {
 
         useAlertStore().success('Review created successfully');
         this.fetchReviews();
+        // clear the review form
+        this.newReviewContent = '';
+        this.newReviewRating = 0;
         this.closeModalReview();
       } catch (error) {
         console.error(error);
