@@ -5,6 +5,7 @@ import { useAlertStore } from './alert'; // Import the alert store
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') as string | null,
+    userId: localStorage.getItem('userId') as string | null,
   }),
   actions: {
     async login(username: string, password: string) {
@@ -57,6 +58,7 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.token = null;
       localStorage.removeItem('token');
+      localStorage.removeItem('userId');
       const alertStore = useAlertStore(); // Use the alert store
       alertStore.success('Logged out successfully');
     },

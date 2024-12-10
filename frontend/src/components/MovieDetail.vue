@@ -56,13 +56,21 @@
               <div v-if="movieDetailStore.isDropdownOpen"
                 class="absolute top-0 left-full ml-2 mt-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg transition ease-in-out duration-150 transform">
                 <ul class="py-1">
-                  <li v-for="list in listStore.lists" :key="list.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
-                    <button
-                      @click="() => listStore.selectList(list.id, movieDetailStore.movie, () => movieDetailStore.isDropdownOpen = false)"
-                      class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                      {{ list.name }}
-                    </button>
-                  </li>
+                  <!-- Check if lists exist -->
+                  <template v-if="listStore.lists.length > 0">
+                    <li v-for="list in listStore.lists" :key="list.id"
+                      class="hover:bg-gray-100 focus-within:bg-gray-100">
+                      <button
+                        @click="() => listStore.selectList(list.id, movieDetailStore.movie, () => movieDetailStore.isDropdownOpen = false)"
+                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        {{ list.name }}
+                      </button>
+                    </li>
+                  </template>
+                  <!-- Display message when no lists are available -->
+                  <template v-else>
+                    <li class="text-gray-500 px-4 py-2 text-sm">No lists created</li>
+                  </template>
                 </ul>
               </div>
             </div>

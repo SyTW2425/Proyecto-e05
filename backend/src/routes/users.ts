@@ -213,10 +213,11 @@ userRouter.put('/profile-picture', async (req: Request, res: Response) => {
   }
 });
 
-userRouter.get('/:userId', async (req: Request, res: Response) => {
+userRouter.get('/:id', async (req: Request, res: Response) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.params.id;
     const user = await User.findById(userId);
+    console.log("US: ", user);
     res.json(user);
   } catch (error) {
     console.error(error);

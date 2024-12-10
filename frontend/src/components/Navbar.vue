@@ -10,18 +10,19 @@
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         Films
       </router-link>
-      <router-link to="/"
+      <router-link to="/about-us"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         About us
       </router-link>
 
       <!-- Profile image and Log out -->
       <div class="absolute right-4 top-4 flex items-center space-x-4">
-        <router-link to="/profile" class="profile-link">
+        <router-link :to="`/profile/${userId}`" class="profile-link">
           <div
             class="relative group w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 border-transparent hover:border-yellow-500 transition duration-300">
             <!-- Profile Image -->
-            <img src="/default-profile.png" alt="Profile Picture" class="w-full h-full object-cover" />
+            <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
+              class="w-full h-full object-cover" />
             <!-- Dark Overlay -->
             <div class="absolute inset-0 bg-black bg-opacity-30"></div>
           </div>
@@ -39,24 +40,39 @@
 <script>
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { useUserStore } from '../stores/userStore';
 
 export default {
   name: 'Navbar',
   setup() {
     const router = useRouter();
     const authStore = useAuthStore();
+    const userStore = useUserStore();
+
+    const userId = localStorage.getItem('userId');
 
     const logout = () => {
       authStore.logout();
       router.push({ name: 'LogIn' });
     };
 
+    // Ensure the user profile data is fetched if not already done
+    if (!userStore.user.username) {
+      userStore.fetchUser(userId);
+    }
+
     return {
       logout,
+      userId,
+      userStore,
     };
   },
 };
 </script>
+
+<style scoped>
+/* Your existing styles */
+</style>
 
 <style scoped>
 header {

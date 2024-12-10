@@ -28,23 +28,27 @@ export const useReviewStore = defineStore('reviews', {
     async fetchReviews() {
       try {
         const userId = localStorage.getItem('userId');
+        if (!userId) {
+          useAlertStore().error('User not logged in');
+          return;
+        }
+
         const response = await fetch(
-          'http://localhost:5001/api/reviews/user/reviews?userId=' + userId,
+          `http://localhost:5001/api/reviews/user/reviews?userId=${userId}`
         );
         const data = await response.json();
-
+        
         const reviewsWithImages = await Promise.all(
           data.map(async (review: any) => {
             const movieResponse = await fetch(
-              `http://localhost:5001/api/moviesdb/movie/${review.movie.TMDid}/images`,
+              `http://localhost:5001/api/moviesdb/movie/${review.movie.TMDid}/images`
             );
             const movieData = await movieResponse.json();
 
             const moviePoster = `https://image.tmdb.org/t/p/w200${
-              movieData.backdrops?.[0]?.file_path || '/default-movie-poster.jpg'
+              movieData.backdrops?.[0]?.file_path ||
+              '/default-movie-poster.jpg'
             }`;
-
-            console.log('REV: ', review);
 
             return {
               _id: review._id,
@@ -54,7 +58,7 @@ export const useReviewStore = defineStore('reviews', {
               body: review.body,
               moviePoster,
             };
-          }),
+          })
         );
 
         this.reviews = reviewsWithImages;
@@ -85,8 +89,6 @@ export const useReviewStore = defineStore('reviews', {
           movieId: this.newReviewMovieId,
         };
 
-        console.log('Review data:', reviewData);
-
         const response = await fetch(
           'http://localhost:5001/api/reviews/add-review',
           {
@@ -96,7 +98,7 @@ export const useReviewStore = defineStore('reviews', {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(reviewData),
-          },
+          }
         );
 
         if (!response.ok) {
@@ -104,9 +106,28 @@ export const useReviewStore = defineStore('reviews', {
           return;
         }
 
+        const createdReview = await response.json();
+        const movieResponse = await fetch(
+          `http://localhost:5001/api/moviesdb/movie/${createdReview.movie.TMDid}/images`
+        );
+        const movieData = await movieResponse.json();
+
+        const moviePoster = `https://image.tmdb.org/t/p/w200${
+          movieData.backdrops?.[0]?.file_path || '/default-movie-poster.jpg'
+        }`;
+
+        const newReview = {
+          _id: createdReview._id,
+          movieId: createdReview.movie.TMDid,
+          movieTitle: createdReview.movie.title,
+          rating: createdReview.rating,
+          body: createdReview.body,
+          moviePoster,
+        };
+
+        this.reviews.push(newReview); // Directly add the new review to the state
+
         useAlertStore().success('Review created successfully');
-        this.fetchReviews();
-        // clear the review form
         this.newReviewContent = '';
         this.newReviewRating = 0;
         this.closeModalReview();
@@ -115,15 +136,13 @@ export const useReviewStore = defineStore('reviews', {
         useAlertStore().error('Failed to create review');
       }
     },
-    removeReview(reviewId) {
+    removeReview(reviewId: any) {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
           useAlertStore().error('You must be logged in to delete a review');
           return;
         }
-
-        console.log('Deleting review:', reviewId._id);
 
         fetch(`http://localhost:5001/api/reviews/review/${reviewId._id}`, {
           method: 'DELETE',
@@ -137,11 +156,9 @@ export const useReviewStore = defineStore('reviews', {
               return;
             }
 
-            // Remove the deleted review from the local reviews state using _id
             this.reviews = this.reviews.filter(
-              (review) => review._id !== reviewId._id, // Corrected comparison to use _id
+              (review) => review._id !== reviewId._id
             );
-
             useAlertStore().success('Review deleted successfully');
           })
           .catch((error) => {

@@ -7,23 +7,20 @@
       <div class="bg-gray-700 p-6 rounded-lg text-center relative overflow-hidden">
         <!-- Background Image -->
         <div class="absolute top-0 left-0 w-full h-20 bg-cover bg-center"
-          style="background-image: url('/background-pattern.png');"></div>
+          :style="{ backgroundImage: 'url(/background-pattern.png)' }"></div>
 
         <!-- Profile Picture -->
         <div class="relative w-24 h-24 mx-auto flex justify-center items-center mt-8 group">
-          <!-- Avatar Image or Placeholder (Resized and formatted) -->
-          <img :src="userProfilePicture" alt="User"
+          <img :src="profilePicture" alt="User"
             class="w-full h-full object-cover rounded-full border-2 border-yellow-400" />
-
-          <!-- Display button only on hover (default or profile picture set) -->
-          <div v-if="userProfilePicture === '/default-profile.png'"
+          <!-- Hover Button (edit profile picture) -->
+          <div v-if="profilePicture === '/default-profile.png'"
             class="absolute top-0 right-0 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button @click="showAvatarModal = true"
               class="bg-yellow-500 text-black p-2 rounded-full hover:bg-yellow-400 transition duration-200">
               <i class="fas fa-plus"></i>
             </button>
           </div>
-
           <div v-else
             class="absolute top-0 right-0 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button @click="showAvatarModal = true"
@@ -33,23 +30,19 @@
           </div>
         </div>
 
-        <!-- Avatar Modal -->
+        <!-- Avatar Modal for Avatar Selection -->
         <div v-if="showAvatarModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div class="bg-gray-800 p-6 rounded-lg w-[600px] max-w-full">
             <h3 class="text-2xl text-yellow-500 mb-6 text-center">Choose Your Profile Picture</h3>
-            <div class="overflow-y-auto h-96"> <!-- Set height and enable vertical scroll -->
+            <div class="overflow-y-auto h-96">
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <!-- Adjusted the gap between avatars -->
-                <!-- Avatar Grid -->
                 <div v-for="avatar in avatars" :key="avatar" @click="selectAvatar(avatar)"
                   class="flex justify-center items-center w-28 h-28 p-2 rounded-lg cursor-pointer overflow-hidden transition-transform transform relative group">
-                  <!-- Increased image size and reduced padding -->
                   <img :src="avatar" alt="Avatar"
                     class="object-cover w-full h-full rounded-lg transition-all duration-300 ease-in-out group-hover:scale-110"
                     :class="{
                       'border-4 border-yellow-500 scale-105': userProfilePicture === avatar
                     }" />
-                  <!-- Optional shadow effect on hover -->
                   <div
                     class="absolute inset-0 bg-transparent group-hover:shadow-xl rounded-lg transition-shadow duration-300">
                   </div>
@@ -66,21 +59,21 @@
         <!-- Follower and Following Stats -->
         <div class="flex justify-between text-sm mt-4">
           <div class="flex flex-col items-center">
-            <span class="text-yellow-400 text-lg">1984</span>
+            <span class="text-yellow-400 text-lg">{{ followers }}</span>
             <span class="text-gray-400">Followers</span>
           </div>
           <div class="flex flex-col items-center">
-            <span class="text-yellow-400 text-lg">1002</span>
+            <span class="text-yellow-400 text-lg">{{ following }}</span>
             <span class="text-gray-400">Following</span>
           </div>
         </div>
 
         <!-- Profile Details -->
-        <h2 class="mt-4 text-lg font-semibold">AlExMDi</h2>
-        <p class="text-sm text-gray-400">@alexmdi</p>
-        <p class="mt-2 text-sm text-gray-300">
+        <h2 class="mt-4 text-lg font-semibold">{{ name }}</h2>
+        <p class="text-sm text-gray-400">@{{ userName }}</p>
+        <!-- <p class="mt-2 text-sm text-gray-300">
           ✨ Hi, I'm a movie lover! ✨
-        </p>
+        </p> -->
       </div>
 
       <!-- Reviews -->
@@ -111,9 +104,24 @@
           </li>
         </ul>
       </div>
+      <div>
+        <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
+        <ul>
+          <li v-for="list in listsStore.lists" :key="list.id" @click="() => listsStore.showListMovies(list)"
+            class="flex items-center gap-3 mb-3 cursor-pointer">
+            <div v-if="!list.movies?.length"
+              class="w-8 h-8 rounded-full flex justify-center items-center bg-gray-600 text-white">
+              <i class="fas fa-list"></i>
+            </div>
+            <img v-else :src="list.movies[0].moviePoster" alt="List Image" class="w-8 h-8 rounded-full object-cover" />
+            <span>{{ list.name }}</span>
+            <button @click.stop="listsStore.deleteList(list.id)" class="ml-auto text-red-500 hover:text-red-300">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
 
-
-      <!-- Full Review Pop-up -->
       <div v-if="reviewStore.showReviewModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-gray-800 p-6 rounded-lg w-96">
@@ -150,25 +158,6 @@
           <p class="text-white mb-4">{{ reviewStore.selectedReview.body }}</p>
           <button @click="reviewStore.closeModalReview" class="text-yellow-400 mt-4 hover:underline">Close</button>
         </div>
-      </div>
-
-      <!-- Lists -->
-      <div>
-        <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
-        <ul>
-          <li v-for="list in listsStore.lists" :key="list.id" @click="() => listsStore.showListMovies(list)"
-            class="flex items-center gap-3 mb-3 cursor-pointer">
-            <div v-if="!list.movies?.length"
-              class="w-8 h-8 rounded-full flex justify-center items-center bg-gray-600 text-white">
-              <i class="fas fa-list"></i>
-            </div>
-            <img v-else :src="list.movies[0].moviePoster" alt="List Image" class="w-8 h-8 rounded-full object-cover" />
-            <span>{{ list.name }}</span>
-            <button @click.stop="listsStore.deleteList(list.id)" class="ml-auto text-red-500 hover:text-red-300">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </li>
-        </ul>
       </div>
 
       <!-- Add List Button -->
@@ -243,171 +232,94 @@
             Photo
           </button>
           <button
-            class="flex items-center gap-2 bg-neutral-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-500 transition">
-            <img src="/video.svg" class="w-5 h-5" />
+            class="flex items-center gap-2 bg-neutral-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-500 transition">
+            <img src="/video.svg" class="w-5 h-5" alt="Video" />
             Video
           </button>
-          <button
-            class="flex items-center gap-2 bg-neutral-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition">
-            <img src="/poll.svg" class="w-5 h-5" />
-            Poll
-          </button>
-        </div>
-
-        <div class="absolute right-4 bottom-4">
-          <button class="bg-yellow-400 px-6 py-2 text-black rounded-lg">
-            Post
-          </button>
-        </div>
-      </div>
-
-      <!-- Posts -->
-      <div v-for="post in posts" :key="post.id" class="bg-gray-800 p-4 rounded-lg mb-6">
-        <div class="flex items-center gap-4 mb-4">
-          <img :src="post.userImage" alt="User" class="w-12 h-12 rounded-full" />
-          <div>
-            <h3 class="font-semibold">{{ post.userName }}</h3>
-            <p class="text-sm text-gray-400">{{ post.time }}</p>
-          </div>
-        </div>
-        <p class="text-gray-300">{{ post.content }}</p>
-        <img v-if="post.image" :src="post.image" alt="Post" class="mt-4 rounded-lg" />
-        <div class="flex items-center gap-8 text-gray-500 mt-4">
-          <span>❤️ {{ post.likes }}</span>
-          <span>💬 {{ post.comments }}</span>
-          <span>🔄 {{ post.shares }}</span>
         </div>
       </div>
     </main>
-
-    <!-- Right Sidebar -->
-    <aside class="w-72 bg-gray-800 p-6 mt-20 flex flex-col gap-8">
-      <!-- Recent Activity -->
-      <div>
-        <h3 class="text-lg font-semibold mb-4">My Activity</h3>
-        <ul class="space-y-4">
-          <li v-for="activity in activities" :key="activity.id" class="bg-gray-700 p-4 rounded-lg flex flex-col">
-            <div>
-              <p class="text-sm font-semibold">{{ activity.name }}</p>
-              <p class="text-sm text-gray-400">{{ activity.time }}</p>
-            </div>
-            <!-- Move action text below the user info -->
-            <p class="text-sm text-yellow-400 mt-2">
-              {{ activity.action }}
-            </p>
-          </li>
-        </ul>
-      </div>
-    </aside>
   </div>
 </template>
 
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
+import { useReviewStore } from '../stores/reviewStore';
+import { useListStore } from '../stores/listsStore';
+import { useUserStore } from '../stores/userStore';
+import axios from 'axios';
 
-<script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useListStore } from "../stores/listsStore";
-import { useReviewStore } from "../stores/reviewStore";
-import { useUserStore } from "../stores/userStore";
-import axios from "axios";
+const userProfilePicture = ref('/default-profile.png');
+const showAvatarModal = ref(false);
+const postContent = ref('');
+const userName = ref('');
+const name = ref('');
+const email = ref('');
+const followers = ref(0);
+const following = ref(0);
+const profilePicture = ref('/default-profile.png');
+
+const avatars = [
+  '/avatars/avatar1.jpg',
+  '/avatars/avatar2.jpeg',
+  '/avatars/avatar3.jpg',
+  '/avatars/avatar4.png',
+  '/avatars/avatar5.jpg',
+  '/avatars/avatar6.jpeg',
+  '/avatars/avatar7.jpeg',
+  '/avatars/avatar8.jpg',
+  '/avatars/avatar9.png',
+  '/avatars/avatar10.jpeg',
+  '/avatars/avatar11.jpeg',
+  '/avatars/avatar12.jpeg',
+  '/avatars/avatar13.jpeg',
+];
 
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
 const userStore = useUserStore();
 
-const userId = localStorage.getItem("userId");
-const userName = ref("");
-const userUsername = ref("");
-const userProfilePicture = ref("");
+function selectAvatar(avatar) {
+  profilePicture.value = avatar;
+  showAvatarModal.value = false;
 
-// Show modal to select avatar
-const showAvatarModal = ref(false);
+  updateProfilePicture(avatar);
+}
 
-// List of avatars
-const avatars = ref([
-  "/avatars/avatar1.jpg",
-  "/avatars/avatar2.jpeg",
-  "/avatars/avatar3.jpg",
-  "/avatars/avatar4.png",
-  "/avatars/avatar5.jpg",
-  "/avatars/avatar6.jpeg",
-  "/avatars/avatar7.jpeg",
-  "/avatars/avatar8.jpg",
-  "/avatars/avatar9.png",
-  "/avatars/avatar10.jpeg",
-  "/avatars/avatar11.jpeg",
-  "/avatars/avatar12.jpeg",
-  "/avatars/avatar13.jpeg",
-]);
 
-// Select avatar and store it in localStorage
-const selectAvatar = async (avatar: string) => {
+async function updateProfilePicture(newProfilePicture) {
+  const userId = localStorage.getItem('userId'); 
   try {
-    userProfilePicture.value = avatar;
-    showAvatarModal.value = false;
-
-    // Save the selected avatar to localStorage with userId as key
-    localStorage.setItem(`userAvatar-${userId}`, avatar);
-
-    // Update the avatar in the backend
-    const response = await axios.put("http://localhost:5001/api/users/profile-picture", {
-      profilePicture: avatar,
-      userId: userId,
+    const response = await axios.put('http://localhost:5001/api/users/profile-picture', {
+      userId,
+      profilePicture: newProfilePicture,
     });
-
-    if (response.status === 200) {
-      console.log("Avatar updated successfully.");
-      // Update the user store with the new profile picture
-      if (userStore.user) {
-        userStore.setUser({ ...userStore.user, profilePicture: avatar });
-      }
-    } else {
-      console.error("Failed to update avatar in the backend.");
-    }
+    userStore.user.profilePicture = response.data.profilePicture;
   } catch (error) {
-    console.error("Error updating avatar:", error);
+    console.error('Failed to update profile picture', error);
   }
-};
+}
 
-// On mount, check if there's a stored avatar in localStorage
-onMounted(() => {
-  if (userId) {
-    const storedAvatar = localStorage.getItem(`userAvatar-${userId}`);
-    console.log("Stored Avatar from localStorage: ", storedAvatar); // Debugging line
+onMounted(async () => {
+  const userId = localStorage.getItem('userId');
+  await userStore.fetchUser(userId);
 
-    if (storedAvatar) {
-      userProfilePicture.value = storedAvatar;
-    } else {
-      axios.get(`http://localhost:5001/api/users/${userId}`)
-        .then(response => {
-          const userData = response.data;
-          console.log("User data fetched from backend: ", userData); // Debugging line
+  const user = userStore.user;
+  userName.value = user.username;
+  name.value = user.name;
+  email.value = user.email;
+  followers.value = user.followers.length;
+  following.value = user.following.length;
+  profilePicture.value = user.profilePicture;
 
-          if (userData.profilePicture) {
-            userProfilePicture.value = userData.profilePicture;
-            localStorage.setItem(`userAvatar-${userId}`, userData.profilePicture);
-            console.log("User Profile Picture: ", userData.profilePicture); // Debugging line
-          } else {
-            userProfilePicture.value = "/default-profile.png";
-          }
 
-          userName.value = userData.name;
-          userUsername.value = userData.username;
-
-          userStore.setUser(userData);
-        })
-        .catch(error => {
-          console.error("Error fetching user data", error);
-        });
-
-    }
-  }
+  reviewStore.fetchReviews();
+  listsStore.fetchLists();
 });
 </script>
 
 <style scoped>
-textarea {
-  word-wrap: break-word;
-  word-break: break-word;
-  resize: none;
+.profile-page {
+  padding: 2rem;
 }
 </style>
