@@ -10,7 +10,7 @@
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         Films
       </router-link>
-      <router-link to="/about-us"
+      <router-link to="/"
         class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
         About us
       </router-link>

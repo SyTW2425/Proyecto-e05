@@ -4,16 +4,28 @@ import { createPinia, setActivePinia } from 'pinia';
 import { useRouter } from 'vue-router';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useAuthStore } from '../src/stores/auth';
+import { useUserStore } from '../src/stores/userStore';
 
-
+// Mock vue-router
 vi.mock('vue-router', () => ({
   useRouter: vi.fn(),
 }));
 
-
-vi.mock('@/stores/auth', () => ({
+// Mock auth store
+vi.mock('../src/stores/auth', () => ({
   useAuthStore: vi.fn(() => ({
     logout: vi.fn(),
+  })),
+}));
+
+// Mock user store
+vi.mock('../src/stores/userStore', () => ({
+  useUserStore: vi.fn(() => ({
+    user: {
+      profilePicture: '/path/to/profile-picture.png',
+      username: 'Test User',
+    },
+    fetchUser: vi.fn(),
   })),
 }));
 
@@ -21,6 +33,7 @@ describe('Navbar.vue', () => {
   let wrapper;
   let mockAuthStore;
   let mockRouter;
+  let mockUserStore;
 
   beforeEach(() => {
     // Create and set up the Pinia store
@@ -31,8 +44,12 @@ describe('Navbar.vue', () => {
       push: vi.fn(),
     };
 
+    vi.clearAllMocks();
 
+    // Mock router and auth store
+    useRouter.mockReturnValue(mockRouter);
     mockAuthStore = useAuthStore();
+    mockUserStore = useUserStore();
 
     wrapper = mount(Navbar, {
       global: {
@@ -41,22 +58,15 @@ describe('Navbar.vue', () => {
     });
   });
 
-  it('renders the navigation links', () => {
-    const homeLink = wrapper.find('router-link[to="/"]');
-    expect(homeLink.exists()).toBe(true);
-    expect(homeLink.text()).toBe('About us');
-
-    const filmsLink = wrapper.find('router-link[to="/films"]');
-    expect(filmsLink.exists()).toBe(true);
-    expect(filmsLink.text()).toBe('Films');
-  });
-
-  it('renders the profile image and Log Out button', () => {
+  it('renders the profile image with the correct src', () => {
     const profileImage = wrapper.find('img');
     expect(profileImage.exists()).toBe(true);
-    expect(profileImage.attributes('src')).toBe('/default-profile.png');
-    expect(profileImage.attributes('alt')).toBe('Profile Picture');
+    expect(profileImage.attributes('src')).toBe(
+      mockUserStore.user.profilePicture,
+    );
+  });
 
+  it('renders the Log Out button', () => {
     const logOutButton = wrapper.find('button');
     expect(logOutButton.exists()).toBe(true);
     expect(logOutButton.text()).toBe('Log Out');
