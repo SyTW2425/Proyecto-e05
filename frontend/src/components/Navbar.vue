@@ -1,5 +1,5 @@
 <template>
-  <header class="w-full bg-transparent absolute top-0 left-0 z-10">
+  <header :class="{'hidden': isNavbarHidden}" class="w-full bg-transparent fixed top-0 left-0 z-50 transition-all">
     <div class="flex justify-between items-center px-4 py-3 md:px-8 lg:px-16">
       <!-- Logo / Title -->
       <router-link to="/home" class="text-white text-lg lg:text-2xl font-bold">
@@ -24,7 +24,7 @@
           class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
           Films
         </router-link>
-        <router-link to="/about"
+        <router-link to="/"
           class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
           About us
         </router-link>
@@ -53,22 +53,10 @@
         <router-link to="/films" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
           Films
         </router-link>
-        <router-link to="/about" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
+        <router-link to="/" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
           About us
         </router-link>
       </nav>
-
-      <!-- Profile & Log Out for Mobile -->
-      <div class="mt-4 flex items-center space-x-4">
-        <router-link :to="`/profile/${userId}`" class="relative w-10 h-10 rounded-full overflow-hidden">
-          <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
-            class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition" />
-        </router-link>
-
-        <button @click="logout" class="text-white bg-red-500 hover:bg-red-400 px-4 py-2 rounded transition">
-          Log Out
-        </button>
-      </div>
     </div>
   </header>
 </template>
@@ -77,7 +65,7 @@
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useUserStore } from '../stores/userStore';
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   name: 'Navbar',
@@ -93,10 +81,32 @@ export default {
     };
 
     const isMobileMenuOpen = ref(false);
+    const isNavbarHidden = ref(false);
 
+    let lastScrollTop = 0;
     const toggleMobileMenu = () => {
       isMobileMenuOpen.value = !isMobileMenuOpen.value;
     };
+
+    const handleScroll = () => {
+      let scrollTop = window.scrollY || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop) {
+        // Scrolling down
+        isNavbarHidden.value = true;
+      } else {
+        // Scrolling up
+        isNavbarHidden.value = false;
+      }
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Prevent negative scrolling
+    };
+
+    onMounted(() => {
+      window.addEventListener('scroll', handleScroll);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('scroll', handleScroll);
+    });
 
     // Ensure the user profile data is fetched if not already done
     if (!userStore.user.username) {
@@ -109,6 +119,7 @@ export default {
       userStore,
       isMobileMenuOpen,
       toggleMobileMenu,
+      isNavbarHidden,
     };
   },
 };

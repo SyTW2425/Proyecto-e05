@@ -1,5 +1,5 @@
 <template>
-  <div class="carousel">
+  <div class="carousel z-10">
     <div class="list">
       <div v-for="(item, index) in carouselStore.items" :key="index" class="item"
         :style="{ backgroundImage: `url(${item.poster_path})` }">
@@ -47,7 +47,7 @@ import { useCarouselStore } from '../stores/carouselStore';
 import { useMovieDetailStore } from '../stores/movieDetailStore';
 
 
-export default defineComponent({
+export default defineComponent({ 
   setup() {
     const carouselStore = useCarouselStore();
     const movieDetailStore = useMovieDetailStore();
@@ -107,7 +107,7 @@ header {
   display: flex;
   align-items: center;
   position: relative;
-  z-index: 1000;
+  z-index: 20;
 }
 
 header nav a {
@@ -145,6 +145,9 @@ a:hover {
   height: 100vh;
   overflow: hidden;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Responsive Background Image Adjustments */
@@ -165,14 +168,16 @@ a:hover {
 /* Ensure items are in a row */
 .carousel .list {
   display: flex;
-  /* This arranges items next to each other */
   overflow: hidden;
-  /* Hide the overflow for sliding effect */
   transition: transform 0.5s ease-in-out;
-  /* Smooth sliding effect */
+  width: 100%;
+  gap: 10px;
+  padding: 0 20px;
 }
 
 .carousel .list .item {
+  flex: 0 0 80%;
+  aspect-ratio: 2/3;
   width: 180px;
   height: 250px;
   position: absolute;
@@ -195,13 +200,20 @@ a:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
   z-index: 1;
 }
 
 .carousel .list .item .content {
-  position: relative;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
   z-index: 2;
+  color: white;
+  text-align: left;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .item {
@@ -490,9 +502,7 @@ a:hover {
 
 .no-hover:hover {
   background: none;
-  /* Or reset the hover effect you don't want */
   color: inherit;
-  /* Keep the text color unaffected */
 }
 
 .bg-custom-background {
