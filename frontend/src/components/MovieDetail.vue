@@ -3,11 +3,14 @@
   <div class="mt-10 bg-custom-background font-[poppins]">
     <!-- Background Image -->
     <div v-if="movieDetailStore.movie" class="absolute inset-0 w-full h-[570px] bg-cover bg-center"
-      :style="movieDetailStore.movieBackgroundStyle"></div>
-    <div v-if="movieDetailStore.movie" class="absolute inset-0 bg-black opacity-60"></div>
+      :style="movieDetailStore.movieBackgroundStyle">
+    </div>
+
+    <!-- Dark Overlay -->
+    <div v-if="movieDetailStore.movie" class="absolute inset-0 "></div>
 
     <!-- Movie Detail Content -->
-    <div v-if="movieDetailStore.movie" class="relative z-10 max-w-5xl mx-auto p-6 rounded-lg text-white">
+    <div v-if="movieDetailStore.movie" class="relative z-10 max-w-7xl mx-auto p-6 rounded-lg text-white">
       <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
         <!-- Movie Poster -->
         <img
@@ -15,9 +18,9 @@
           alt="Movie Poster" class="rounded-lg shadow-lg w-full md:w-1/3 z-10" />
 
         <!-- Movie Info -->
-        <div class="flex flex-col gap-4">
-          <div class="flex justify-between items-center gap-2">
-            <h1 class="text-2xl md:text-3xl font-bold">{{ movieDetailStore.movie.title }}</h1>
+        <div class="flex flex-col gap-4 w-full">
+          <div class="flex justify-between items-start md:items-center gap-2 flex-col md:flex-row">
+            <h1 class="text-2xl md:text-3xl font-bold text-white">{{ movieDetailStore.movie.title }}</h1>
 
             <!-- Average Rating Section -->
             <div class="flex items-center gap-2">
@@ -38,9 +41,9 @@
 
           <div class="flex gap-4">
             <button @click="movieDetailStore.viewTrailer(movieDetailStore.movie.id)"
-              class="bg-yellow-500 text-black p-2 rounded-lg">See Trailer</button>
+              class="bg-yellow-500 text-black p-2 rounded-lg hover:bg-yellow-600">See Trailer</button>
             <button @click="reviewStore.toggleRateAndSetReviewMovieId"
-              class="border-2 border-white text-yellow-500 p-2 rounded-lg">
+              class="border-2 border-white text-yellow-500 hover:bg-stone-900 p-2 rounded-lg">
               Rate
             </button>
 
@@ -53,13 +56,14 @@
               </button>
 
               <!-- Dropdown -->
+              <!-- Dropdown -->
               <div v-if="movieDetailStore.isDropdownOpen" @click.outside="movieDetailStore.isDropdownOpen = false"
-                class="absolute top-full left-0 mt-4 w-full sm:w-56 md:w-64 bg-white border border-gray-200 rounded-lg shadow-lg transition ease-in-out duration-150 transform z-10 sm:left-auto sm:ml-2 sm:top-0">
+                class="absolute top-full mt-2 w-full sm:w-56 md:w-64 bg-white border border-gray-200 rounded-lg shadow-xl transition ease-in-out duration-150 transform z-10 sm:left-auto sm:ml-2 sm:top-0">
                 <ul class="py-1 max-h-60 overflow-y-auto">
                   <!-- Check if lists exist -->
                   <template v-if="listStore.lists.length > 0">
                     <li v-for="list in listStore.lists" :key="list.id"
-                      class="hover:bg-gray-100 focus-within:bg-gray-100">
+                      class="hover:bg-green-50 focus-within:bg-green-100 transition-colors duration-150">
                       <button
                         @click="() => listStore.selectList(list.id, movieDetailStore.movie, () => movieDetailStore.isDropdownOpen = false)"
                         class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -115,15 +119,15 @@
 
       <!-- Reviews Section -->
       <div v-if="movieDetailStore.reviews.length" class="mt-14">
-        <h2 class="text-xl font-bold mb-4">Reviews</h2>
-        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <h2 class="text-3xl font-bold mb-8 text-white">Reviews</h2>
+        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <div v-for="review in movieDetailStore.reviews.slice(0, 6)" :key="review.id"
-            class="p-4 bg-gray-800 rounded-lg flex flex-col justify-between">
-            <h3 class="text-lg font-bold">{{ review.author }}</h3>
-            <p class="text-gray-300 mt-2 line-clamp-3">
+            class="p-6 bg-gray-800 rounded-lg flex flex-col justify-between shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105">
+            <h3 class="text-lg font-semibold text-white truncate">{{ review.author }}</h3>
+            <p class="text-gray-300 mt-3 line-clamp-4">
               {{ review.content }}
             </p>
-            <a class="text-yellow-500 mt-4 cursor-pointer hover:underline"
+            <a class="text-yellow-400 mt-5 cursor-pointer hover:underline transition-colors duration-200"
               @click="movieDetailStore.openReviewModal(review.content)">
               See more
             </a>
@@ -131,28 +135,27 @@
         </div>
       </div>
 
+      <!-- Review Modal -->
       <div v-if="movieDetailStore.showReviewModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-75">
-        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-1/2 max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-4 border-b">
-            <h3 class="text-xl font-bold">Full Review</h3>
-            <button class="text-gray-500 hover:text-gray-800" @click="movieDetailStore.closeReviewModal()">
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-4 border-b border-gray-200">
+            <h3 class="text-2xl font-semibold text-gray-800">Full Review</h3>
+            <button class="text-gray-500 hover:text-gray-800 focus:outline-none"
+              @click="movieDetailStore.closeReviewModal()">
               ✕
             </button>
           </div>
+
           <div class="p-6">
-            <p class="text-gray-800 whitespace-pre-line">
-              {{ movieDetailStore.selectedReview }}
-            </p>
+            <!-- Render the review with HTML content -->
+            <p class="text-gray-800 whitespace-pre-line leading-relaxed" v-html="movieDetailStore.selectedReview"></p>
           </div>
-          <div class="flex justify-end p-4 border-t">
-            <button class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
-              @click="movieDetailStore.closeReviewModal()">
-              Close
-            </button>
-          </div>
+
         </div>
       </div>
+
+
       <!-- Cast Section -->
       <div v-if="movieDetailStore.cast.length" class="mt-6">
         <h2 class="text-xl font-bold">Cast</h2>
@@ -180,10 +183,10 @@
 
 
       <!-- Images Section -->
-      <div v-if="movieDetailStore.images.backdrops" class="mt-6">
+      <div v-if="movieDetailStore.images" class="mt-6">
         <h2 class="text-xl font-bold mb-4">Images</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
-          <div v-for="image in movieDetailStore.images.backdrops" :key="image.file_path" class="flex-none w-64">
+          <div v-for="image in movieDetailStore.images.backdrops || []" :key="image.file_path" class="flex-none w-64">
             <img :src="`https://image.tmdb.org/t/p/w500${image.file_path}`" alt="Movie Image"
               class="rounded-lg shadow-md cursor-pointer" @click="movieDetailStore.viewImage(image.file_path)" />
           </div>

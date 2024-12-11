@@ -1,6 +1,6 @@
 <template>
-  <Navbar />
   <div class="bg-custom-background min-h-screen">
+    
     <MovieDetail />
   </div>
 </template>

@@ -1,8 +1,8 @@
 <template>
-  <header :class="{'hidden': isNavbarHidden}" class="w-full bg-transparent fixed top-0 left-0 z-50 transition-all">
+  <header :class="{ 'hidden': isNavbarHidden }" class="w-full bg-transparent fixed top-0 left-0 z-50 transition-all">
     <div class="flex justify-between items-center px-4 py-3 md:px-8 lg:px-16">
       <!-- Logo / Title -->
-      <router-link to="/home" class="text-white text-lg lg:text-2xl font-bold">
+      <router-link to="/home" class="text-white text-lg lg:text-2xl font-bold no-hover" exact>
         CineTrunk
       </router-link>
 
@@ -16,16 +16,14 @@
 
       <!-- Desktop Nav Links -->
       <nav class="hidden md:flex space-x-4">
-        <router-link to="/home"
-          class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200">
-          Home
-        </router-link>
         <router-link to="/films"
-          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
+          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:border-b-2 hover:border-yellow-500 transition duration-200"
+          active-class="border-b-2 border-yellow-500">
           Films
         </router-link>
         <router-link to="/"
-          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
+          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:border-b-2 hover:border-yellow-500 transition duration-200"
+          active-class="border-b-2 border-yellow-500">
           About us
         </router-link>
       </nav>
@@ -34,7 +32,7 @@
       <div class="flex items-center space-x-4">
         <router-link :to="`/profile/${userId}`" class="relative w-10 h-10 rounded-full overflow-hidden">
           <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
-            class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition" />
+            class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition-all rounded-full" />
         </router-link>
 
         <button @click="logout"
@@ -47,13 +45,16 @@
     <!-- Mobile Menu (always below the "CineTrunk" logo) -->
     <div v-if="isMobileMenuOpen" class="md:hidden bg-gray-900 px-4 pt-4 pb-2">
       <nav class="space-y-2">
-        <router-link to="/home" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
+        <router-link to="/home"
+          class="block text-white px-4 py-2 rounded hover:border-b-2 hover:border-yellow-500 transition duration-200">
           Home
         </router-link>
-        <router-link to="/films" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
+        <router-link to="/films"
+          class="block text-white px-4 py-2 rounded hover:border-b-2 hover:border-yellow-500 transition duration-200">
           Films
         </router-link>
-        <router-link to="/" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
+        <router-link to="/"
+          class="block text-white px-4 py-2 rounded hover:border-b-2 hover:border-yellow-500 transition duration-200">
           About us
         </router-link>
       </nav>
@@ -140,6 +141,18 @@ a.active {
   border-radius: 2px;
 }
 
+.md\\:hidden .active {
+  background: #FFD700;
+  border-radius: 2px;
+}
+
+/* Remove hover effect from CineTrunk logo */
+.no-hover:hover {
+  background: none;
+  border-radius: none;
+}
+
+/* Desktop Nav Links Hover Effects */
 a:hover {
   background: #FFD700;
   border-radius: 2px;

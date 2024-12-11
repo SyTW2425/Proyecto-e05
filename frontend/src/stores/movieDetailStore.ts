@@ -14,12 +14,14 @@ export const useMovieDetailStore = defineStore('movieDetail', {
     trailerKey: '',
     selectedImagePath: '',
     showImageModal: false,
+    showReviewModal: false,
+    selectedReview: null as any,
     movieBackgroundStyle: {
       backgroundImage: 'none',
-      backgroundColor: 'bg-custom-background',
       backgroundSize: 'cover',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
+      filter: 'brightness(35%)',
     },
     isDropdownOpen: false,
     openRatePopup: false,
@@ -64,8 +66,9 @@ export const useMovieDetailStore = defineStore('movieDetail', {
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
-            backgroundColor: 'bg-custom-background',
+            filter: 'brightness(35%)',
           };
+
         } else {
           this.movieBackgroundStyle.backgroundImage =
             'linear-gradient(to right, #0b101a, #1a2b3f)';
@@ -137,6 +140,16 @@ export const useMovieDetailStore = defineStore('movieDetail', {
 
     closeImageModal() {
       this.showImageModal = false;
+    },
+
+    openReviewModal(review: any) {
+      this.selectedReview = review;
+      this.showReviewModal = true;
+    },
+
+    closeReviewModal() {
+      this.showReviewModal = false;
+      this.selectedReview = null;
     },
 
     async fetchLists() {
