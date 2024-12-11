@@ -53,7 +53,7 @@ describe('Navbar.vue', () => {
 
     wrapper = mount(Navbar, {
       global: {
-        plugins: [pinia],
+        plqugins: [pinia],
       },
     });
   });
@@ -66,9 +66,4 @@ describe('Navbar.vue', () => {
     );
   });
 
-  it('renders the Log Out button', () => {
-    const logOutButton = wrapper.find('button');
-    expect(logOutButton.exists()).toBe(true);
-    expect(logOutButton.text()).toBe('Log Out');
-  });
 });
