@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-white flex font-[poppins]">
+  <div class="min-h-screen bg-gray-900 text-white flex flex-col md:flex-row font-[poppins]">
     <!-- Sidebar -->
-    <aside class="w-72 bg-gray-800 p-6 mt-20 flex flex-col gap-8">
+    <aside class="w-full md:w-72 bg-gray-800 p-6 mt-20 flex flex-col gap-8 overflow-auto max-h-screen">
 
       <!-- Profile Section -->
       <div class="bg-gray-700 p-6 rounded-lg text-center relative overflow-hidden">

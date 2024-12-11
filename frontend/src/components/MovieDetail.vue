@@ -1,6 +1,6 @@
 <template>
   <Navbar />
-  <div class="bg-custom-background font-[poppins]">
+  <div class="mt-10 bg-custom-background font-[poppins]">
     <!-- Background Image -->
     <div v-if="movieDetailStore.movie" class="absolute inset-0 w-full h-[570px] bg-cover bg-center"
       :style="movieDetailStore.movieBackgroundStyle"></div>
@@ -114,18 +114,43 @@
       <!-- Reviews Section -->
       <div v-if="movieDetailStore.reviews.length" class="mt-14">
         <h2 class="text-xl font-bold mb-4">Reviews</h2>
-        <div class="flex gap-4 overflow-x-auto custom-scrollbar">
+        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <div v-for="review in movieDetailStore.reviews.slice(0, 6)" :key="review.id"
-            class="flex-none w-64 p-4 bg-gray-800 rounded-lg">
+            class="p-4 bg-gray-800 rounded-lg flex flex-col justify-between">
             <h3 class="text-lg font-bold">{{ review.author }}</h3>
-            <p class="text-gray-300 mt-2">
-              {{ review.content.slice(0, 100) }}...
-              <a class="text-yellow-500" href="#">See more</a>
+            <p class="text-gray-300 mt-2 line-clamp-3">
+              {{ review.content }}
             </p>
+            <a class="text-yellow-500 mt-4 cursor-pointer hover:underline"
+              @click="movieDetailStore.openReviewModal(review.content)">
+              See more
+            </a>
           </div>
         </div>
       </div>
 
+      <div v-if="movieDetailStore.showReviewModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-75">
+        <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-1/2 max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-4 border-b">
+            <h3 class="text-xl font-bold">Full Review</h3>
+            <button class="text-gray-500 hover:text-gray-800" @click="movieDetailStore.closeReviewModal()">
+              ✕
+            </button>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-800 whitespace-pre-line">
+              {{ movieDetailStore.selectedReview }}
+            </p>
+          </div>
+          <div class="flex justify-end p-4 border-t">
+            <button class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
+              @click="movieDetailStore.closeReviewModal()">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
       <!-- Cast Section -->
       <div v-if="movieDetailStore.cast.length" class="mt-6">
         <h2 class="text-xl font-bold">Cast</h2>

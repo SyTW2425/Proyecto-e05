@@ -1,39 +1,75 @@
 <template>
-  <header class="w-full px-4 lg:px-16 h-12 flex items-center relative z-10">
-    <nav class="flex space-x-4 mt-7">
-      <!-- Router Links -->
-      <router-link to="/home"
-        class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200 active:bg-yellow-500">
-        Home
-      </router-link>
-      <router-link to="/films"
-        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        Films
-      </router-link>
-      <router-link to="/"
-        class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
-        About us
+  <header class="w-full bg-transparent absolute top-0 left-0 z-10">
+    <div class="flex justify-between items-center px-4 py-3 md:px-8 lg:px-16">
+      <!-- Logo / Title -->
+      <router-link to="/home" class="text-white text-lg lg:text-2xl font-bold">
+        CineTrunk
       </router-link>
 
-      <!-- Profile image and Log out -->
-      <div class="absolute right-4 top-4 flex items-center space-x-4">
-        <router-link :to="`/profile/${userId}`" class="profile-link">
-          <div
-            class="relative group w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 border-transparent hover:border-yellow-500 transition duration-300">
-            <!-- Profile Image -->
-            <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
-              class="w-full h-full object-cover" />
-            <!-- Dark Overlay -->
-            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-          </div>
+      <!-- Burger Button (visible on small screens) -->
+      <button @click="toggleMobileMenu" class="md:hidden text-white focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+          class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex space-x-4">
+        <router-link to="/home"
+          class="text-white px-4 py-2 text-sm lg:text-base rounded hover:bg-yellow-500 transition duration-200">
+          Home
+        </router-link>
+        <router-link to="/films"
+          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
+          Films
+        </router-link>
+        <router-link to="/about"
+          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded hover:bg-yellow-500 transition duration-200">
+          About us
+        </router-link>
+      </nav>
+
+      <!-- Profile & Log Out -->
+      <div class="flex items-center space-x-4">
+        <router-link :to="`/profile/${userId}`" class="relative w-10 h-10 rounded-full overflow-hidden">
+          <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
+            class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition" />
         </router-link>
 
         <button @click="logout"
-          class="text-white px-4 py-2 text-sm lg:text-base font-poppins rounded bg-red-500 hover:bg-red-400 transition duration-200">
+          class="text-white bg-red-500 hover:bg-red-400 px-4 py-2 text-sm lg:text-base rounded transition">
           Log Out
         </button>
       </div>
-    </nav>
+    </div>
+
+    <!-- Mobile Menu (always below the "CineTrunk" logo) -->
+    <div v-if="isMobileMenuOpen" class="md:hidden bg-gray-900 px-4 pt-4 pb-2">
+      <nav class="space-y-2">
+        <router-link to="/home" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
+          Home
+        </router-link>
+        <router-link to="/films" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
+          Films
+        </router-link>
+        <router-link to="/about" class="block text-white px-4 py-2 rounded hover:bg-yellow-500 transition duration-200">
+          About us
+        </router-link>
+      </nav>
+
+      <!-- Profile & Log Out for Mobile -->
+      <div class="mt-4 flex items-center space-x-4">
+        <router-link :to="`/profile/${userId}`" class="relative w-10 h-10 rounded-full overflow-hidden">
+          <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
+            class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition" />
+        </router-link>
+
+        <button @click="logout" class="text-white bg-red-500 hover:bg-red-400 px-4 py-2 rounded transition">
+          Log Out
+        </button>
+      </div>
+    </div>
   </header>
 </template>
 
@@ -41,6 +77,7 @@
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useUserStore } from '../stores/userStore';
+import { ref } from 'vue';
 
 export default {
   name: 'Navbar',
@@ -48,12 +85,17 @@ export default {
     const router = useRouter();
     const authStore = useAuthStore();
     const userStore = useUserStore();
-
     const userId = localStorage.getItem('userId');
 
     const logout = () => {
       authStore.logout();
       router.push({ name: 'LogIn' });
+    };
+
+    const isMobileMenuOpen = ref(false);
+
+    const toggleMobileMenu = () => {
+      isMobileMenuOpen.value = !isMobileMenuOpen.value;
     };
 
     // Ensure the user profile data is fetched if not already done
@@ -65,32 +107,21 @@ export default {
       logout,
       userId,
       userStore,
+      isMobileMenuOpen,
+      toggleMobileMenu,
     };
   },
 };
 </script>
 
 <style scoped>
-/* Your existing styles */
-</style>
-
-<style scoped>
 header {
-  position: absolute;
-  top: 0;
   width: 100%;
-  background: transparent;
-  z-index: 1000;
+  background-color: transparent;
 }
 
-header nav a {
-  color: #fff;
-  margin-right: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-family: 'Poppins';
-  transition: 0.2s;
-  text-decoration: none;
+button:focus {
+  outline: none;
 }
 
 a.active {
@@ -103,13 +134,77 @@ a:hover {
   border-radius: 2px;
 }
 
-/* Prevent hover effect on profile */
-header nav .profile-link:hover {
-  background: transparent;
+/* Mobile Menu Adjustments */
+.md\\:hidden {
+  display: none;
+}
+
+.md\\:flex {
+  display: flex;
+}
+
+/* Position and spacing of mobile menu below the logo */
+.md\\:hidden {
+  display: none;
 }
 
 button:hover {
   transform: scale(1.05);
   transition: all 0.3s ease;
+}
+
+/* Mobile Menu */
+.md\\:hidden {
+  display: none;
+}
+
+button.logout {
+  display: block;
+  width: 100%;
+}
+
+button.logout:hover {
+  background-color: #FF0000;
+}
+
+.profile-link img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .flex.items-center.space-x-4 {
+    justify-content: space-between;
+  }
+
+  button.logout {
+    display: block;
+    width: auto;
+    margin-left: auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .profile-link {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Mobile Menu adjustments */
+  .bg-gray-900 {
+    position: relative;
+    top: 0;
+  }
+
+  .px-4.pt-4.pb-2 {
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .space-y-2>*+* {
+    margin-top: 0.5rem;
+  }
 }
 </style>

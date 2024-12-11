@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-custom-background min-h-screen p-8">
+  <div class="bg-custom-background min-h-screen px-4 py-8 md:p-8">
     <!-- Search Bar -->
-    <div class="flex justify-center items-center gap-4 mt-6 mb-8">
+    <div class="flex justify-center items-center gap-4 mt-8 mb-8">
       <input v-model="searchQuery" type="text" placeholder="Search for a movie..."
-        class="w-3/4 md:w-1/3 px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 text-sm font-[poppins]"
+        class="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 text-sm font-[poppins]"
         @input="handleSearch" />
     </div>
 
@@ -23,42 +23,42 @@
     </div>
 
     <!-- Movies Grid -->
-    <div v-if="movies.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+    <div v-if="movies.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
       <div v-for="movie in movies" :key="movie.id" class="text-center">
         <router-link :to="`/movie/${movie.id}`">
           <img :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/default-poster.jpg'"
-            alt="Movie Poster" :class="{
+            alt="Movie Poster" class="{
               'w-full rounded-md shadow-lg hover:scale-105 transition-transform': true,
               'h-[331px]': !movie.poster_path,
               'h-auto': movie.poster_path
             }" />
-          <h2 class="text-white mt-2 font-bold">{{ movie.title }}</h2>
-          <p class="text-gray-400">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
+          <h2 class="text-white mt-2 font-bold text-sm sm:text-base">{{ movie.title }}</h2>
+          <p class="text-gray-400 text-xs sm:text-sm">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
 
           <!-- Average Rating Section -->
-          <div class="flex items-center gap-2 justify-center">
-            <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+          <div class="flex items-center gap-2 justify-center mt-1">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
               fill="currentColor" aria-hidden="true">
               <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
             </svg>
-            <span class="text-xl text-white font-bold">{{ movie.vote_average.toFixed(1) || 'N/A' }}</span>
+            <span class="text-sm sm:text-xl text-white font-bold">{{ movie.vote_average.toFixed(1) || 'N/A' }}</span>
           </div>
         </router-link>
       </div>
     </div>
 
     <!-- No Movies Found -->
-    <div v-else-if="!loading && !error" class="text-center text-gray-400">No movies found. Try another search!</div>
+    <div v-else-if="!loading && !error" class="text-center text-gray-400 text-sm sm:text-base">No movies found. Try another search!</div>
 
     <!-- Loading Indicator -->
-    <div v-if="loading" class="text-center text-yellow-400">Loading movies...</div>
+    <div v-if="loading" class="text-center text-yellow-400 text-sm sm:text-base">Loading movies...</div>
 
     <!-- Error Message -->
-    <div v-if="error" class="text-center text-red-500">Error fetching movies: {{ error }}</div>
+    <div v-if="error" class="text-center text-red-500 text-sm sm:text-base">Error fetching movies: {{ error }}</div>
 
     <!-- Pagination Controls -->
-    <div v-if="totalPages > 1" class="flex justify-center mt-8">
-      <button v-for="page in pagesToShow" :key="page" @click="changePage(page)" class="mx-2 px-4 py-2 rounded-lg"
+    <div v-if="totalPages > 1" class="flex justify-center mt-8 flex-wrap">
+      <button v-for="page in pagesToShow" :key="page" @click="changePage(page)" class="mx-2 px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-sm sm:text-base"
         :class="page === currentPage ? 'bg-yellow-400 text-black' : 'bg-gray-700 text-white hover:bg-gray-500'">
         {{ page }}
       </button>
