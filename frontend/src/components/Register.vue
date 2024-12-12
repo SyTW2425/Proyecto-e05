@@ -81,9 +81,19 @@
             <div class="flex items-center">
               <input id="agree-terms" name="agree-terms" type="checkbox"
                 class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label for="agree-terms" class="text-white ml-3 block text-sm">Accept terms & conditions</label>
+              <label for="agree-terms" class="text-white ml-3 block text-sm">
+                I accept the
+                <a href="https://www.example.com/terms" rel="noreferrer"
+                  class="text-yellow-400 hover:underline focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded"
+                  target="_blank">
+                  terms & conditions
+                </a>
+                <span class="tooltip ml-1 text-gray-400 cursor-pointer" tabindex="0"
+                  aria-label="Click to view details">❓</span>
+              </label>
             </div>
           </div>
+
 
           <div class="mt-12">
             <button type="button" @click="handleSubmit"
@@ -132,35 +142,63 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
-import { useRouter } from 'vue-router';
 import { useAlertStore } from '../stores/alert';
+import { useRouter } from 'vue-router';
+import * as yup from 'yup';
+
+const authStore = useAuthStore();
+const alertStore = useAlertStore();
+const router = useRouter();
+
+// Validation schema
+const schema = yup.object({
+  name: yup.string().required('Full name is required'),
+  username: yup.string().required('Username is required'),
+  email: yup.string().email('Invalid email address').required('Email is required'),
+  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Passwords must match')
+    .required('Please confirm your password'),
+  agreeTerms: yup.boolean().oneOf([true], 'You must accept the terms and conditions'),
+});
+
+// Form state
 const name = ref('');
 const username = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
-const authStore = useAuthStore();
-const router = useRouter();
-
-
+const agreeTerms = ref(false);
 
 const handleSubmit = async () => {
-  if (password.value !== confirmPassword.value) {
-    const alertStore = useAlertStore();
-    alertStore.error('Passwords do not match'); //! alert component
-    return;
-  }
+  const values = {
+    name: name.value,
+    username: username.value,
+    email: email.value,
+    password: password.value,
+    confirmPassword: confirmPassword.value,
+    agreeTerms: agreeTerms.value,
+  };
 
   try {
-    const isSuccess = await authStore.register(name.value, username.value, email.value, password.value);
-    if (isSuccess) {
-      router.push({ name: 'LogIn' });
+    await schema.validate(values, { abortEarly: false });
+
+    // Call the register action
+    await authStore.register(name.value, username.value, email.value, password.value);
+
+    // Redirect to the login page after successful registration
+    router.push('/login');
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      alertStore.error(err.errors.join(', '));
+    } else {
+      alertStore.error('An unexpected error occurred.');
     }
-  } catch (error) {
-    alert(error.message);
   }
 };
 </script>
+
 
 
 <style scoped>
@@ -169,4 +207,36 @@ const handleSubmit = async () => {
   background-size: cover;
   background-position: center;
 }
+
+/* Tooltip styling */
+.tooltip {
+    position: relative;
+  }
+
+  .tooltip:hover::after,
+  .tooltip:focus::after {
+    content: 'Click the link to view full terms.';
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    top: -35px;
+    left: 0;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 10;
+  }
+
+  .tooltip:hover::before,
+  .tooltip:focus::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+    z-index: 10;
+  }
 </style>

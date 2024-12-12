@@ -4,7 +4,7 @@
       <div v-for="(item, index) in carouselStore.items" :key="index" class="item"
         :style="{ backgroundImage: `url(${item.poster_path})` }">
         <div class="content">
-          <div class="title">{{ item.title }}</div>
+          <div :style="carouselStore.resizeTitle(item.title)"  class="title">{{ item.title }}</div>
           <div class="des">
             {{ carouselStore.truncateOverview(item.overview) }}
             <span v-if="item.overview.length > 150">
@@ -309,7 +309,7 @@ a:hover {
 }
 
 .content .title {
-  font-size: 90px;
+  /* font-size: 90px; */
   text-transform: uppercase;
   color: #ffd700;
   font-weight: bold;

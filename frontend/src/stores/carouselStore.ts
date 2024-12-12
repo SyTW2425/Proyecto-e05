@@ -32,5 +32,14 @@ export const useCarouselStore = defineStore('carousel', {
     truncateOverview(overview: string) {
       return overview.length > 200 ? overview.slice(0, 200) + '...' : overview;
     },
+    resizeTitle(title: string) {
+      // change font size based on title length
+      console.log(title, title.length);
+      if (title.length > 20) {
+        return { fontSize: '50px' };
+      } else {
+        return { fontSize: '90px' };
+      }
+    }
   },
 });
