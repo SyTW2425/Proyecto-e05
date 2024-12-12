@@ -77,23 +77,6 @@
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
-            <div class="flex items-center">
-              <input id="agree-terms" name="agree-terms" type="checkbox"
-                class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label for="agree-terms" class="text-white ml-3 block text-sm">
-                I accept the
-                <a href="https://www.example.com/terms" rel="noreferrer"
-                  class="text-yellow-400 hover:underline focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded"
-                  target="_blank">
-                  terms & conditions
-                </a>
-                <span class="tooltip ml-1 text-gray-400 cursor-pointer" tabindex="0"
-                  aria-label="Click to view details">❓</span>
-              </label>
-            </div>
-          </div>
-
 
           <div class="mt-12">
             <button type="button" @click="handleSubmit"
@@ -178,7 +161,6 @@ const handleSubmit = async () => {
     email: email.value,
     password: password.value,
     confirmPassword: confirmPassword.value,
-    agreeTerms: agreeTerms.value,
   };
 
   try {
