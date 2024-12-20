@@ -119,7 +119,7 @@
 
       <!-- Reviews Section -->
       <div v-if="movieDetailStore.reviews.length" class="mt-14">
-        <h2 class="text-3xl font-bold mb-8 text-white">Reviews</h2>
+        <h2 class="text-2xl font-bold mb-6 text-white">Reviews</h2>
         <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <div v-for="review in movieDetailStore.reviews.slice(0, 6)" :key="review.id"
             class="p-6 bg-gray-800 rounded-lg flex flex-col justify-between shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105">
@@ -157,8 +157,8 @@
 
 
       <!-- Cast Section -->
-      <div v-if="movieDetailStore.cast.length" class="mt-6">
-        <h2 class="text-xl font-bold">Cast</h2>
+      <div v-if="movieDetailStore.cast.length" class="mt-8">
+        <h2 class="text-2xl font-bold mb-6">Cast</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-4">
           <div v-for="actor in movieDetailStore.cast.slice(0, 10)" :key="actor.id" class="text-center">
             <img
@@ -171,8 +171,8 @@
 
 
       <!-- Videos Section -->
-      <div v-if="movieDetailStore.videos.length" class="mt-6">
-        <h2 class="text-xl font-bold mb-4">Videos</h2>
+      <div v-if="movieDetailStore.videos.length" class="mt-8">
+        <h2 class="text-2xl font-bold mb-6">Videos</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="video in movieDetailStore.videos" :key="video.key" class="flex-none w-64">
             <img :src="`https://img.youtube.com/vi/${video.key}/0.jpg`" alt="Video Thumbnail"
@@ -183,8 +183,8 @@
 
 
       <!-- Images Section -->
-      <div v-if="movieDetailStore.images" class="mt-6">
-        <h2 class="text-xl font-bold mb-4">Images</h2>
+      <div v-if="movieDetailStore.images" class="mt-8">
+        <h2 class="text-2xl font-bold mb-6">Images</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="image in movieDetailStore.images.backdrops || []" :key="image.file_path" class="flex-none w-64">
             <img :src="`https://image.tmdb.org/t/p/w500${image.file_path}`" alt="Movie Image"
@@ -204,8 +204,8 @@
 
 
       <!-- Similar Movies -->
-      <div v-if="movieDetailStore.similarMovies.length" class="mt-6">
-        <h2 class="text-xl font-bold mb-4">Similar Movies</h2>
+      <div v-if="movieDetailStore.similarMovies.length" class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Similar Movies</h2>
         <div class="flex gap-4 overflow-x-auto custom-scrollbar">
           <div v-for="movie in movieDetailStore.similarMovies.slice(0, 10)" :key="movie.id"
             class="flex-none w-40 text-center">

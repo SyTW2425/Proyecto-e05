@@ -87,7 +87,7 @@
 
           <div class="my-6 flex items-center gap-4">
             <hr class="w-full border-gray-300" />
-            <p class="text-sm text-white text-center">o</p>
+            <p class="text-sm text-white text-center">or</p>
             <hr class="w-full border-gray-300" />
           </div>
 
