@@ -109,8 +109,7 @@ export default {
       window.removeEventListener('scroll', handleScroll);
     });
 
-    // Ensure the user profile data is fetched if not already done
-    if (!userStore.user.username) {
+    if (!userStore.user.id) {
       userStore.fetchUser(userId);
     }
 
