@@ -85,18 +85,18 @@ export const useListStore = defineStore('lists', {
 
         if (!response.ok) {
           useAlertStore().error('Error creating list');
+        } else {
+          const newList = await response.json();
+          this.lists.push({
+            id: newList._id,
+            name: newList.name,
+            movies: [],
+          });
+
+          this.newListName = '';
+          this.showCreateListModal = false;
+          useAlertStore().success('List created');
         }
-
-        const newList = await response.json();
-        this.lists.push({
-          id: newList._id,
-          name: newList.name,
-          movies: [],
-        });
-
-        this.newListName = '';
-        this.showCreateListModal = false;
-        useAlertStore().success('List created');
       } catch (error) {
         console.error(error);
         useAlertStore().error('An error occurred while creating the list.');
@@ -162,6 +162,7 @@ export const useListStore = defineStore('lists', {
     },
     closeModal() {
       this.showMovieListModal = false;
+      this.showCreateListModal = false;
     },
     selectList(listId: string, movie: any, closeDropdown: () => void) {
       this.selectedList = this.lists.find((list) => list.id === listId);

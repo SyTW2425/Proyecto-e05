@@ -28,7 +28,20 @@
               <i class="fas fa-pencil-alt"></i>
             </button>
           </div>
+
+
         </div>
+        <div class="relative flex justify-center items-center mt-6" @mouseover="isEnvelopeHovered = true"
+          @mouseleave="isEnvelopeHovered = false">
+          <div class="absolute cursor-pointer" @click="showRequestsModal = true">
+            <i class="fas fa-envelope text-3xl text-yellow-500"></i>
+            <span v-if="friendRequests.length"
+              class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {{ friendRequests.length }}
+            </span>
+          </div>
+        </div>
+
 
         <!-- Avatar Modal for Avatar Selection -->
         <div v-if="showAvatarModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -71,9 +84,6 @@
         <!-- Profile Details -->
         <h2 class="mt-4 text-lg font-semibold">{{ name }}</h2>
         <p class="text-sm text-gray-400">@{{ userName }}</p>
-        <!-- <p class="mt-2 text-sm text-gray-300">
-          ✨ Hi, I'm a movie lover! ✨
-        </p> -->
       </div>
 
       <!-- Reviews -->
@@ -83,44 +93,52 @@
           <li v-for="review in reviewStore.reviews" :key="review.id"
             class="flex items-center gap-3 mb-3 cursor-pointer">
             <img :src="review.moviePoster" alt="Movie Poster" class="w-10 h-10 rounded-full object-cover" />
-            <div class="flex justify-between w-full">
-              <router-link :to="`/movie/${review.movieId}`">
-                <h4 class="text-white text-sm hover:opacity-75 transition-opacity duration-200">
-                  {{ review.movieTitle }}
+            <div class="flex items-center justify-between w-full">
+              <router-link :to="`/movie/${review.movieId}`" class="flex-1 truncate">
+                <h4 class="text-white text-sm hover:opacity-75 transition-opacity duration-200 truncate">
+                  {{ reviewStore.truncateTitle(review.movieTitle, 10) }}
                 </h4>
               </router-link>
-              <button @click="reviewStore.showReviewPopup(review)"
-                class="bg-yellow-500 text-black px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
-                Review
-              </button>
-              <button @click="reviewStore.removeReview(review)"
-                class="text-red-500 hover:text-red-400 transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                  stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <div class="flex items-center gap-2">
+                <button @click="reviewStore.showReviewPopup(review)"
+                  class="bg-yellow-500 text-black px-3 py-1 text-xs rounded-lg hover:bg-yellow-400 transition duration-200 w-20 text-center">
+                  Review
+                </button>
+                <button @click="reviewStore.removeReview(review)"
+                  class="text-red-500 hover:text-red-400 transition duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </li>
         </ul>
       </div>
       <div>
         <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
-        <ul>
+        <!-- Scrollable container -->
+        <ul class="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200">
           <li v-for="list in listsStore.lists" :key="list.id" @click="() => listsStore.showListMovies(list)"
             class="flex items-center gap-3 mb-3 cursor-pointer">
+            <!-- Placeholder or image -->
             <div v-if="!list.movies?.length"
               class="w-8 h-8 rounded-full flex justify-center items-center bg-gray-600 text-white">
               <i class="fas fa-list"></i>
             </div>
             <img v-else :src="list.movies[0].moviePoster" alt="List Image" class="w-8 h-8 rounded-full object-cover" />
+            <!-- List name -->
             <span>{{ list.name }}</span>
+            <!-- Delete button -->
             <button @click.stop="listsStore.deleteList(list.id)" class="ml-auto text-red-500 hover:text-red-300">
               <i class="fas fa-trash-alt"></i>
             </button>
           </li>
         </ul>
       </div>
+
+
 
       <div v-if="reviewStore.showReviewModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -151,14 +169,22 @@
 
       <!-- Full Review Pop-up -->
       <div v-if="reviewStore.showModalReview"
-        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-gray-800 p-6 rounded-lg w-96">
-          <h3 class="text-2xl text-yellow-500 mb-4">{{ reviewStore.selectedReview.movieTitle }}</h3>
-          <p class="text-white mb-4">Rating: {{ reviewStore.selectedReview.rating }}</p>
-          <p class="text-white mb-4">{{ reviewStore.selectedReview.body }}</p>
-          <button @click="reviewStore.closeModalReview" class="text-yellow-400 mt-4 hover:underline">Close</button>
+        class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+        <div
+          class="bg-gray-900 p-8 rounded-lg max-w-md w-full shadow-xl transform transition-all duration-300 ease-in-out scale-95 hover:scale-100">
+          <h3 class="text-3xl text-yellow-500 font-semibold mb-4">{{ reviewStore.selectedReview.movieTitle }}</h3>
+          <p class="text-lg text-white mb-2">Rating:
+            <span class="font-semibold text-yellow-400">{{ reviewStore.selectedReview.rating }}</span>
+          </p>
+          <p class="text-white mb-6">{{ reviewStore.selectedReview.body }}</p>
+
+          <button @click="reviewStore.closeModalReview"
+            class="bg-yellow-500 text-black py-2 px-6 rounded-full text-lg hover:bg-yellow-400 transition-all duration-200 focus:outline-none">
+            Close
+          </button>
         </div>
       </div>
+
 
       <!-- Add List Button -->
       <button @click="listsStore.showCreateListModal = true"
@@ -168,20 +194,27 @@
 
       <!-- Modal for creating a new list -->
       <div v-if="listsStore.showCreateListModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-gray-800 p-6 rounded-lg w-96">
-          <h3 class="text-2xl text-yellow-500 mb-4">Create a New List</h3>
+        class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+        <div
+          class="bg-gray-900 p-8 rounded-lg max-w-md w-full shadow-xl transform transition-all duration-300 ease-in-out scale-95 hover:scale-100">
+          <!-- Modal Header -->
+          <h3 class="text-3xl text-yellow-500 font-semibold mb-6 text-center">Create a New List</h3>
+
+          <!-- Input Field -->
           <input v-model="listsStore.newListName" type="text" placeholder="Enter list name"
-            class="w-full bg-gray-700 p-3 rounded-lg text-white text-sm mb-4" />
+            class="w-full bg-gray-800 p-3 rounded-lg text-white text-base mb-6 focus:ring-2 focus:ring-yellow-500 outline-none transition-all duration-200" />
+
+          <!-- Action Buttons -->
           <div class="flex justify-end gap-4">
             <!-- Cancel Button -->
             <button @click="listsStore.closeModal"
-              class="bg-gray-600 text-white py-1 px-3 text-sm rounded-lg hover:bg-gray-500 transition duration-200">
+              class="bg-gray-700 text-white py-2 px-5 rounded-full text-base hover:bg-gray-600 transition-all duration-200 focus:outline-none">
               Cancel
             </button>
+
             <!-- Create Button -->
             <button @click="listsStore.createList"
-              class="bg-yellow-500 text-black py-1 px-3 text-sm rounded-lg hover:bg-yellow-400 transition duration-200">
+              class="bg-yellow-500 text-black py-2 px-5 rounded-full text-base font-semibold hover:bg-yellow-400 transition-all duration-200 focus:outline-none">
               Create
             </button>
           </div>
@@ -192,58 +225,126 @@
       <!-- Movie List Modal -->
       <div v-if="listsStore.showMovieListModal && listsStore.selectedListMovies.length > 0"
         class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-gray-800 p-6 rounded-lg w-96">
-          <h3 class="text-2xl text-yellow-500 mb-4">{{ listsStore.selectedList.name }} Movies</h3>
-          <ul>
-            <li v-for="movie in listsStore.selectedListMovies" :key="movie._id" class="flex items-center gap-3 mb-3">
+        <div
+          class="bg-gray-900 p-8 rounded-lg w-96 max-w-md shadow-lg transform transition-all duration-300 ease-in-out translate-x-12">
+          <h3 class="text-2xl text-yellow-400 mb-4 font-semibold">{{ listsStore.selectedList.name }} Movies</h3>
+          <ul
+            class="max-h-96 overflow-y-scroll space-y-4 scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-gray-700 scrollbar-rounded-lg">
+            <li v-for="movie in listsStore.selectedListMovies" :key="movie._id"
+              class="flex items-center gap-3 mb-3 hover:bg-gray-800 rounded-lg transition duration-200">
               <img :src="movie.moviePoster || '/default-movie-poster.jpg'" alt="Movie Poster"
-                class="w-10 h-10 rounded-full object-cover" />
-              <router-link :to="`/movie/${movie.TMDid}`">
-                <span class="flex-1">{{ movie.title }}</span>
+                class="w-12 h-12 rounded-full object-cover shadow-md" />
+              <router-link :to="`/movie/${movie.TMDid}`"
+                class="flex-1 text-white hover:text-yellow-400 transition duration-200">
+                <span class="font-medium">{{ movie.title }}</span>
               </router-link>
               <button @click.stop="listsStore.deleteMovie(listsStore.selectedList.id, movie._id)"
-                class="bg-red-500 text-white py-1 px-3 text-xs rounded-lg hover:bg-red-400 transition duration-200">
+                class="bg-red-500 text-white py-1 px-3 text-xs rounded-lg hover:bg-red-400 transition duration-200 focus:outline-none">
                 Delete
               </button>
             </li>
           </ul>
           <button @click="listsStore.showMovieListModal = false"
-            class="bg-yellow-500 text-black py-1 px-3 text-xs rounded-lg hover:bg-yellow-400 transition duration-200">
+            class="bg-yellow-500 text-black py-1 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 focus:outline-none mt-2">
             Close
           </button>
         </div>
       </div>
+
     </aside>
 
     <!-- Main Feed -->
-    <main class="flex-1 p-6">
-      <!-- Post Input -->
-      <div class="bg-gray-800 p-4 rounded-lg mt-14 mb-6 relative">
-        <div class="flex items-center gap-4">
-          <img src="/alex.png" alt="User" class="w-12 h-12 rounded-full" />
-          <textarea v-model="postContent" placeholder="What's on your mind?"
-            class="w-full bg-gray-700 p-3 rounded-lg text-white text-sm resize-none"></textarea>
+    <main class="flex-1 p-6 space-y-8">
+      <!-- Activity Feed -->
+      <section class="space-y-6 mt-8">
+        <div v-for="activity in activities" :key="activity.id" class="p-6 rounded-lg shadow-lg flex gap-4 items-start"
+          :class="activity.isCurrentUser ? 'bg-yellow-800' : 'bg-gray-900'">
+          <img :src="activity.user?.avatar" alt="User" class="w-12 h-12 rounded-full" />
+          <div>
+            <p class="text-white text-sm">
+              <span class="font-semibold text-yellow-400">{{ activity.user?.name }}</span>
+              <template v-if="activity.type === 'REVIEW'">
+                reviewed and rated <span class="font-semibold text-yellow-400">{{ activity.movie?.title }}</span>
+                <span class="text-yellow-500 font-bold">({{ activity.rating }}/10)</span>
+              </template>
+              <template v-else-if="activity.type === 'Add_list'">
+                added <span class="font-semibold text-yellow-400">{{ activity.movie?.title }}</span>
+                to the list <span class="font-semibold text-yellow-400">{{ activity.listName }}</span>.
+              </template>
+              <template v-else-if="activity.type === 'Follow'">
+                followed <span class="font-semibold text-yellow-400">{{ activity.followedUser?.name }}</span>.
+              </template>
+            </p>
+            <p v-if="activity.type === 'REVIEW'" class="text-gray-400 text-sm mt-2 italic">
+              "{{ activity.reviewContent }}"
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div class="flex justify-center items-center mt-3 space-x-4">
-          <button
-            class="flex items-center gap-2 bg-neutral-800 text-white px-5 py-2 rounded-lg font-medium hover:bg-yellow-500 transition">
-            <img src="/camera.svg" class="w-5 h-5" alt="Smiley" />
-            Photo
+      <!-- Profile Actions -->
+      <section class="mt-10">
+
+        <!-- Search Users -->
+        <!-- <div class="flex items-center gap-4 bg-gray-800 p-4 rounded-lg shadow-md">
+          <input v-model="searchQuery" placeholder="Search for users..."
+            class="w-full bg-gray-700 p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+          <button @click="searchUsers"
+            class="bg-yellow-500 text-black px-5 py-2 rounded-lg font-medium hover:bg-yellow-400 transition">
+            Search
           </button>
-          <button
-            class="flex items-center gap-2 bg-neutral-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-500 transition">
-            <img src="/video.svg" class="w-5 h-5" alt="Video" />
-            Video
-          </button>
+        </div> -->
+
+        <!-- Friend Requests Modal -->
+        <div v-if="showRequestsModal"
+          class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+          <div class="bg-gray-900 p-6 rounded-lg max-w-lg w-full">
+            <h2 class="text-xl font-semibold text-white mb-4">Friend Requests</h2>
+            <div v-for="request in friendRequests" :key="request.id"
+              class="bg-gray-800 p-4 rounded-lg flex items-center gap-4 mb-3">
+              <img :src="request.user.avatar" alt="User" class="w-12 h-12 rounded-full" />
+              <p class="text-white flex-1">
+                <span class="font-semibold text-yellow-400">{{ request.user.name }}</span> sent you a friend request.
+              </p>
+              <div class="flex gap-3">
+                <button @click="acceptRequest(request.id)"
+                  class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-yellow-400 transition">Accept</button>
+                <button @click="declineRequest(request.id)"
+                  class="bg-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-600 transition">Decline</button>
+              </div>
+            </div>
+            <button @click="showRequestsModal = false"
+              class="mt-4 bg-gray-700 px-4 py-2 rounded-lg text-white">Close</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Friend Request Popup -->
+      <div v-if="userStore.showFriendRequestPopup"
+        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg w-96 max-w-full text-center">
+          <h3 class="text-2xl text-yellow-500 mb-4">Send Friend Request</h3>
+          <p class="text-white mb-4">Would you like to send a friend request to <strong>{{ userStore.selectedUser.name
+              }}</strong>?</p>
+          <div class="flex gap-4 justify-center">
+            <button @click="userStore.sendFriendRequest"
+              class="bg-yellow-500 text-black py-2 px-6 rounded-lg font-medium hover:bg-yellow-400 transition">
+              Send Request
+            </button>
+            <button @click="userStore.cancelFriendRequest"
+              class="bg-gray-700 py-2 px-6 rounded-lg font-medium hover:bg-gray-600 transition">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </main>
+
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useReviewStore } from '../stores/reviewStore';
 import { useListStore } from '../stores/listsStore';
 import { useUserStore } from '../stores/userStore';
@@ -258,6 +359,8 @@ const email = ref('');
 const followers = ref(0);
 const following = ref(0);
 const profilePicture = ref('/default-profile.png');
+const showRequestsModal = ref(false); // Controls modal visibility
+
 
 const avatars = [
   '/avatars/avatar1.jpg',
@@ -275,9 +378,19 @@ const avatars = [
   '/avatars/avatar13.jpeg',
 ];
 
+const activities = ref([]); // Keep this reactive
+const friendRequests = ref([]);
+
+
+
+
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
 const userStore = useUserStore();
+
+watch(() => userStore.searchQuery, () => {
+  userStore.searchUsers();
+});
 
 function selectAvatar(avatar) {
   profilePicture.value = avatar;
@@ -286,9 +399,8 @@ function selectAvatar(avatar) {
   updateProfilePicture(avatar);
 }
 
-
 async function updateProfilePicture(newProfilePicture) {
-  const userId = localStorage.getItem('userId'); 
+  const userId = localStorage.getItem('userId');
   try {
     const response = await axios.put('http://localhost:5001/api/users/profile-picture', {
       userId,
@@ -312,10 +424,108 @@ onMounted(async () => {
   following.value = user.following.length;
   profilePicture.value = user.profilePicture;
 
-
   reviewStore.fetchReviews();
   listsStore.fetchLists();
+
+  userStore.fetchUsers();
+
+  generateRandomActivities();
+  generateRandomFriendRequests();
 });
+
+// Ensure the generateRandomActivities is correctly updating the activities array
+const generateRandomActivities = () => {
+  const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
+  console.log('loggedInUserId', loggedInUserId);
+  const randomUsers = [
+    { id: '1', name: 'Alex' },
+    { id: '2', name: 'Sophia' },
+    { id: '3', name: 'Michael' },
+    { id: '4', name: 'Emma' },
+    { id: '5', name: 'John' },
+    { id: '6', name: 'Alice' },
+    { id: loggedInUserId, name: 'admin' }
+  ];
+  const randomMovies = ['Inception', 'The Dark Knight', 'Interstellar', 'The Matrix', 'Avengers'];
+  const randomListNames = ['Favorites', 'Top Picks', 'Must Watch'];
+
+  const types = ['REVIEW', 'Add_list', 'Follow'];
+
+  const randomActivity = () => {
+    const randomUser = randomUsers[Math.floor(Math.random() * randomUsers.length)];
+    const movie = randomMovies[Math.floor(Math.random() * randomMovies.length)];
+    const listName = randomListNames[Math.floor(Math.random() * randomListNames.length)];
+    const type = types[Math.floor(Math.random() * types.length)];
+
+    if (randomUser.id === loggedInUserId) {
+      randomUser.name = 'You'; // Replace the user name with 'You' for the logged-in user
+    }
+
+    const activity = {
+      id: Math.floor(Math.random() * 1000),
+      type,
+      user: { id: randomUser.id, name: randomUser.name, avatar: `/${randomUser.name.toLowerCase()}.png` },
+      createdAt: new Date().toISOString(),
+      movie: { title: movie },
+      followedUser: {},
+      isCurrentUser: randomUser.id === loggedInUserId // Check if the activity belongs to the logged-in user
+    };
+
+    if (type === 'REVIEW') {
+      activity.rating = Math.floor(Math.random() * 10) + 1;
+      activity.reviewContent = `I really enjoyed ${movie}. Highly recommended!`;
+    } else if (type === 'Add_list') {
+      activity.listName = listName;
+    } else if (type === 'Follow') {
+      const followedUser = randomUsers[Math.floor(Math.random() * randomUsers.length)];
+      activity.followedUser = { id: followedUser.id, name: followedUser.name, avatar: `/${followedUser.name.toLowerCase()}.png` };
+    }
+
+    return activity;
+  };
+
+  activities.value = [];
+  for (let i = 0; i < 20; i++) {
+    activities.value.push(randomActivity());
+  }
+
+  activities.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+};
+
+const generateRandomFriendRequests = () => {
+  const randomUsers = ['Alex', 'Sophia', 'Michael', 'Emma', 'John', 'Alice'];
+
+  const randomRequest = () => {
+    const user = randomUsers[Math.floor(Math.random() * randomUsers.length)];
+    return {
+      id: Math.floor(Math.random() * 1000),
+      user: { name: user, avatar: `/${user.toLowerCase()}.png` },
+    };
+  };
+
+  friendRequests.value = []; // Reset before pushing new requests
+  for (let i = 0; i < 3; i++) {
+    friendRequests.value.push(randomRequest());
+  }
+};
+
+// Simulate accepting a friend request
+const acceptRequest = (id) => {
+  const requestIndex = friendRequests.value.findIndex(request => request.id === id);
+  if (requestIndex !== -1) {
+    friendRequests.value.splice(requestIndex, 1); // Remove accepted request
+  }
+};
+
+// Simulate declining a friend request
+const declineRequest = (id) => {
+  const requestIndex = friendRequests.value.findIndex(request => request.id === id);
+  if (requestIndex !== -1) {
+    friendRequests.value.splice(requestIndex, 1); // Remove declined request
+  }
+};
+
+
 </script>
 
 <style scoped>
