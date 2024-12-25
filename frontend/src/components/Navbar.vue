@@ -28,8 +28,14 @@
         </router-link>
       </nav>
 
-      <!-- Profile & Log Out -->
+      <!-- Profile, Search, & Log Out -->
       <div class="flex items-center space-x-4">
+        <!-- Search Button: Only visible on Profile page -->
+        <button v-if="isProfilePage" @click="toggleSearchModal"
+          class="text-yellow-500 text-2xl hover:text-yellow-400 transition">
+          <i class="fas fa-search"></i>
+        </button>
+
         <router-link :to="`/profile/${userId}`" class="relative w-10 h-10 rounded-full overflow-hidden">
           <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
             class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition-all rounded-full" />
@@ -59,19 +65,43 @@
         </router-link>
       </nav>
     </div>
+
+    <div v-if="userStore.showSearchModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-poppins">
+      <div class="bg-gray-800 p-6 rounded-lg w-96 max-w-full">
+        <h3 class="text-2xl text-yellow-500 mb-6 text-center">Search Users</h3>
+        <input v-model="userStore.searchQuery" type="text" placeholder="Enter username..."
+          class="w-full bg-gray-700 p-3 rounded-lg text-white text-base mb-4 focus:ring-2 focus:ring-yellow-500 outline-none" />
+        <ul>
+          <li v-for="user in userStore.filteredUsers" :key="user.id"
+            class="flex items-center gap-4 p-2 bg-gray-700 rounded-lg mb-2 cursor-pointer hover:bg-gray-600 transition"
+            @click="userStore.selectUser(user)">
+            <img :src="user.profilePicture || '/default-avatar.png'" alt="User Avatar"
+              class="w-12 h-12 rounded-full object-cover" />
+
+            <span class="text-white">{{ user.name }}</span>
+          </li>
+        </ul>
+        <button @click="userStore.showSearchModal = false"
+          class="mt-4 bg-yellow-500 text-black py-2 px-4 rounded-lg font-medium hover:bg-yellow-400 transition">
+          Close
+        </button>
+      </div>
+    </div>
   </header>
 </template>
 
 <script>
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useUserStore } from '../stores/userStore';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 
 export default {
   name: 'Navbar',
   setup() {
     const router = useRouter();
+    const route = useRoute(); // Get current route
     const authStore = useAuthStore();
     const userStore = useUserStore();
     const userId = localStorage.getItem('userId');
@@ -113,6 +143,13 @@ export default {
       userStore.fetchUser(userId);
     }
 
+    // Check if the current route is the Profile page
+    const isProfilePage = computed(() => route.name === 'Profile');
+
+    const toggleSearchModal = () => {
+      userStore.showSearchModal = !userStore.showSearchModal;
+    };
+
     return {
       logout,
       userId,
@@ -120,6 +157,8 @@ export default {
       isMobileMenuOpen,
       toggleMobileMenu,
       isNavbarHidden,
+      isProfilePage,
+      toggleSearchModal,
     };
   },
 };

@@ -3,8 +3,10 @@ import { createMovie, getMovieByTMDid } from '../controllers/movieController';
 import { List } from '../models/listModel';
 import mongoose from 'mongoose';
 
-
-export const createListController = async (req: Request, res: Response): Promise<void> => {
+export const createListController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   const { name, userId } = req.body;
   try {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -12,15 +14,27 @@ export const createListController = async (req: Request, res: Response): Promise
       return;
     }
     const list = new List({ name, user: userId });
-    await list.save();
-    res.status(201).json(list);
-  } catch(error) {
-    res.status(500).json({ message: 'Error creating list', error: error.message });
+    // Save the list to the database if it doesn't already exist for the user
+    const existingList = await List.findOne({ name, user: userId });
+    if (existingList) {
+      res.status(409).json({ message: 'List already exists for user' });
+      return;
+    } else {
+      await list.save();
+      res.status(201).json(list);
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error creating list', error: error.message });
   }
-}
+};
 
 // Get all lists for a user
-export const getUserListsController = async (req: Request, res: Response): Promise<void> => {
+export const getUserListsController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   const { userId } = req.params;
   try {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -29,10 +43,12 @@ export const getUserListsController = async (req: Request, res: Response): Promi
     }
     const lists = await List.find({ user: userId }).populate('movies');
     res.status(200).json(lists);
-  } catch(error) {
-    res.status(500).json({ message: 'Error fetching user lists', error: error.message });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error fetching user lists', error: error.message });
   }
-}
+};
 
 /*
 // This could be used if we decide to remove the populate from the getUserListsController.
@@ -52,7 +68,10 @@ export const getList = async (req: Request, res: Response): Promise<void> => {
   */
 
 // Delete a list
-export const deleteListController = async (req: Request, res: Response): Promise<void> => {
+export const deleteListController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   const { listId } = req.params;
   try {
     if (!mongoose.Types.ObjectId.isValid(listId)) {
@@ -61,14 +80,18 @@ export const deleteListController = async (req: Request, res: Response): Promise
     }
     await List.findOneAndDelete({ _id: listId });
     res.status(200).json({ message: 'List deleted successfully' });
-  } catch(error) {
-    res.status(500).json({ message: 'Error deleting list', error: error.message });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error deleting list', error: error.message });
   }
-}
-
+};
 
 // Add a movie to a list
-export const addMovieToListController = async (req: Request, res: Response): Promise<void> => {
+export const addMovieToListController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   const { listId, title, releaseYear, TMDid } = req.body;
   try {
     if (!mongoose.Types.ObjectId.isValid(listId)) {
@@ -89,14 +112,18 @@ export const addMovieToListController = async (req: Request, res: Response): Pro
       await list.save();
     }
     res.status(200).json(list);
-  } catch(error) {
-    res.status(500).json({ message: 'Error adding movie to list', error: error.message });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error adding movie to list', error: error.message });
   }
 };
 
-
 // Remove a movie from a list
-export const removeMovieFromListController = async (req: Request, res: Response): Promise<void> => {
+export const removeMovieFromListController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   const { listId, movieId } = req.body;
   try {
     if (!mongoose.Types.ObjectId.isValid(listId)) {
@@ -116,8 +143,12 @@ export const removeMovieFromListController = async (req: Request, res: Response)
     await list.save();
     const populatedList = await list.populate('movies');
     res.status(200).json(populatedList);
-  } catch(error) {
-    res.status(500).json({ message: 'Error removing movie from list', error: error.message });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: 'Error removing movie from list',
+        error: error.message,
+      });
   }
-}
-
+};

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import Navbar from '../src/components/Navbar.vue';
 import { createPinia, setActivePinia } from 'pinia';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useAuthStore } from '../src/stores/auth';
 import { useUserStore } from '../src/stores/userStore';
@@ -9,6 +9,7 @@ import { useUserStore } from '../src/stores/userStore';
 // Mock vue-router
 vi.mock('vue-router', () => ({
   useRouter: vi.fn(),
+  useRoute: vi.fn(),
 }));
 
 // Mock auth store
@@ -34,6 +35,7 @@ describe('Navbar.vue', () => {
   let mockAuthStore;
   let mockRouter;
   let mockUserStore;
+  let mockRoute;
 
   beforeEach(() => {
     // Create and set up the Pinia store
@@ -44,16 +46,21 @@ describe('Navbar.vue', () => {
       push: vi.fn(),
     };
 
+    mockRoute = {
+      name: 'Home', // Simulate the current route
+    };
+
     vi.clearAllMocks();
 
-    // Mock router and auth store
+    // Mock router and stores
     useRouter.mockReturnValue(mockRouter);
+    useRoute.mockReturnValue(mockRoute);
     mockAuthStore = useAuthStore();
     mockUserStore = useUserStore();
 
     wrapper = mount(Navbar, {
       global: {
-        plqugins: [pinia],
+        plugins: [pinia],
       },
     });
   });
@@ -65,5 +72,4 @@ describe('Navbar.vue', () => {
       mockUserStore.user.profilePicture,
     );
   });
-
 });
