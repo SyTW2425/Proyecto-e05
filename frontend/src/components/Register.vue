@@ -166,11 +166,11 @@ const handleSubmit = async () => {
   try {
     await schema.validate(values, { abortEarly: false });
 
-    // Call the register action
-    await authStore.register(name.value, username.value, email.value, password.value);
+    if (await authStore.register(name.value, username.value, email.value, password.value) === true) {
+      // Redirect to the login page after successful registration
+      router.push('/login');
+    }
 
-    // Redirect to the login page after successful registration
-    router.push('/login');
   } catch (err) {
     if (err.name === 'ValidationError') {
       alertStore.error(err.errors.join(', '));
@@ -192,33 +192,33 @@ const handleSubmit = async () => {
 
 /* Tooltip styling */
 .tooltip {
-    position: relative;
-  }
+  position: relative;
+}
 
-  .tooltip:hover::after,
-  .tooltip:focus::after {
-    content: 'Click the link to view full terms.';
-    position: absolute;
-    background: #333;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    top: -35px;
-    left: 0;
-    white-space: nowrap;
-    font-size: 12px;
-    z-index: 10;
-  }
+.tooltip:hover::after,
+.tooltip:focus::after {
+  content: 'Click the link to view full terms.';
+  position: absolute;
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  top: -35px;
+  left: 0;
+  white-space: nowrap;
+  font-size: 12px;
+  z-index: 10;
+}
 
-  .tooltip:hover::before,
-  .tooltip:focus::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: 10px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent #333 transparent;
-    z-index: 10;
-  }
+.tooltip:hover::before,
+.tooltip:focus::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 10px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+  z-index: 10;
+}
 </style>
