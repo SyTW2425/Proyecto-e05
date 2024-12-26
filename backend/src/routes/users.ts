@@ -1,6 +1,11 @@
 import express, { Request, Response } from 'express';
 import { User } from '../models/userModel';
-import { login, register } from '../controllers/userController';
+import { login,
+         register,
+         followUser,
+         unfollowUser,
+         getFollowers,
+         getFollowing } from '../controllers/userController';
 
 export const userRouter = express.Router();
 
@@ -224,5 +229,13 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to fetch user' });
   }
 });
+
+userRouter.put('/follow', followUser);
+
+userRouter.put('/unfollow', unfollowUser);
+
+userRouter.get('/followers/:userId', getFollowers);
+
+userRouter.get('/following/:userId', getFollowing);
 
 export default userRouter;

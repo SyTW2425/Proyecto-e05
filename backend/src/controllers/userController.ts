@@ -55,3 +55,79 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Error logging in', error: err.message });
   }
 };
+
+export const followUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId, followId } = req.body;
+    const user = await User.findById(userId);
+    const followUser = await User.findById(followId);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    if (!followUser) {
+      res.status(404).json({ message: 'User to follow not found' });
+      return;
+    }
+    user.following.push(followId);
+    followUser.followers.push(userId);
+    await user.save();
+    await followUser.save();
+    res.status(200).json({ message: 'User followed successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error following user', error: err.message });
+  }
+};
+
+export const unfollowUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId, unfollowId } = req.body;
+    const user = await User.findById(userId);
+    const unfollowUser = await User.findById(unfollowId);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    if (!unfollowUser) {
+      res.status(404).json({ message: 'User to unfollow not found' });
+      return;
+    }
+    user.following = user.following.filter((id) => id.toString() !== unfollowId.toString());
+    unfollowUser.followers = unfollowUser.followers.filter((id) => id.toString() !== userId.toString());
+    await user.save();
+    await unfollowUser.save();
+    res.status(200).json({ message: 'User unfollowed successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error unfollowing user', error: err.message });
+  }
+};
+
+export const getFollowers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    const followers = await User.find({ _id: { $in: user.followers } });
+    res.status(200).json(followers);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching followers', error: err.message });
+  }
+};
+
+export const getFollowing = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    const following = await User.find({ _id: { $in: user.following } });
+    res.status(200).json(following);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching following', error: err.message });
+  }
+};

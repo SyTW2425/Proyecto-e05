@@ -6,7 +6,7 @@ import { User } from '../../src/models/userModel';
 import bcrypt from 'bcrypt';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from '@jest/globals';
 
-describe('Auth Controller Tests', () => {
+describe('User Controller Tests', () => {
   let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
@@ -130,4 +130,162 @@ describe('Auth Controller Tests', () => {
       expect(res.body.message).toBe('Incorrect password');
     });
   });
+
+  describe('PUT /follow', () => {
+
+    it('should allow to follow user', async () => {
+      const testUser = new User({
+        name: 'Test User',
+        username: 'testUser',
+        password: 'password',
+        email: 'testuser@example.com',
+      });
+      await testUser.save();
+      const followUser = new User({
+        name: 'Follow User',
+        username: 'followUser',
+        password: 'password',
+        email: 'followuser@example.com',
+      });
+      await followUser.save();
+      const followPayload = {
+        userId: testUser._id,
+        followId: followUser._id,
+      }
+      const res = await request(app).put('/api/users/follow').send(followPayload);
+      expect(res.status).toBe(200);
+      expect(res.body.message).toBe('User followed successfully');
+      const user = await User.findById(testUser._id);
+      const followedUser = await User.findById(followUser._id);
+      expect(user?.following.map(id => id.toString())).toContain(followUser._id.toString());
+      expect(followedUser?.followers.map(id => id.toString())).toContain(testUser._id.toString());
+    });
+
+  });
+
+  describe('PUT /unfollow', () => {
+
+    it('should allow to unfollow a user', async () => {
+      const testUser = new User({
+        name: 'Test User',
+        username: 'testUser',
+        password: 'password',
+        email: 'testuser@example.com',
+      });
+      await testUser.save();
+      const followUser = new User({
+        name: 'Follow User',
+        username: 'followUser',
+        password: 'password',
+        email: 'followuser@example.com',
+      });
+      await followUser.save();
+      const followPayload = {
+        userId: testUser._id,
+        followId: followUser._id,
+      }
+      await request(app).put('/api/users/follow').send(followPayload);
+
+      const unfollowPayload = {
+        userId: testUser._id,
+        unfollowId: followUser._id,
+      }
+      const res = await request(app).put('/api/users/unfollow').send(unfollowPayload);
+      expect(res.status).toBe(200);
+      expect(res.body.message).toBe('User unfollowed successfully');
+      const user = await User.findById(testUser._id);
+      const followedUser = await User.findById(followUser._id);
+      expect(user?.following.length).toBe(0)
+      expect(followedUser?.followers.length).toBe(0);
+    });
+
+  });
+
+  describe('GET /followers', () => {
+
+    it('should return all the followers of a user', async () => {
+      const testUser = new User({
+        name: 'Test User',
+        username: 'testUser',
+        password: 'password',
+        email: 'testuser@example.com',
+      });
+      await testUser.save();
+      const follower1 = new User({
+        name: 'Follow User',
+        username: 'follower1',
+        password: 'password',
+        email: 'follower1@example.com',
+      });
+      await follower1.save();
+      const follower2 = new User({
+        name: 'Follow User',
+        username: 'follower2',
+        password: 'password',
+        email: 'follower2@example.com',
+      });
+      await follower2.save();
+      const follower3 = new User({
+        name: 'Follow User',
+        username: 'follower3',
+        password: 'password',
+        email: 'follower3@example.com',
+      });
+      await follower3.save();
+      await request(app).put('/api/users/follow').send({ userId: follower1._id, followId: testUser._id });
+      await request(app).put('/api/users/follow').send({ userId: follower2._id, followId: testUser._id });
+      await request(app).put('/api/users/follow').send({ userId: follower3._id, followId: testUser._id });
+      const res = await request(app).get(`/api/users/followers/${testUser._id}`);
+     
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(3);
+    });
+
+  });
+
+  describe('GET /following', () => {
+
+    it('should return the users followed by a given user', async () => {
+      const testUser = new User({
+        name: 'Test User',
+        username: 'testUser',
+        password: 'password',
+        email: 'testuser@example.com',
+      });
+      await testUser.save();
+      const followed1 = new User({
+        name: 'Follow User',
+        username: 'followed1',
+        password: 'password',
+        email: 'followed1@example.com',
+      });
+      await followed1.save();
+      const followed2 = new User({
+        name: 'Follow User',
+        username: 'followed2',
+        password: 'password',
+        email: 'followed2@example.com',
+      });
+      await followed2.save();
+      const followed3 = new User({
+        name: 'Follow User',
+        username: 'followed3',
+        password: 'password',
+        email: 'followed3@example.com',
+      });
+      await followed3.save();
+
+      await request(app).put('/api/users/follow').send({ userId: testUser._id, followId: followed1._id });
+      await request(app).put('/api/users/follow').send({ userId: testUser._id, followId: followed2._id });
+      await request(app).put('/api/users/follow').send({ userId: testUser._id, followId: followed3._id });
+      const res = await request(app).get(`/api/users/following/${testUser._id}`);
+     
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(3);
+    });
+
+  });
+
 });
+
+
