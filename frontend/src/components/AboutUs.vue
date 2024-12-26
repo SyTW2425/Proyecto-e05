@@ -188,7 +188,6 @@ export default {
       document.getElementById(id).scrollIntoView({ behavior: "smooth" });
     },
     handleSubmit() {
-      console.log("Form submitted:", this.contactForm);
       alert("Gracias por tu mensaje. Nos pondremos en contacto contigo pronto.");
       this.contactForm = { name: "", email: "", message: "" };
     },
