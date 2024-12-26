@@ -123,11 +123,9 @@ export const getMovieTrailers = async (movieId: number) => {
       },
       headers: getAuthHeaders(),
     });
-    console.log("response: ", response.data);
     const trailers = response.data.results.filter(
       (video: any) => video.type === 'Trailer',
     );
-    console.log("trailer: ", trailers);
     return trailers;
   } catch (error) {
     console.error('Error fetching movie trailers:', error);

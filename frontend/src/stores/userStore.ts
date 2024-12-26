@@ -38,13 +38,9 @@ export const useUserStore = defineStore('user', {
       }
     },
     searchUsers() {
-      console.log('Searching users...');
-      console.log("QUERY: ", this.searchQuery);
-      console.log("USERS: ", this.users);
       this.filteredUsers = this.users.filter((user) =>
         user.name.toLowerCase().includes(this.searchQuery.toLowerCase()),
       );
-      console.log(this.filteredUsers);
     },
     selectUser(user: any) {
       this.selectedUser = user;

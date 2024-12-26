@@ -34,7 +34,6 @@ export const useCarouselStore = defineStore('carousel', {
     },
     resizeTitle(title: string) {
       // change font size based on title length
-      console.log(title, title.length);
       if (title.length > 15 && title.length < 30) {
         return { fontSize: '50px' };
 

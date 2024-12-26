@@ -436,7 +436,6 @@ onMounted(async () => {
 // Ensure the generateRandomActivities is correctly updating the activities array
 const generateRandomActivities = () => {
   const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
-  console.log('loggedInUserId', loggedInUserId);
   const randomUsers = [
     { id: '1', name: 'Alex' },
     { id: '2', name: 'Sophia' },

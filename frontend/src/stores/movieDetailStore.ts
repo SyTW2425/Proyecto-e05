@@ -167,7 +167,6 @@ export const useMovieDetailStore = defineStore('movieDetail', {
 
     selectList(listId: string) {
       this.selectedListId = listId;
-      console.log('Selected list ID:', listId);
       this.isDropdownOpen = false;
     },
 

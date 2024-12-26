@@ -107,10 +107,8 @@ export const addReviewToMovie = async (req: Request, res: Response) => {
 
 export const getUserReviews = async (req: Request, res: Response) => {
   const { userId } = req.query;
-  console.log(`userId: ${userId}`);
   try {
     const reviews = await getReviewsByUserId(userId!.toString());
-    console.log(`${userId} reviews: ${reviews}`);
     res.status(200).json(reviews);
   } catch (error) {
     res
