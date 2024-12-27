@@ -61,14 +61,30 @@ export const followUser = async (req: Request, res: Response): Promise<void> => 
     const { userId, followId } = req.body;
     const user = await User.findById(userId);
     const followUser = await User.findById(followId);
+    
     if (!user) {
       res.status(404).json({ message: 'User not found' });
       return;
     }
+    
     if (!followUser) {
       res.status(404).json({ message: 'User to follow not found' });
       return;
     }
+
+    // Check if the user is already following the user
+
+    if (user.following.includes(followId)) {
+      res.status(400).json({ message: 'User already followed' });
+      return;
+    }
+
+    // cannot follow yourself
+    if (userId === followId) {
+      res.status(400).json({ message: 'Cannot follow yourself' });
+      return;
+    }
+
     user.following.push(followId);
     followUser.followers.push(userId);
     await user.save();

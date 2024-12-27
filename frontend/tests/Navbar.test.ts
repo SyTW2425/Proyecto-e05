@@ -23,10 +23,12 @@ vi.mock('../src/stores/auth', () => ({
 vi.mock('../src/stores/userStore', () => ({
   useUserStore: vi.fn(() => ({
     user: {
-      profilePicture: '/path/to/profile-picture.png',
+      profilePicture: '../public/default-profile.png',
       username: 'Test User',
     },
     fetchUser: vi.fn(),
+    fetchUsers: vi.fn(),
+    fetchFollowing: vi.fn(),
   })),
 }));
 

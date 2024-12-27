@@ -66,22 +66,37 @@
       </nav>
     </div>
 
+
+    <!-- Search User -->
     <div v-if="userStore.showSearchModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-poppins">
       <div class="bg-gray-800 p-6 rounded-lg w-96 max-w-full">
         <h3 class="text-2xl text-yellow-500 mb-6 text-center">Search Users</h3>
+
+        <!-- Search Input -->
         <input v-model="userStore.searchQuery" type="text" placeholder="Enter username..."
           class="w-full bg-gray-700 p-3 rounded-lg text-white text-base mb-4 focus:ring-2 focus:ring-yellow-500 outline-none" />
-        <ul>
-          <li v-for="user in userStore.filteredUsers" :key="user.id"
-            class="flex items-center gap-4 p-2 bg-gray-700 rounded-lg mb-2 cursor-pointer hover:bg-gray-600 transition"
-            @click="userStore.selectUser(user)">
-            <img :src="user.profilePicture || '/default-avatar.png'" alt="User Avatar"
-              class="w-12 h-12 rounded-full object-cover" />
 
-            <span class="text-white">{{ user.name }}</span>
+        <!-- User List -->
+        <ul>
+          <li v-for="user in userStore.filteredUsers" :key="user._id"
+            class="flex items-center justify-between gap-4 p-2 bg-gray-700 rounded-lg mb-2 hover:bg-gray-600 transition">
+            <div class="flex items-center gap-4">
+              <img :src="user.profilePicture || '/default-avatar.png'" alt="User Avatar"
+                class="w-12 h-12 rounded-full object-cover" />
+              <span class="text-white">{{ user.name }}</span>
+            </div>
+
+            <!-- Follow/Unfollow Button -->
+            <button v-if="userStore.following" @click="toggleFollow(user)"
+              class="text-sm font-medium py-2 px-4 rounded-lg transition"
+              :class="isFollowing(user) ? 'bg-red-500 text-white hover:bg-red-400' : 'bg-yellow-500 text-black hover:bg-yellow-400'">
+              {{ isFollowing(user) ? 'Unfollow' : 'Follow' }}
+            </button>
           </li>
         </ul>
+
+        <!-- Close Button -->
         <button @click="userStore.showSearchModal = false"
           class="mt-4 bg-yellow-500 text-black py-2 px-4 rounded-lg font-medium hover:bg-yellow-400 transition">
           Close
@@ -119,6 +134,18 @@ export default {
       isMobileMenuOpen.value = !isMobileMenuOpen.value;
     };
 
+    const isFollowing = (user) => userStore.following.includes(user._id);
+
+    const toggleFollow = async (user) => {
+      if (isFollowing(user)) {
+        await userStore.unfollowUser(user._id);
+      } else {
+        console.log('Following user:', user._id);
+        await userStore.followUser(user._id);
+      }
+    };
+
+
     const handleScroll = () => {
       let scrollTop = window.scrollY || document.documentElement.scrollTop;
       if (scrollTop > lastScrollTop) {
@@ -131,17 +158,20 @@ export default {
       lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Prevent negative scrolling
     };
 
-    onMounted(() => {
-      window.addEventListener('scroll', handleScroll);
+    onMounted(async () => {
+      // Fetch the user and their following data on mount
+      await userStore.fetchUser(userId);
+      await userStore.fetchUsers();
+      await userStore.fetchFollowing(userId);
     });
 
     onBeforeUnmount(() => {
       window.removeEventListener('scroll', handleScroll);
     });
 
-    if (!userStore.user.id) {
-      userStore.fetchUser(userId);
-    }
+    // if (!userStore.user._id) {
+    userStore.fetchUser(userId);
+    // }
 
     // Check if the current route is the Profile page
     const isProfilePage = computed(() => route.name === 'Profile');
@@ -158,6 +188,8 @@ export default {
       toggleMobileMenu,
       isNavbarHidden,
       isProfilePage,
+      isFollowing,
+      toggleFollow,
       toggleSearchModal,
     };
   },

@@ -31,18 +31,6 @@
 
 
         </div>
-        <div class="relative flex justify-center items-center mt-6" @mouseover="isEnvelopeHovered = true"
-          @mouseleave="isEnvelopeHovered = false">
-          <div class="absolute cursor-pointer" @click="showRequestsModal = true">
-            <i class="fas fa-envelope text-3xl text-yellow-500"></i>
-            <span v-if="friendRequests.length"
-              class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {{ friendRequests.length }}
-            </span>
-          </div>
-        </div>
-
-
         <!-- Avatar Modal for Avatar Selection -->
         <div v-if="showAvatarModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div class="bg-gray-800 p-6 rounded-lg w-[600px] max-w-full">
@@ -71,13 +59,35 @@
 
         <!-- Follower and Following Stats -->
         <div class="flex justify-between text-sm mt-4">
-          <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center cursor-pointer" @click="openFollowModal('followers')">
             <span class="text-yellow-400 text-lg">{{ followers }}</span>
             <span class="text-gray-400">Followers</span>
           </div>
-          <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center cursor-pointer" @click="openFollowModal('following')">
             <span class="text-yellow-400 text-lg">{{ following }}</span>
             <span class="text-gray-400">Following</span>
+          </div>
+        </div>
+
+
+        <div v-if="showFollowModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg w-[600px] max-w-full">
+            <h3 class="text-2xl text-yellow-500 mb-4 text-center">{{ followModalTitle }}</h3>
+            <div class="overflow-y-auto max-h-96">
+              <ul>
+                <li v-for="user in followUsers" :key="user.id" class="flex items-center gap-3 mb-3">
+                  <img :src="user.profilePicture" alt="User Avatar" class="w-12 h-12 rounded-full object-cover" />
+                  <div>
+                    <p class="text-white text-sm font-semibold">{{ user.name }}</p>
+                    <p class="text-gray-400 text-xs">@{{ user.username }}</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <button @click="closeFollowModal"
+              class="bg-yellow-500 text-black py-2 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-6 w-full sm:w-auto mx-auto block">
+              Close
+            </button>
           </div>
         </div>
 
@@ -282,62 +292,7 @@
         </div>
       </section>
 
-      <!-- Profile Actions -->
-      <section class="mt-10">
 
-        <!-- Search Users -->
-        <!-- <div class="flex items-center gap-4 bg-gray-800 p-4 rounded-lg shadow-md">
-          <input v-model="searchQuery" placeholder="Search for users..."
-            class="w-full bg-gray-700 p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500" />
-          <button @click="searchUsers"
-            class="bg-yellow-500 text-black px-5 py-2 rounded-lg font-medium hover:bg-yellow-400 transition">
-            Search
-          </button>
-        </div> -->
-
-        <!-- Friend Requests Modal -->
-        <div v-if="showRequestsModal"
-          class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div class="bg-gray-900 p-6 rounded-lg max-w-lg w-full">
-            <h2 class="text-xl font-semibold text-white mb-4">Friend Requests</h2>
-            <div v-for="request in friendRequests" :key="request.id"
-              class="bg-gray-800 p-4 rounded-lg flex items-center gap-4 mb-3">
-              <img :src="request.user.avatar" alt="User" class="w-12 h-12 rounded-full" />
-              <p class="text-white flex-1">
-                <span class="font-semibold text-yellow-400">{{ request.user.name }}</span> sent you a friend request.
-              </p>
-              <div class="flex gap-3">
-                <button @click="acceptRequest(request.id)"
-                  class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-yellow-400 transition">Accept</button>
-                <button @click="declineRequest(request.id)"
-                  class="bg-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-600 transition">Decline</button>
-              </div>
-            </div>
-            <button @click="showRequestsModal = false"
-              class="mt-4 bg-gray-700 px-4 py-2 rounded-lg text-white">Close</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Friend Request Popup -->
-      <div v-if="userStore.showFriendRequestPopup"
-        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-gray-800 p-6 rounded-lg w-96 max-w-full text-center">
-          <h3 class="text-2xl text-yellow-500 mb-4">Send Friend Request</h3>
-          <p class="text-white mb-4">Would you like to send a friend request to <strong>{{ userStore.selectedUser.name
-              }}</strong>?</p>
-          <div class="flex gap-4 justify-center">
-            <button @click="userStore.sendFriendRequest"
-              class="bg-yellow-500 text-black py-2 px-6 rounded-lg font-medium hover:bg-yellow-400 transition">
-              Send Request
-            </button>
-            <button @click="userStore.cancelFriendRequest"
-              class="bg-gray-700 py-2 px-6 rounded-lg font-medium hover:bg-gray-600 transition">
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
     </main>
 
   </div>
@@ -359,8 +314,30 @@ const email = ref('');
 const followers = ref(0);
 const following = ref(0);
 const profilePicture = ref('/default-profile.png');
-const showRequestsModal = ref(false); // Controls modal visibility
+const showFollowModal = ref(false);
+const followModalTitle = ref('');
+const followUsers = ref([]);
 
+async function openFollowModal(type) {
+  showFollowModal.value = true;
+  followModalTitle.value = type === 'followers' ? 'Followers' : 'Following';
+
+  const userId = localStorage.getItem('userId');
+  try {
+    const endpoint = type === 'followers'
+      ? `http://localhost:5001/api/users/followers/${userId}`
+      : `http://localhost:5001/api/users/following/${userId}`;
+    const response = await axios.get(endpoint);
+    followUsers.value = response.data; // Ensure your API returns a list of users
+  } catch (error) {
+    console.error('Failed to fetch users', error);
+  }
+}
+
+function closeFollowModal() {
+  showFollowModal.value = false;
+  followUsers.value = [];
+}
 
 const avatars = [
   '/avatars/avatar1.jpg',
@@ -380,9 +357,6 @@ const avatars = [
 
 const activities = ref([]); // Keep this reactive
 const friendRequests = ref([]);
-
-
-
 
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
@@ -430,7 +404,6 @@ onMounted(async () => {
   userStore.fetchUsers();
 
   generateRandomActivities();
-  generateRandomFriendRequests();
 });
 
 // Ensure the generateRandomActivities is correctly updating the activities array
@@ -490,40 +463,6 @@ const generateRandomActivities = () => {
 
   activities.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 };
-
-const generateRandomFriendRequests = () => {
-  const randomUsers = ['Alex', 'Sophia', 'Michael', 'Emma', 'John', 'Alice'];
-
-  const randomRequest = () => {
-    const user = randomUsers[Math.floor(Math.random() * randomUsers.length)];
-    return {
-      id: Math.floor(Math.random() * 1000),
-      user: { name: user, avatar: `/${user.toLowerCase()}.png` },
-    };
-  };
-
-  friendRequests.value = []; // Reset before pushing new requests
-  for (let i = 0; i < 3; i++) {
-    friendRequests.value.push(randomRequest());
-  }
-};
-
-// Simulate accepting a friend request
-const acceptRequest = (id) => {
-  const requestIndex = friendRequests.value.findIndex(request => request.id === id);
-  if (requestIndex !== -1) {
-    friendRequests.value.splice(requestIndex, 1); // Remove accepted request
-  }
-};
-
-// Simulate declining a friend request
-const declineRequest = (id) => {
-  const requestIndex = friendRequests.value.findIndex(request => request.id === id);
-  if (requestIndex !== -1) {
-    friendRequests.value.splice(requestIndex, 1); // Remove declined request
-  }
-};
-
 
 </script>
 
