@@ -66,54 +66,6 @@
       </div>
     </section>
 
-
-
-    <!-- Leadership Section -->
-    <section v-if="team.length" class="leadership">
-      <h2>Meet the team</h2>
-      <p class="leadership-description">
-        Behind CineTrunk is a team passionate about cinema and technology, working to offer you the best
-        experience.
-      </p>
-      <div class="team-grid">
-        <div v-for="(member, index) in team" :key="index" class="team-member">
-          <div class="team-photo-wrapper">
-            <img :src="member.image" :alt="'Foto de ' + member.name" />
-          </div>
-          <h3>{{ member.name }}</h3>
-          <p>{{ member.role }}</p>
-          <div class="social-links">
-            <a v-for="(link, idx) in member.links" :key="idx" :href="link.url" target="_blank" rel="noopener noreferrer"
-              :aria-label="'Enlace a ' + link.icon">
-              <i :class="link.icon"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-      <h2>Contact us</h2>
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" v-model="contactForm.name" required aria-required="true"
-            aria-label="Full name" />
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" v-model="contactForm.email" required aria-required="true" aria-label="email" />
-        </div>
-        <div class="form-group">
-          <label for="message">Message</label>
-          <textarea id="message" v-model="contactForm.message" required aria-required="true"
-            aria-label="Write your message"></textarea>
-        </div>
-        <button type="submit" class="cta-button">Send</button>
-      </form>
-    </section>
-
     <!-- Call to Action -->
     <section class="call-to-action" id="call-to-action">
       <h2>Ready to join CineTrunk?</h2>
@@ -162,10 +114,10 @@ export default {
         },
         { text: "Haha, perfect. Thanks for the rec! I’m signing up now. 🎬", author: "bob" },
       ],
-      team: [
-        { name: "Persona 1", role: "Co-fundador, Estrategia y Desarrollo", image: "/alex.png", links: [{ url: "https://linkedin.com", icon: "fa-brands fa-linkedin" }, { url: "https://twitter.com", icon: "fa-brands fa-twitter" }] },
-        { name: "Persona 2", role: "Co-fundador, Tecnología y Producto", image: "/dani.png", links: [{ url: "https://linkedin.com", icon: "fa-brands fa-linkedin" }, { url: "https://twitter.com", icon: "fa-brands fa-twitter" }] },
-      ],
+      // team: [
+      //   { name: "Alexander Morales", role: "Co-fundador, Estrategia y Desarrollo", image: "/alex.png", links: [{ url: "https://linkedin.com", icon: "fa-brands fa-linkedin" }, { url: "https://twitter.com", icon: "fa-brands fa-twitter" }] },
+      //   { name: "Daniel Garvi", role: "Co-fundador, Tecnología y Producto", image: "/dani.png", links: [{ url: "https://linkedin.com", icon: "fa-brands fa-linkedin" }, { url: "https://twitter.com", icon: "fa-brands fa-twitter" }] },
+      // ],
       contactForm: {
         name: "",
         email: "",
