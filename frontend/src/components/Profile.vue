@@ -77,9 +77,9 @@
               <ul>
                 <li v-for="user in followUsers" :key="user.id" class="flex items-center gap-3 mb-3">
                   <img :src="user.profilePicture" alt="User Avatar" class="w-12 h-12 rounded-full object-cover" />
-                  <div>
-                    <p class="text-white text-sm font-semibold">{{ user.name }}</p>
-                    <p class="text-gray-400 text-xs">@{{ user.username }}</p>
+                  <div class="text-left">
+                    <h2 class="text-lg font-semibold">{{ user.name }}</h2>
+                    <p class="text-sm text-gray-400">@{{ user.username }}</p>
                   </div>
                 </li>
               </ul>
@@ -93,7 +93,7 @@
 
         <!-- Profile Details -->
         <h2 class="mt-4 text-lg font-semibold">{{ name }}</h2>
-        <p class="text-sm text-gray-400">@{{ userName }}</p>
+        <p class="text-sm left-0 text-gray-400">@{{ userName }}</p>
       </div>
 
       <!-- Reviews -->
