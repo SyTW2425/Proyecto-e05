@@ -296,8 +296,6 @@ watch(() => route.params.id, (newId) => {
 onMounted(() => {
   movieDetailStore.fetchMovieData(movieId);
   listStore.fetchLists();
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 </script>
 
