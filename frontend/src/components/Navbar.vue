@@ -2,7 +2,8 @@
   <header :class="{ 'hidden': isNavbarHidden }" class="w-full bg-transparent fixed top-0 left-0 z-50 transition-all">
     <div class="flex justify-between items-center px-4 py-3 md:px-8 lg:px-16">
       <!-- Logo / Title -->
-      <router-link to="/home" class="text-white text-lg lg:text-2xl font-bold no-hover" exact>
+      <router-link to="/home" class="flex items-center text-white text-lg lg:text-2xl font-bold no-hover" exact>
+        <img src="/logo.svg" alt="CineTrunk Logo" class="w-8 h-8 mr-2" />
         CineTrunk
       </router-link>
 
@@ -159,6 +160,8 @@ export default {
     };
 
     onMounted(async () => {
+      window.addEventListener('scroll', handleScroll);
+
       // Fetch the user and their following data on mount
       await userStore.fetchUser(userId);
       await userStore.fetchUsers();
