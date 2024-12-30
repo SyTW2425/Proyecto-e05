@@ -4,6 +4,9 @@ import { Review } from '../models/reviewModel';
 import { User } from '../models/userModel';
 import mongoose from 'mongoose';
 import { getMovieDetails } from './tmdbController';
+import { ActivityType } from '../types/activityType';
+import { logActivity } from './activityController';
+import { log } from 'console';
 
 // create review
 export const createReview = async (
@@ -96,6 +99,9 @@ export const addReviewToMovie = async (req: Request, res: Response) => {
 
       // Save the review
       await review.save();
+
+      await logActivity(userId.toString(), ActivityType.REVIEW, { review: review._id });
+
       res.status(201).json(review); // Return immediately after saving
     }
   } catch (error) {

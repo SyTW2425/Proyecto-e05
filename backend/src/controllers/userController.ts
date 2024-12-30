@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { User } from "../models/userModel";
+import { ActivityType } from "../types/activityType";
+import { logActivity } from './activityController';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Ensure JWT_SECRET is defined
 
@@ -89,6 +91,9 @@ export const followUser = async (req: Request, res: Response): Promise<void> => 
     followUser.followers.push(userId);
     await user.save();
     await followUser.save();
+
+    await logActivity(userId.toString(), ActivityType.FOLLOW, { followed: followId });
+
     res.status(200).json({ message: 'User followed successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Error following user', error: err.message });

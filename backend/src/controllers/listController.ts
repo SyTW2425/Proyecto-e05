@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { createMovie, getMovieByTMDid } from '../controllers/movieController';
 import { List } from '../models/listModel';
 import mongoose from 'mongoose';
+import { ActivityType } from '../types/activityType';
+import { logActivity } from './activityController';
 
 export const createListController = async (
   req: Request,
@@ -110,6 +112,10 @@ export const addMovieToListController = async (
     if (!list.movies.includes(movie._id)) {
       list.movies.push(movie._id);
       await list.save();
+      await logActivity(list.user.toString(), ActivityType.ADD_TO_LIST, {
+        list: list._id,
+        movie: movie._id,
+      });
     }
     res.status(200).json(list);
   } catch (error) {
