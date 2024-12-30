@@ -31,5 +31,5 @@ setupSwaggerDocs(app);
 app.use('/api/users',  userRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/lists', listRouter);
-app.use('/api/activities', activityRouter);
+app.use('/api/activity', activityRouter);
 app.use('/api/moviesdb', tmdbRouter);
