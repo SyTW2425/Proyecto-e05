@@ -152,3 +152,18 @@ export const getFollowing = async (req: Request, res: Response): Promise<void> =
     res.status(500).json({ message: 'Error fetching following', error: err.message });
   }
 };
+
+export const getUserInfo = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select('-password -email')
+    .populate('followers following');
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching user info', error: err.message });
+  }
+}
