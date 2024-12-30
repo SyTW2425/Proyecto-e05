@@ -1,5 +1,10 @@
 import express, { Request, Response } from 'express';
 import { Activity } from '../models/activityModel';
+import { ActivityType } from '../types/activityType';
+import { getUserActivities,
+         getFollowingActivities,
+         getAllActivities,
+       } from '../controllers/activityController';
 
 export const activityRouter = express.Router();
 
@@ -25,5 +30,11 @@ activityRouter.get('/', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to fetch activities' });
   }
 });
+
+activityRouter.get('/user/:userId', getUserActivities);
+
+activityRouter.get('/following/:userId', getFollowingActivities);
+
+activityRouter.get('/all/:userId', getAllActivities);
 
 export default activityRouter;
