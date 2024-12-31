@@ -287,7 +287,7 @@
     <!-- Main Feed -->
     <main class="flex-1 p-6 space-y-8">
       <!-- Activity Feed -->
-      <section class="space-y-6 mt-8">
+      <section class="space-y-6 mt-10">
         <div v-for="activity in userStore.activities" :key="activity.id"
           class="p-6 rounded-lg shadow-lg flex gap-4 items-start relative transition-transform transform hover:scale-105"
           :class="activity.isCurrentUser ? 'bg-yellow-800' : 'bg-gray-900'">
