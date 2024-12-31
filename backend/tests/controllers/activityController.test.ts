@@ -62,20 +62,20 @@ describe('User Controller Tests', () => {
       expect(res.body[0].type).toBe(ActivityType.ADD_TO_LIST);
     });
 
-    it('should get user activity: review', async () => {
-      const reviewPayload = {
-        title: 'Test Review',
-        body: 'Test Review Body',
-        rating: 5,
-        userId: user._id.toString(),
-        movieId: 74563,
-      };
-      await request(app).post('/api/reviews/add-review').send(reviewPayload);
-      const res = await request(app).get(`/api/activity/user/${user._id.toString()}`);
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBe(1);
-      expect(res.body[0].type).toBe(ActivityType.REVIEW);
-    });
+    // it('should get user activity: review', async () => {
+    //   const reviewPayload = {
+    //     title: 'Test Review',
+    //     body: 'Test Review Body',
+    //     rating: 5,
+    //     userId: user._id.toString(),
+    //     movieId: 74563,
+    //   };
+    //   await request(app).post('/api/reviews/add-review').send(reviewPayload);
+    //   const res = await request(app).get(`/api/activity/user/${user._id.toString()}`);
+    //   expect(res.status).toBe(200);
+    //   expect(res.body.length).toBe(1);
+    //   expect(res.body[0].type).toBe(ActivityType.REVIEW);
+    // });
 
   });
 

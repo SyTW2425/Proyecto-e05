@@ -104,7 +104,6 @@
                 class="w-24 h-24 rounded-full object-cover mb-4" />
               <h2 class="text-xl font-semibold">{{ selectedUser.name }}</h2>
               <p class="text-sm text-gray-400">@{{ selectedUser.username }}</p>
-              <p class="mt-2 text-gray-300">{{ selectedUser.bio || 'No bio available.' }}</p>
             </div>
             <button @click="closeUserInfoModal"
               class="bg-yellow-500 text-black py-2 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-6 w-full sm:w-auto mx-auto block">
