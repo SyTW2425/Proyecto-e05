@@ -295,15 +295,26 @@
           <div>
             <p class="text-white text-sm">
               <span class="font-semibold text-yellow-400">{{ activity.username }}</span>
+
+              <!-- Review activity -->
               <template v-if="activity.type === 'review'">
-                reviewed and rated <span class="font-semibold text-yellow-400">{{ activity.review.movie.title }}</span>
+                reviewed and rated
+                <router-link :to="`/movie/${activity.review.movie.TMDid}`" class="font-semibold text-yellow-400">
+                  {{ activity.review.movie.title }}
+                </router-link>
                 <span class="text-yellow-500 font-bold"> ({{ activity.review.rating }}/10)</span>
               </template>
+
+              <!-- Add to list activity -->
               <template v-else-if="activity.type === 'add_to_list'">
                 added <span class="font-semibold text-yellow-400">{{ activity.movieName }}</span>
-                to the list <span class="font-semibold text-yellow-400">{{ activity.list.name }}</span> the film <span
-                  class="font-semibold text-yellow-400">{{ activity.movie.title }}</span>.
+                to the list <span class="font-semibold text-yellow-400">{{ activity.list.name }}</span> the film
+                <router-link :to="`/movie/${activity.movie.TMDid}`" class="font-semibold text-yellow-400">
+                  {{ activity.movie.title }}
+                </router-link>.
               </template>
+
+              <!-- Follow activity -->
               <template v-else-if="activity.type === 'follow'">
                 followed <span class="font-semibold text-yellow-400">{{ activity.followed.name }}</span>.
               </template>

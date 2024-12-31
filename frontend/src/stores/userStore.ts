@@ -164,6 +164,8 @@ export const useUserStore = defineStore('user', {
             activity.username = 'You';
           }
         });
+
+        console.log('Activities fetched successfully', this.activities);
       } catch (error) {
         console.error(
           'Failed to fetch activities:',
