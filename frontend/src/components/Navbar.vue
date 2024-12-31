@@ -37,7 +37,7 @@
           <i class="fas fa-search"></i>
         </button>
 
-        <router-link :to="`/profile/${userId}`" class="relative w-10 h-10 rounded-full overflow-hidden">
+        <router-link :to="`/profile/${username}`" class="relative w-10 h-10 rounded-full overflow-hidden">
           <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
             class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition-all rounded-full" />
         </router-link>
@@ -122,6 +122,12 @@ export default {
     const userStore = useUserStore();
     const userId = localStorage.getItem('userId');
 
+    const username = computed(() => {
+      const user = userStore.users.find((user) => user._id === userId);
+      return user ? user.username : '';
+    });
+
+
     const logout = () => {
       authStore.logout();
       router.push({ name: 'LogIn' });
@@ -186,6 +192,7 @@ export default {
     return {
       logout,
       userId,
+      username,
       userStore,
       isMobileMenuOpen,
       toggleMobileMenu,
