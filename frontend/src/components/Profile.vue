@@ -289,17 +289,27 @@
       <!-- Activity Feed -->
       <section class="space-y-6 mt-8">
         <div v-for="activity in userStore.activities" :key="activity.id"
-          class="p-6 rounded-lg shadow-lg flex gap-4 items-start relative"
+          class="p-6 rounded-lg shadow-lg flex gap-4 items-start relative transition-transform transform hover:scale-105"
           :class="activity.isCurrentUser ? 'bg-yellow-800' : 'bg-gray-900'">
-          <img :src="activity.userProfilePicture" alt="User" class="w-10 h-10 rounded-full object-cover" />
-          <div>
+
+          <!-- Profile Picture with subtle hover effect -->
+          <div class="relative group">
+            <img :src="activity.userProfilePicture" alt="User"
+              class="w-12 h-12 rounded-full object-cover shadow-md transition-all duration-300 ease-in-out group-hover:ring-2 group-hover:ring-yellow-500" />
+          </div>
+
+          <div class="flex flex-col justify-start gap-2">
             <p class="text-white text-sm">
-              <span class="font-semibold text-yellow-400">{{ activity.username }}</span>
+              <span class="font-semibold text-yellow-400 hover:text-yellow-300 transition-colors duration-300">{{
+                activity.username }}</span>
 
               <!-- Review activity -->
               <template v-if="activity.type === 'review'">
-                reviewed and rated
-                <router-link :to="`/movie/${activity.review.movie.TMDid}`" class="font-semibold text-yellow-400">
+                <span class="text-gray-300"> reviewed and rated </span>
+                <!-- Movie Icon for review activity -->
+                <i class="fas fa-film text-yellow-400 mx-1"></i>
+                <router-link :to="`/movie/${activity.review.movie.TMDid}`"
+                  class="font-semibold text-yellow-400 hover:text-yellow-300 transition-colors">
                   {{ activity.review.movie.title }}
                 </router-link>
                 <span class="text-yellow-500 font-bold"> ({{ activity.review.rating }}/10)</span>
@@ -307,24 +317,36 @@
 
               <!-- Add to list activity -->
               <template v-else-if="activity.type === 'add_to_list'">
-                added <span class="font-semibold text-yellow-400">{{ activity.movieName }}</span>
-                to the list <span class="font-semibold text-yellow-400">{{ activity.list.name }}</span> the film
-                <router-link :to="`/movie/${activity.movie.TMDid}`" class="font-semibold text-yellow-400">
+                <span class="text-gray-300"> added </span>
+                <!-- Plus Icon for add to list activity -->
+                <i class="fas fa-plus-circle text-yellow-400 mx-1"></i>
+                <span class="font-semibold text-yellow-400">{{ activity.movieName }}</span>
+                <span class="text-gray-300"> to the list </span>
+                <span class="font-semibold text-yellow-400">{{ activity.list.name }}</span>
+                <span class="text-gray-300"> the film </span>
+                <router-link :to="`/movie/${activity.movie.TMDid}`"
+                  class="font-semibold text-yellow-400 hover:text-yellow-300 transition-colors">
                   {{ activity.movie.title }}
                 </router-link>.
               </template>
 
               <!-- Follow activity -->
               <template v-else-if="activity.type === 'follow'">
-                followed <span class="font-semibold text-yellow-400">{{ activity.followed.name }}</span>.
+                <span class="text-gray-300"> followed </span>
+                <!-- Follow Icon for follow activity -->
+                <i class="fas fa-user-plus text-yellow-400 mx-1"></i>
+                <span class="font-semibold text-yellow-400">{{ activity.followed.name }}</span>.
               </template>
             </p>
+
+            <!-- Review body text -->
             <p v-if="activity.type === 'review'" class="text-gray-400 text-sm mt-2 italic">
               "{{ activity.review.body }}"
             </p>
           </div>
-          <!-- Date added in the bottom-right corner -->
-          <span class="absolute bottom-2 right-2 text-xs text-gray-400">
+
+          <!-- Date in the bottom-right corner -->
+          <span class="absolute bottom-2 right-2 text-xs text-gray-400 opacity-70">
             {{ new Date(activity.createdAt).toLocaleString().split(',')[0] }}
           </span>
         </div>
