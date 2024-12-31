@@ -12,6 +12,7 @@ export const useUserStore = defineStore('user', {
     selectedUser: null,
     showFriendRequestPopup: false,
     following: [] as string[], // List of user IDs the logged-in user is following
+    activities: [] as any[], // List of activities
   }),
 
   actions: {
@@ -100,6 +101,75 @@ export const useUserStore = defineStore('user', {
     selectUser(user: any) {
       this.selectedUser = user;
       this.showFriendRequestPopup = true;
+    },
+    async fetchUserInfo(userId: string) {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/users/info/${userId}`,
+        );
+        return response.data; // Return the user data
+      } catch (error) {
+        console.error('Error fetching user info', error);
+        throw new Error('Failed to fetch user info');
+      }
+    },
+    async fetchMovieInfo(movieId: string) {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/movies/${movieId}`,
+        );
+        return response.data; // Return the movie data
+      } catch (error) {
+        console.error('Error fetching movie info', error);
+        throw new Error('Failed to fetch movie info');
+      }
+    },
+    async fetchActivities() {
+      const userId = localStorage.getItem('userId'); // Get logged-in user's ID
+      if (!userId) {
+        console.error('No user ID found in local storage.');
+        return;
+      }
+
+      try {
+        // Fetch activities from the backend API
+        const response = await axios.get(
+          `http://localhost:5001/api/activity/all/${userId}`,
+        );
+
+        // Map the activities and add the `isCurrentUser` property
+        this.activities = response.data.map((activity: any) => ({
+          ...activity,
+          isCurrentUser: activity.user?.id === userId, // Identify if the activity is by the logged-in user
+        }));
+
+        // Sort activities by creation date in descending order
+        this.activities.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+
+        // each activity has a user property, which contains the userId, from it store the profile picture
+        this.activities.forEach(async (activity) => {
+          const user = await this.fetchUserInfo(activity.user);
+          activity.userProfilePicture = user.profilePicture;
+        });
+
+        // get the username of the user that created the activity
+        this.activities.forEach(async (activity) => {
+          const user = await this.fetchUserInfo(activity.user);
+          activity.username = user.username;
+          if (localStorage.getItem('userId') === activity.user) {
+            activity.isCurrentUser = true;
+            activity.username = 'You';
+          }
+        });
+      } catch (error) {
+        console.error(
+          'Failed to fetch activities:',
+          error.response?.data?.message || error.message,
+        );
+      }
     },
   },
 

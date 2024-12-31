@@ -75,16 +75,38 @@
             <h3 class="text-2xl text-yellow-500 mb-4 text-center">{{ followModalTitle }}</h3>
             <div class="overflow-y-auto max-h-96">
               <ul>
-                <li v-for="user in followUsers" :key="user.id" class="flex items-center gap-3 mb-3">
-                  <img :src="user.profilePicture" alt="User Avatar" class="w-12 h-12 rounded-full object-cover" />
+                <li v-for="user in followUsers" :key="user._id" class="flex items-center gap-3 mb-3 cursor-pointer">
+                  <img :src="user.profilePicture || '/default-profile.png'" alt="User Avatar"
+                    class="w-12 h-12 rounded-full object-cover" />
                   <div class="text-left">
-                    <h2 class="text-lg font-semibold">{{ user.name }}</h2>
+                    <h2 class="text-lg font-semibold text-yellow-500 cursor-pointer hover:underline"
+                      @click="openUserInfoModal(user._id)">
+                      {{ user.name }}
+                    </h2>
                     <p class="text-sm text-gray-400">@{{ user.username }}</p>
                   </div>
                 </li>
               </ul>
             </div>
             <button @click="closeFollowModal"
+              class="bg-yellow-500 text-black py-2 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-6 w-full sm:w-auto mx-auto block">
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div v-if="showUserInfoModal"
+          class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg w-[500px] max-w-full">
+            <h3 class="text-2xl text-yellow-500 mb-4 text-center">User Details</h3>
+            <div class="flex flex-col items-center">
+              <img :src="selectedUser.profilePicture || '/default-profile.png'" alt="User Avatar"
+                class="w-24 h-24 rounded-full object-cover mb-4" />
+              <h2 class="text-xl font-semibold">{{ selectedUser.name }}</h2>
+              <p class="text-sm text-gray-400">@{{ selectedUser.username }}</p>
+              <p class="mt-2 text-gray-300">{{ selectedUser.bio || 'No bio available.' }}</p>
+            </div>
+            <button @click="closeUserInfoModal"
               class="bg-yellow-500 text-black py-2 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-6 w-full sm:w-auto mx-auto block">
               Close
             </button>
@@ -267,32 +289,36 @@
     <main class="flex-1 p-6 space-y-8">
       <!-- Activity Feed -->
       <section class="space-y-6 mt-8">
-        <div v-for="activity in activities" :key="activity.id" class="p-6 rounded-lg shadow-lg flex gap-4 items-start"
+        <div v-for="activity in userStore.activities" :key="activity.id"
+          class="p-6 rounded-lg shadow-lg flex gap-4 items-start relative"
           :class="activity.isCurrentUser ? 'bg-yellow-800' : 'bg-gray-900'">
-          <img :src="activity.user?.avatar" alt="User" class="w-12 h-12 rounded-full" />
+          <img :src="activity.userProfilePicture" alt="User" class="w-10 h-10 rounded-full object-cover" />
           <div>
             <p class="text-white text-sm">
-              <span class="font-semibold text-yellow-400">{{ activity.user?.name }}</span>
-              <template v-if="activity.type === 'REVIEW'">
-                reviewed and rated <span class="font-semibold text-yellow-400">{{ activity.movie?.title }}</span>
-                <span class="text-yellow-500 font-bold">({{ activity.rating }}/10)</span>
+              <span class="font-semibold text-yellow-400">{{ activity.username }}</span>
+              <template v-if="activity.type === 'review'">
+                reviewed and rated <span class="font-semibold text-yellow-400">{{ activity.review.movie.title }}</span>
+                <span class="text-yellow-500 font-bold"> ({{ activity.review.rating }}/10)</span>
               </template>
-              <template v-else-if="activity.type === 'Add_list'">
-                added <span class="font-semibold text-yellow-400">{{ activity.movie?.title }}</span>
-                to the list <span class="font-semibold text-yellow-400">{{ activity.listName }}</span>.
+              <template v-else-if="activity.type === 'add_to_list'">
+                added <span class="font-semibold text-yellow-400">{{ activity.movieName }}</span>
+                to the list <span class="font-semibold text-yellow-400">{{ activity.list.name }}</span> the film <span
+                  class="font-semibold text-yellow-400">{{ activity.movie.title }}</span>.
               </template>
-              <template v-else-if="activity.type === 'Follow'">
-                followed <span class="font-semibold text-yellow-400">{{ activity.followedUser?.name }}</span>.
+              <template v-else-if="activity.type === 'follow'">
+                followed <span class="font-semibold text-yellow-400">{{ activity.followed.name }}</span>.
               </template>
             </p>
-            <p v-if="activity.type === 'REVIEW'" class="text-gray-400 text-sm mt-2 italic">
-              "{{ activity.reviewContent }}"
+            <p v-if="activity.type === 'review'" class="text-gray-400 text-sm mt-2 italic">
+              "{{ activity.review.body }}"
             </p>
           </div>
+          <!-- Date added in the bottom-right corner -->
+          <span class="absolute bottom-2 right-2 text-xs text-gray-400">
+            {{ new Date(activity.createdAt).toLocaleString().split(',')[0] }}
+          </span>
         </div>
       </section>
-
-
     </main>
 
   </div>
@@ -306,9 +332,11 @@ import { useUserStore } from '../stores/userStore';
 import axios from 'axios';
 
 const userProfilePicture = ref('/default-profile.png');
+const showUserInfoModal = ref(false);
 const showAvatarModal = ref(false);
 const postContent = ref('');
 const userName = ref('');
+const selectedUser = ref(null); // To store the selected user's information
 const name = ref('');
 const email = ref('');
 const followers = ref(0);
@@ -324,14 +352,39 @@ async function openFollowModal(type) {
 
   const userId = localStorage.getItem('userId');
   try {
-    const endpoint = type === 'followers'
-      ? `http://localhost:5001/api/users/followers/${userId}`
-      : `http://localhost:5001/api/users/following/${userId}`;
+    const endpoint =
+      type === 'followers'
+        ? `http://localhost:5001/api/users/followers/${userId}`
+        : `http://localhost:5001/api/users/following/${userId}`;
     const response = await axios.get(endpoint);
-    followUsers.value = response.data; // Ensure your API returns a list of users
+
+    // Fetch detailed user info for each user
+    followUsers.value = await Promise.all(
+      response.data.map(async (user) => {
+        const userInfo = await userStore.fetchUserInfo(user._id);
+        return userInfo;
+      })
+    );
+
   } catch (error) {
     console.error('Failed to fetch users', error);
   }
+}
+
+
+async function openUserInfoModal(userId) {
+  try {
+    const userInfo = await userStore.fetchUserInfo(userId);
+    selectedUser.value = userInfo; // Store the user's information
+    showUserInfoModal.value = true; // Open the modal
+  } catch (error) {
+    console.error('Failed to fetch user information', error);
+  }
+}
+
+function closeUserInfoModal() {
+  showUserInfoModal.value = false;
+  selectedUser.value = null;
 }
 
 function closeFollowModal() {
@@ -356,7 +409,6 @@ const avatars = [
 ];
 
 const activities = ref([]); // Keep this reactive
-const friendRequests = ref([]);
 
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
@@ -373,6 +425,8 @@ function selectAvatar(avatar) {
   updateProfilePicture(avatar);
 }
 
+
+
 async function updateProfilePicture(newProfilePicture) {
   const userId = localStorage.getItem('userId');
   try {
@@ -385,6 +439,7 @@ async function updateProfilePicture(newProfilePicture) {
     console.error('Failed to update profile picture', error);
   }
 }
+
 
 onMounted(async () => {
   const userId = localStorage.getItem('userId');
@@ -403,66 +458,9 @@ onMounted(async () => {
 
   userStore.fetchUsers();
 
-  generateRandomActivities();
+  userStore.fetchActivities();
 });
 
-// Ensure the generateRandomActivities is correctly updating the activities array
-const generateRandomActivities = () => {
-  const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
-  const randomUsers = [
-    { id: '1', name: 'Alex' },
-    { id: '2', name: 'Sophia' },
-    { id: '3', name: 'Michael' },
-    { id: '4', name: 'Emma' },
-    { id: '5', name: 'John' },
-    { id: '6', name: 'Alice' },
-    { id: loggedInUserId, name: 'admin' }
-  ];
-  const randomMovies = ['Inception', 'The Dark Knight', 'Interstellar', 'The Matrix', 'Avengers'];
-  const randomListNames = ['Favorites', 'Top Picks', 'Must Watch'];
-
-  const types = ['REVIEW', 'Add_list', 'Follow'];
-
-  const randomActivity = () => {
-    const randomUser = randomUsers[Math.floor(Math.random() * randomUsers.length)];
-    const movie = randomMovies[Math.floor(Math.random() * randomMovies.length)];
-    const listName = randomListNames[Math.floor(Math.random() * randomListNames.length)];
-    const type = types[Math.floor(Math.random() * types.length)];
-
-    if (randomUser.id === loggedInUserId) {
-      randomUser.name = 'You'; // Replace the user name with 'You' for the logged-in user
-    }
-
-    const activity = {
-      id: Math.floor(Math.random() * 1000),
-      type,
-      user: { id: randomUser.id, name: randomUser.name, avatar: `/${randomUser.name.toLowerCase()}.png` },
-      createdAt: new Date().toISOString(),
-      movie: { title: movie },
-      followedUser: {},
-      isCurrentUser: randomUser.id === loggedInUserId // Check if the activity belongs to the logged-in user
-    };
-
-    if (type === 'REVIEW') {
-      activity.rating = Math.floor(Math.random() * 10) + 1;
-      activity.reviewContent = `I really enjoyed ${movie}. Highly recommended!`;
-    } else if (type === 'Add_list') {
-      activity.listName = listName;
-    } else if (type === 'Follow') {
-      const followedUser = randomUsers[Math.floor(Math.random() * randomUsers.length)];
-      activity.followedUser = { id: followedUser.id, name: followedUser.name, avatar: `/${followedUser.name.toLowerCase()}.png` };
-    }
-
-    return activity;
-  };
-
-  activities.value = [];
-  for (let i = 0; i < 20; i++) {
-    activities.value.push(randomActivity());
-  }
-
-  activities.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-};
 
 </script>
 
