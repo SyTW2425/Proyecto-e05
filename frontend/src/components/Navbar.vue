@@ -37,9 +37,9 @@
           <i class="fas fa-search"></i>
         </button>
 
-        <router-link :to="`/profile/${username}`" class="relative w-10 h-10 rounded-full overflow-hidden">
+        <router-link :to="`/profile/${username}`" class="relative group">
           <img :src="userStore.user.profilePicture || '/default-profile.png'" alt="Profile Picture"
-            class="w-full h-full object-cover border-2 border-transparent hover:border-yellow-500 transition-all rounded-full" />
+            class="w-10 h-10 rounded-full object-cover shadow-md transition-all duration-300 ease-in-out group-hover:ring-2 group-hover:ring-yellow-500" />
         </router-link>
 
         <button @click="logout"
@@ -232,11 +232,6 @@ a.active {
   border-radius: none;
 }
 
-/* Desktop Nav Links Hover Effects */
-a:hover {
-  background: #FFD700;
-  border-radius: 2px;
-}
 
 /* Mobile Menu Adjustments */
 .md\\:hidden {
