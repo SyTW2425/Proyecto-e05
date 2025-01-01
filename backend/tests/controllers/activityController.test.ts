@@ -8,6 +8,7 @@ import { List } from '../../src/models/listModel';
 import { Review } from '../../src/models/reviewModel';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from '@jest/globals';
 import { ActivityType } from '../../src/types/activityType';
+import { createMovie } from '../../src/controllers/movieController';
 
 describe('User Controller Tests', () => {
   let mongoServer: MongoMemoryServer;
@@ -29,6 +30,8 @@ describe('User Controller Tests', () => {
     });
 
     await mongoose.connect(uri);
+
+    await user.save();
   });
 
   afterAll(async () => {
@@ -62,20 +65,40 @@ describe('User Controller Tests', () => {
       expect(res.body[0].type).toBe(ActivityType.ADD_TO_LIST);
     });
 
-    // it('should get user activity: review', async () => {
-    //   const reviewPayload = {
-    //     title: 'Test Review',
-    //     body: 'Test Review Body',
-    //     rating: 5,
-    //     userId: user._id.toString(),
-    //     movieId: 74563,
-    //   };
-    //   await request(app).post('/api/reviews/add-review').send(reviewPayload);
-    //   const res = await request(app).get(`/api/activity/user/${user._id.toString()}`);
-    //   expect(res.status).toBe(200);
-    //   expect(res.body.length).toBe(1);
-    //   expect(res.body[0].type).toBe(ActivityType.REVIEW);
-    // });
+    it('should get user activity: review', async () => {
+      const movie = await createMovie('Test Movie', 2021, 170);
+      const reviewPayload = {
+        title: 'Test Review',
+        body: 'Test Review Body',
+        rating: 5,
+        userId: user._id.toString(),
+        movieId: movie._id,
+      };
+      await request(app).post('/api/reviews/add-review').send(reviewPayload);
+      const res = await request(app).get(`/api/activity/user/${user._id.toString()}`);
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].type).toBe(ActivityType.REVIEW);
+    });
+
+    it('should get user activity: follow', async () => {
+      const user2 = new User({
+        name: 'Test User 2',
+        username: 'testuser2',
+        email: 'testuser2@example.com',
+        password: 'testuser2password',
+      });
+      await user2.save();
+      const followPayload = {
+        userId: user._id.toString(),
+        followId: user2._id.toString(),
+      };
+      await request(app).post(`/api/users/follow`).send(followPayload);
+      const res = await request(app).get(`/api/activity/user/${user._id.toString()}`);
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].type).toBe(ActivityType.FOLLOW);
+    });
 
   });
 
