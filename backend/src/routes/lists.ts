@@ -1,5 +1,4 @@
-import express, { Request, Response, Router } from 'express';
-import { List } from '../models/listModel';
+import express from 'express';
 import { createListController,
   getUserListsController,
   deleteListController,

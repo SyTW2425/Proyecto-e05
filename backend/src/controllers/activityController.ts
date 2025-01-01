@@ -29,21 +29,6 @@ export const getUserActivities = async (req: Request, res: Response): Promise<vo
   }
 };
 
-// Function to get all activities from users followed by a user
-export const getFollowingActivities = async (req: Request, res: Response): Promise<void> => {
-  const { userId } = req.params;
-  try {
-    const user = await User.findById(userId).populate('following');
-    const followingIds = user.following.map((user: any) => user._id);
-    const activities = await Activity.find({ user: { $in: followingIds } })
-    .populate('review list movie followed')
-    .sort({ createdAt: -1 });
-    res.status(200).json(activities);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to fetch following activities' });
-  }
-};
 
 // Function to get both user and following activities
 export const getAllActivities = async (req: Request, res: Response): Promise<void> => {

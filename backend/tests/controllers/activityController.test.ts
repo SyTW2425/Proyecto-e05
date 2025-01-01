@@ -66,13 +66,12 @@ describe('User Controller Tests', () => {
     });
 
     it('should get user activity: review', async () => {
-      const movie = await createMovie('Test Movie', 2021, 170);
       const reviewPayload = {
         title: 'Test Review',
         body: 'Test Review Body',
         rating: 5,
         userId: user._id.toString(),
-        movieId: movie._id,
+        movieId: 597,
       };
       await request(app).post('/api/reviews/add-review').send(reviewPayload);
       const res = await request(app).get(`/api/activity/user/${user._id.toString()}`);
@@ -93,7 +92,7 @@ describe('User Controller Tests', () => {
         userId: user._id.toString(),
         followId: user2._id.toString(),
       };
-      await request(app).post(`/api/users/follow`).send(followPayload);
+      await request(app).put(`/api/users/follow`).send(followPayload);
       const res = await request(app).get(`/api/activity/user/${user._id.toString()}`);
       expect(res.status).toBe(200);
       expect(res.body.length).toBe(1);

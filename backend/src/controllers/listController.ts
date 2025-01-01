@@ -52,22 +52,6 @@ export const getUserListsController = async (
   }
 };
 
-/*
-// This could be used if we decide to remove the populate from the getUserListsController.
-// Get a list by ID.
-export const getList = async (req: Request, res: Response): Promise<void> => {
-  const { listId } = req.params;
-  try {
-    const list = await List.findById(listId).populate('movies');
-    if (!list) {
-      res.status(404).json({ message: 'List not found' });
-    }
-    res.status(200).json(list);
-  } catch(error) {
-    res.status(500).json({ message: 'Error fetching list', error: error.message });
-  }
-}
-  */
 
 // Delete a list
 export const deleteListController = async (

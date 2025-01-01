@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
-import { getMovieByTMDid, createMovie } from './movieController';
 import { Review } from '../models/reviewModel';
 import { User } from '../models/userModel';
 import mongoose from 'mongoose';
 import { getMovieDetails } from './tmdbController';
 import { ActivityType } from '../types/activityType';
 import { logActivity } from './activityController';
-import { log } from 'console';
 
 // create review
 export const createReview = async (

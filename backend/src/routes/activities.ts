@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import { Activity } from '../models/activityModel';
 import { ActivityType } from '../types/activityType';
 import { getUserActivities,
-         getFollowingActivities,
          getAllActivities,
        } from '../controllers/activityController';
 
@@ -32,8 +31,6 @@ activityRouter.get('/', async (req: Request, res: Response) => {
 });
 
 activityRouter.get('/user/:userId', getUserActivities);
-
-activityRouter.get('/following/:userId', getFollowingActivities);
 
 activityRouter.get('/all/:userId', getAllActivities);
 
