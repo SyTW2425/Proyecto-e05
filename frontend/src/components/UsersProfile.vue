@@ -16,84 +16,20 @@
           <!-- Hover Button (edit profile picture) -->
           <div v-if="profilePicture === '/default-profile.png'"
             class="absolute top-0 right-0 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <button @click="showAvatarModal = true"
-              class="bg-yellow-500 text-black p-2 rounded-full hover:bg-yellow-400 transition duration-200">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-          <div v-else
-            class="absolute top-0 right-0 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <button @click="showAvatarModal = true"
-              class="bg-yellow-500 text-black p-2 rounded-full hover:bg-yellow-400 transition duration-200">
-              <i class="fas fa-pencil-alt"></i>
-            </button>
-          </div>
 
-
-        </div>
-        <!-- Avatar Modal for Avatar Selection -->
-        <div v-if="showAvatarModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div class="bg-gray-800 p-6 rounded-lg w-[600px] max-w-full">
-            <h3 class="text-2xl text-yellow-500 mb-6 text-center">Choose Your Profile Picture</h3>
-            <div class="overflow-y-auto h-96">
-              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <div v-for="avatar in avatars" :key="avatar" @click="selectAvatar(avatar)"
-                  class="flex justify-center items-center w-28 h-28 p-2 rounded-lg cursor-pointer overflow-hidden transition-transform transform relative group">
-                  <img :src="avatar" alt="Avatar"
-                    class="object-cover w-full h-full rounded-lg transition-all duration-300 ease-in-out group-hover:scale-110"
-                    :class="{
-                      'border-4 border-yellow-500 scale-105': userProfilePicture === avatar
-                    }" />
-                  <div
-                    class="absolute inset-0 bg-transparent group-hover:shadow-xl rounded-lg transition-shadow duration-300">
-                  </div>
-                </div>
-              </div>
-            </div>
-            <button @click="showAvatarModal = false"
-              class="bg-yellow-500 text-black py-2 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-6 w-full sm:w-auto mx-auto block">
-              Cancel
-            </button>
           </div>
         </div>
+
 
         <!-- Follower and Following Stats -->
         <div class="flex justify-between text-sm mt-4">
-          <div class="flex flex-col items-center cursor-pointer" @click="openFollowModal('followers')">
+          <div class="flex flex-col items-center cursor-pointer">
             <span class="text-yellow-400 text-lg">{{ followers }}</span>
             <span class="text-gray-400">Followers</span>
           </div>
-          <div class="flex flex-col items-center cursor-pointer" @click="openFollowModal('following')">
+          <div class="flex flex-col items-center cursor-pointer">
             <span class="text-yellow-400 text-lg">{{ following }}</span>
             <span class="text-gray-400">Following</span>
-          </div>
-        </div>
-
-        <div v-if="showFollowModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div class="bg-gray-800 p-6 rounded-lg w-[600px] max-w-full">
-            <h3 class="text-2xl text-yellow-500 mb-4 text-center">{{ followModalTitle }}</h3>
-            <div class="overflow-y-auto max-h-96">
-              <ul>
-                <li v-for="user in followUsers" :key="user._id" class="flex items-center gap-3 mb-3 cursor-pointer">
-                  <router-link :to="`/user/${user.username}`">
-                    <img :src="user.profilePicture || '/default-profile.png'" alt="User Avatar"
-                      class="w-12 h-12 rounded-full object-cover" />
-                  </router-link>
-                  <div class="text-left">
-                    <router-link :to="`/user/${user.username}`">
-                      <h2 class="text-lg font-semibold text-yellow-500 hover:underline">
-                        {{ user.name }}
-                      </h2>
-                    </router-link>
-                    <p class="text-sm text-gray-400">@{{ user.username }}</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <button @click="closeFollowModal"
-              class="bg-yellow-500 text-black py-2 px-4 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-6 w-full sm:w-auto mx-auto block">
-              Close
-            </button>
           </div>
         </div>
 
@@ -108,8 +44,7 @@
       <div>
         <h3 class="text-lg text-yellow-500 font-semibold mb-2">Reviews</h3>
         <ul>
-          <li v-for="review in reviewStore.reviews" :key="review.id"
-            class="flex items-center gap-3 mb-3 cursor-pointer">
+          <li v-for="review in reviews" :key="review.id" class="flex items-center gap-3 mb-3 cursor-pointer">
             <img :src="review.moviePoster" alt="Movie Poster" class="w-10 h-10 rounded-full object-cover" />
             <div class="flex items-center justify-between w-full">
               <router-link :to="`/movie/${review.movieId}`" class="flex-1 truncate">
@@ -122,13 +57,6 @@
                   class="bg-yellow-500 text-black px-3 py-1 text-xs rounded-lg hover:bg-yellow-400 transition duration-200 w-20 text-center">
                   Review
                 </button>
-                <button @click="reviewStore.removeReview(review)"
-                  class="text-red-500 hover:text-red-400 transition duration-200">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                    stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
               </div>
             </div>
           </li>
@@ -138,7 +66,7 @@
         <h3 class="text-lg text-yellow-500 font-semibold mt-6 mb-2">Lists</h3>
         <!-- Scrollable container -->
         <ul class="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200">
-          <li v-for="list in listsStore.lists" :key="list.id" @click="() => listsStore.showListMovies(list)"
+          <li v-for="list in lists" :key="list.id" @click="() => listsStore.showListMovies(list)"
             class="flex items-center gap-3 mb-3 cursor-pointer">
             <!-- Placeholder or image -->
             <div v-if="!list.movies?.length"
@@ -148,10 +76,6 @@
             <img v-else :src="list.movies[0].moviePoster" alt="List Image" class="w-8 h-8 rounded-full object-cover" />
             <!-- List name -->
             <span>{{ list.name }}</span>
-            <!-- Delete button -->
-            <button @click.stop="listsStore.deleteList(list.id)" class="ml-auto text-red-500 hover:text-red-300">
-              <i class="fas fa-trash-alt"></i>
-            </button>
           </li>
         </ul>
       </div>
@@ -204,42 +128,6 @@
       </div>
 
 
-      <!-- Add List Button -->
-      <button @click="listsStore.showCreateListModal = true"
-        class="bg-yellow-500 text-black px-4 py-2 text-sm rounded-lg hover:bg-yellow-400 transition duration-200 mt-3">
-        Create New List
-      </button>
-
-      <!-- Modal for creating a new list -->
-      <div v-if="listsStore.showCreateListModal"
-        class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-        <div
-          class="bg-gray-900 p-8 rounded-lg max-w-md w-full shadow-xl transform transition-all duration-300 ease-in-out scale-95 hover:scale-100">
-          <!-- Modal Header -->
-          <h3 class="text-3xl text-yellow-500 font-semibold mb-6 text-center">Create a New List</h3>
-
-          <!-- Input Field -->
-          <input v-model="listsStore.newListName" type="text" placeholder="Enter list name"
-            class="w-full bg-gray-800 p-3 rounded-lg text-white text-base mb-6 focus:ring-2 focus:ring-yellow-500 outline-none transition-all duration-200" />
-
-          <!-- Action Buttons -->
-          <div class="flex justify-end gap-4">
-            <!-- Cancel Button -->
-            <button @click="listsStore.closeModal"
-              class="bg-gray-700 text-white py-2 px-5 rounded-full text-base hover:bg-gray-600 transition-all duration-200 focus:outline-none">
-              Cancel
-            </button>
-
-            <!-- Create Button -->
-            <button @click="listsStore.createList"
-              class="bg-yellow-500 text-black py-2 px-5 rounded-full text-base font-semibold hover:bg-yellow-400 transition-all duration-200 focus:outline-none">
-              Create
-            </button>
-          </div>
-        </div>
-      </div>
-
-
       <!-- Movie List Modal -->
       <div v-if="listsStore.showMovieListModal && listsStore.selectedListMovies.length > 0"
         class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -256,10 +144,6 @@
                 class="flex-1 text-white hover:text-yellow-400 transition duration-200">
                 <span class="font-medium">{{ movie.title }}</span>
               </router-link>
-              <button @click.stop="listsStore.deleteMovie(listsStore.selectedList.id, movie._id)"
-                class="bg-red-500 text-white py-1 px-3 text-xs rounded-lg hover:bg-red-400 transition duration-200 focus:outline-none">
-                Delete
-              </button>
             </li>
           </ul>
           <button @click="listsStore.showMovieListModal = false"
@@ -275,7 +159,7 @@
     <main class="flex-1 p-6 space-y-8">
       <!-- Activity Feed -->
       <section class="space-y-6 mt-10">
-        <div v-for="activity in userStore.activities" :key="activity.id"
+        <div v-for="activity in activities" :key="activity._id"
           class="p-6 rounded-lg shadow-lg flex gap-4 items-start relative transition-transform transform hover:scale-105"
           :class="activity.isCurrentUser ? 'bg-yellow-800' : 'bg-gray-900'">
 
@@ -365,127 +249,63 @@ const showFollowModal = ref(false);
 const followModalTitle = ref('');
 const followUsers = ref([]);
 
-async function openFollowModal(type) {
-  showFollowModal.value = true;
-  followModalTitle.value = type === 'followers' ? 'Followers' : 'Following';
-
-  const userId = localStorage.getItem('userId');
-  try {
-    const endpoint =
-      type === 'followers'
-        ? `http://localhost:5001/api/users/followers/${userId}`
-        : `http://localhost:5001/api/users/following/${userId}`;
-    const response = await axios.get(endpoint);
-
-    // Fetch detailed user info for each user
-    followUsers.value = await Promise.all(
-      response.data.map(async (user) => {
-        const userInfo = await userStore.fetchUserInfo(user._id);
-        return userInfo;
-      })
-    );
-
-  } catch (error) {
-    console.error('Failed to fetch users', error);
-  }
-}
-
-
-async function openUserInfoModal(userId) {
-  try {
-    const userInfo = await userStore.fetchUserInfo(userId);
-    selectedUser.value = userInfo; // Store the user's information
-    showUserInfoModal.value = true; // Open the modal
-  } catch (error) {
-    console.error('Failed to fetch user information', error);
-  }
-}
-
-function closeUserInfoModal() {
-  showUserInfoModal.value = false;
-  selectedUser.value = null;
-}
-
-function closeFollowModal() {
-  showFollowModal.value = false;
-  followUsers.value = [];
-}
-
-const avatars = [
-  '/avatars/avatar1.jpg',
-  '/avatars/avatar2.jpeg',
-  '/avatars/avatar3.jpg',
-  '/avatars/avatar4.png',
-  '/avatars/avatar5.jpg',
-  '/avatars/avatar6.jpeg',
-  '/avatars/avatar7.jpeg',
-  '/avatars/avatar8.jpg',
-  '/avatars/avatar9.png',
-  '/avatars/avatar10.jpeg',
-  '/avatars/avatar11.jpeg',
-  '/avatars/avatar12.jpeg',
-  '/avatars/avatar13.jpeg',
-];
-
 const activities = ref([]); // Keep this reactive
+const reviews = ref([]); // Keep this reactive
+const lists = ref([]); // Keep this reactive
 
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
 const userStore = useUserStore();
 
-watch(() => userStore.searchQuery, () => {
-  userStore.searchUsers();
-});
+// Get username from the URL path
+const username = window.location.pathname.split('/')[2];
+const userId = ref('');
 
-function selectAvatar(avatar) {
-  profilePicture.value = avatar;
-  showAvatarModal.value = false;
-
-  updateProfilePicture(avatar);
-}
-
-function navigateToUser(username) {
-  router.push(`/user/${username}`);
-}
-
-
-async function updateProfilePicture(newProfilePicture) {
-  const userId = localStorage.getItem('userId');
+// Get user based on the username
+const getUser = async () => {
   try {
-    const response = await axios.put('http://localhost:5001/api/users/profile-picture', {
-      userId,
-      profilePicture: newProfilePicture,
-    });
-    userStore.user.profilePicture = response.data.profilePicture;
+    const loggedInUserId = localStorage.getItem('userId'); // This is the logged-in user ID (from localStorage)
+    const username = window.location.pathname.split('/')[2]; // The friend's username (from URL)
+
+    if (!loggedInUserId || !username) {
+      console.error('No userId or username found');
+      return;
+    }
+
+    // Fetch the friend’s data using their username
+    const response = await axios.get(`http://localhost:5001/api/users/user/${username}`);
+    const friend = response.data.user;
+
+    // Store the friend’s data without affecting the logged-in user’s state
+    selectedUser.value = friend;
+
+    userId.value = loggedInUserId;
+    await userStore.fetchUser(userId.value); // Fetch data for the logged-in user
+    const user = userStore.user;
+
+    // Display the friend’s data
+    userName.value = friend.username;
+    name.value = friend.name;
+    followers.value = friend.followers.length;
+    following.value = friend.following.length;
+    profilePicture.value = friend.profilePicture;
+
+    // Fetch friend-specific data
+    reviews.value = await reviewStore.fetchUserReviews(friend._id); // friend's userId for data
+    lists.value = await listsStore.fetchUserLists(friend._id); // friend's userId
+    activities.value = await userStore.fetchUserActivities(friend._id); // friend's userId for activities
+
   } catch (error) {
-    console.error('Failed to update profile picture', error);
+    console.error("Error fetching user data:", error);
   }
-}
+};
 
 
 onMounted(async () => {
-  const userId = localStorage.getItem('userId');
-  await userStore.fetchUser(userId);
-
-  const user = userStore.user;
-  userName.value = user.username;
-  name.value = user.name;
-  email.value = user.email;
-  followers.value = user.followers.length;
-  following.value = user.following.length;
-  profilePicture.value = user.profilePicture;
-
-  reviewStore.fetchReviews();
-  listsStore.fetchLists();
-
-  userStore.fetchUsers();
-
-  userStore.fetchActivities();
+  await getUser(); // Call getUser when the component mounts
 });
-
-
-
 </script>
+
 
 <style scoped>
 .profile-page {

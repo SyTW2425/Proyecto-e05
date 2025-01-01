@@ -6,7 +6,8 @@ import { login,
          unfollowUser,
          getFollowers,
          getFollowing,
-         getUserInfo } from '../controllers/userController';
+         getUserInfo, 
+         searchUsers} from '../controllers/userController';
 
 export const userRouter = express.Router();
 
@@ -230,6 +231,7 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
+
 userRouter.put('/follow', followUser);
 
 userRouter.put('/unfollow', unfollowUser);
@@ -239,5 +241,7 @@ userRouter.get('/followers/:userId', getFollowers);
 userRouter.get('/following/:userId', getFollowing);
 
 userRouter.get('/info/:userId', getUserInfo);
+
+userRouter.get('/user/:username', searchUsers);
 
 export default userRouter;

@@ -1,8 +1,8 @@
-import { Request, Response } from "express"; 
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { User } from "../models/userModel";
-import { ActivityType } from "../types/activityType";
+import { User } from '../models/userModel';
+import { ActivityType } from '../types/activityType';
 import { logActivity } from './activityController';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Ensure JWT_SECRET is defined
@@ -22,13 +22,20 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create and save the new user
-    const newUser = new User({ name, username, password: hashedPassword, email });
+    const newUser = new User({
+      name,
+      username,
+      password: hashedPassword,
+      email,
+    });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Error registering user', error: err.message });
-  } 
+    res
+      .status(500)
+      .json({ message: 'Error registering user', error: err.message });
+  }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -50,7 +57,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate a JWT
-    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      JWT_SECRET,
+      { expiresIn: '1h' },
+    );
 
     res.status(200).json({ token, userId: user._id });
   } catch (err) {
@@ -58,17 +69,20 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const followUser = async (req: Request, res: Response): Promise<void> => {
+export const followUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { userId, followId } = req.body;
     const user = await User.findById(userId);
     const followUser = await User.findById(followId);
-    
+
     if (!user) {
       res.status(404).json({ message: 'User not found' });
       return;
     }
-    
+
     if (!followUser) {
       res.status(404).json({ message: 'User to follow not found' });
       return;
@@ -92,15 +106,22 @@ export const followUser = async (req: Request, res: Response): Promise<void> => 
     await user.save();
     await followUser.save();
 
-    await logActivity(userId.toString(), ActivityType.FOLLOW, { followed: followId });
+    await logActivity(userId.toString(), ActivityType.FOLLOW, {
+      followed: followId,
+    });
 
     res.status(200).json({ message: 'User followed successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Error following user', error: err.message });
+    res
+      .status(500)
+      .json({ message: 'Error following user', error: err.message });
   }
 };
 
-export const unfollowUser = async (req: Request, res: Response): Promise<void> => {
+export const unfollowUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { userId, unfollowId } = req.body;
     const user = await User.findById(userId);
@@ -113,17 +134,26 @@ export const unfollowUser = async (req: Request, res: Response): Promise<void> =
       res.status(404).json({ message: 'User to unfollow not found' });
       return;
     }
-    user.following = user.following.filter((id) => id.toString() !== unfollowId.toString());
-    unfollowUser.followers = unfollowUser.followers.filter((id) => id.toString() !== userId.toString());
+    user.following = user.following.filter(
+      (id) => id.toString() !== unfollowId.toString(),
+    );
+    unfollowUser.followers = unfollowUser.followers.filter(
+      (id) => id.toString() !== userId.toString(),
+    );
     await user.save();
     await unfollowUser.save();
     res.status(200).json({ message: 'User unfollowed successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Error unfollowing user', error: err.message });
+    res
+      .status(500)
+      .json({ message: 'Error unfollowing user', error: err.message });
   }
 };
 
-export const getFollowers = async (req: Request, res: Response): Promise<void> => {
+export const getFollowers = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
@@ -134,11 +164,16 @@ export const getFollowers = async (req: Request, res: Response): Promise<void> =
     const followers = await User.find({ _id: { $in: user.followers } });
     res.status(200).json(followers);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching followers', error: err.message });
+    res
+      .status(500)
+      .json({ message: 'Error fetching followers', error: err.message });
   }
 };
 
-export const getFollowing = async (req: Request, res: Response): Promise<void> => {
+export const getFollowing = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
@@ -149,21 +184,41 @@ export const getFollowing = async (req: Request, res: Response): Promise<void> =
     const following = await User.find({ _id: { $in: user.following } });
     res.status(200).json(following);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching following', error: err.message });
+    res
+      .status(500)
+      .json({ message: 'Error fetching following', error: err.message });
   }
 };
 
-export const getUserInfo = async (req: Request, res: Response): Promise<void> => {
+export const getUserInfo = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(userId).select('-password -email')
-    .populate('followers following');
+    const user = await User.findById(userId)
+      .select('-password -email')
+      .populate('followers following');
     if (!user) {
       res.status(404).json({ message: 'User not found' });
       return;
     }
     res.status(200).json(user);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching user info', error: err.message });
+    res
+      .status(500)
+      .json({ message: 'Error fetching user info', error: err.message });
   }
-}
+};
+
+export const searchUsers = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user data' });
+  }
+};

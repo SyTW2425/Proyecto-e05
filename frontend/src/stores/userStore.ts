@@ -171,6 +171,33 @@ export const useUserStore = defineStore('user', {
         );
       }
     },
+    async fetchUserActivities(userId: string) {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/activity/user/${userId}`,
+        );
+        this.activities = response.data;
+
+        // each activity has a user property, which contains the userId, from it store the profile picture
+        this.activities.forEach(async (activity) => {
+          const user = await this.fetchUserInfo(activity.user);
+          activity.userProfilePicture = user.profilePicture;
+        });
+
+        this.activities.forEach(async (activity) => {
+          const user = await this.fetchUserInfo(activity.user);
+          activity.username = user.username;
+          activity.isCurrentUser = true;
+          if (localStorage.getItem('userId') === activity.user) {
+            activity.username = 'You';
+          }
+        });
+        
+        return this.activities;
+      } catch (error) {
+        console.error('Failed to fetch user activities:', error);
+      }
+    },
   },
 
   persist: true,

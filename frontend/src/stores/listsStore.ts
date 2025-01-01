@@ -59,6 +59,51 @@ export const useListStore = defineStore('lists', {
       }
     },
 
+    async fetchUserLists(userId: string) {
+      try {
+        const response = await fetch(
+          'http://localhost:5001/api/lists/user-lists/' + userId,
+        );
+        const data = await response.json();
+
+        // Fetch movie posters for each list
+        const listsWithImages = await Promise.all(
+          data.map(async (list: any) => {
+            const moviesWithPosters = await Promise.all(
+              list.movies.map(async (movie: any) => {
+                const movieResponse = await fetch(
+                  `http://localhost:5001/api/moviesdb/movie/${movie.TMDid}/images`,
+                );
+                const movieData = await movieResponse.json();
+
+                // Get the poster image or use a default if none found
+                const moviePoster = `https://image.tmdb.org/t/p/w200${
+                  movieData.backdrops?.[0]?.file_path ||
+                  movie.poster ||
+                  '/default-movie-poster.jpg'
+                }`;
+
+                return {
+                  ...movie,
+                  moviePoster,
+                };
+              }),
+            );
+
+            return {
+              id: list._id,
+              name: list.name,
+              movies: moviesWithPosters,
+            };
+          }),
+        );
+
+        return listsWithImages;
+      } catch (error) {
+        console.error(error);
+        useAlertStore().error('Failed to fetch lists');
+      }
+    },
     async createList() {
       if (!this.newListName.trim()) {
         useAlertStore().error('List name cannot be empty');

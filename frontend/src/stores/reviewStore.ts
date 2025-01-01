@@ -67,6 +67,42 @@ export const useReviewStore = defineStore('reviews', {
         useAlertStore().error('Failed to fetch reviews');
       }
     },
+    async fetchUserReviews(userId: string) {
+      try {
+        const response = await fetch(
+          `http://localhost:5001/api/reviews/user/reviews?userId=${userId}`
+        );
+        const data = await response.json();
+        
+        const reviewsWithImages = await Promise.all(
+          data.map(async (review: any) => {
+            const movieResponse = await fetch(
+              `http://localhost:5001/api/moviesdb/movie/${review.movie.TMDid}/images`
+            );
+            const movieData = await movieResponse.json();
+
+            const moviePoster = `https://image.tmdb.org/t/p/w200${
+              movieData.backdrops?.[0]?.file_path ||
+              '/default-movie-poster.jpg'
+            }`;
+
+            return {
+              _id: review._id,
+              movieId: review.movie.TMDid,
+              movieTitle: review.movie.title,
+              rating: review.rating,
+              body: review.body,
+              moviePoster,
+            };
+          })
+        );
+
+        return reviewsWithImages; 
+      } catch (error) {
+        console.error(error);
+        useAlertStore().error('Failed to fetch reviews');
+      }
+    },
     async createReview() {
       try {
         const token = localStorage.getItem('token');

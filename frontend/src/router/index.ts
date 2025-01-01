@@ -8,6 +8,7 @@ import Profile from '../views/Profile.vue';
 import NotFound from '../components/NotFound.vue';
 import MovieDetail from '../components/MovieDetail.vue';
 import AboutUs from '../components/AboutUs.vue';
+import UsersProfile from '../views/UsersProfile.vue';
 
 const routes = [
   {
@@ -36,6 +37,12 @@ const routes = [
     path: '/profile/:username',
     name: 'Profile',
     component: Profile, // User Profile page
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/user/:username',
+    name: 'UsersProfile',
+    component: UsersProfile, // User Profile page
     meta: { requiresAuth: true },
   },
   {
