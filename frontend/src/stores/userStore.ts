@@ -187,8 +187,8 @@ export const useUserStore = defineStore('user', {
         this.activities.forEach(async (activity) => {
           const user = await this.fetchUserInfo(activity.user);
           activity.username = user.username;
-          activity.isCurrentUser = true;
           if (localStorage.getItem('userId') === activity.user) {
+            activity.isCurrentUser = true;
             activity.username = 'You';
           }
         });
