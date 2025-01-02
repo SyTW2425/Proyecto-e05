@@ -24,7 +24,6 @@ export const getUserActivities = async (req: Request, res: Response): Promise<vo
     .sort({ createdAt: -1 });
     res.status(200).json(activities);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Failed to fetch activities' });
   }
 };
@@ -44,7 +43,6 @@ export const getAllActivities = async (req: Request, res: Response): Promise<voi
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     res.status(200).json(activities);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Failed to fetch all activities' });
   }
 };

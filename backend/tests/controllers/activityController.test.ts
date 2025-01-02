@@ -8,7 +8,7 @@ import { List } from '../../src/models/listModel';
 import { Review } from '../../src/models/reviewModel';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from '@jest/globals';
 import { ActivityType } from '../../src/types/activityType';
-import { createMovie } from '../../src/controllers/movieController';
+import { logActivity } from '../../src/controllers/activityController';
 
 describe('User Controller Tests', () => {
   let mongoServer: MongoMemoryServer;
@@ -203,6 +203,34 @@ describe('User Controller Tests', () => {
       expect(res.body[1].type).toBe(ActivityType.FOLLOW);
     });
 
+  });
+
+  describe('logActivity', () => {
+    it('should log activity', async () => {
+      const activityPayload = {
+        user: user._id.toString(),
+        type: ActivityType.ADD_TO_LIST,
+        list: 'Test List',
+        movie: 'Test Movie',
+      };
+      await logActivity(user._id.toString(), ActivityType.FOLLOW, { followed: user._id.toString() });
+      const activity = await Activity.findOne({ user: user._id.toString() });
+      expect(activity).not.toBeNull();
+      expect(activity?.type).toBe(ActivityType.FOLLOW);
+      expect(activity?.followed?.toString()).toBe(user._id.toString());
+    });
+  });
+
+  describe('GET /activity error handling', () => {
+    it('should return 500 if user is not valid', async () => {
+      const res = await request(app).get(`/api/activity/user/123`);
+      expect(res.status).toBe(500);
+    });
+
+    it('should return 500 if user is not valid', async () => {
+      const res = await request(app).get(`/api/activity/all/123`);
+      expect(res.status).toBe(500);
+    });
   });
 
 });
