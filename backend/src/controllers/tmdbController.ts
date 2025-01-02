@@ -42,8 +42,7 @@ export const getMovieDetails = async (movieId: number) => {
 };
 
 // Get the latest movies from this year most popular
-export const getPopularMovies = async (page: number = 1) => {
-  const currentYear = new Date().getFullYear(); // Get the current year
+export const getPopularMovies = async (page: number = 1, year?: number) => {
   try {
     const response = await axios.get(`${BASE_URL}/discover/movie`, {
       params: {
@@ -51,8 +50,8 @@ export const getPopularMovies = async (page: number = 1) => {
         include_adult: false,
         language: 'en-US',
         page,
-        primary_release_year: currentYear,
         page_size: 20,
+        primary_release_year: year,
       },
       headers: getAuthHeaders(),
     });
@@ -97,6 +96,7 @@ export const getGenres = async () => {
 export const getMoviesByGenres = async (
   genreIds: number[],
   page: number = 1,
+  year?: number,
 ) => {
   try {
     const response = await axios.get(`${BASE_URL}/discover/movie`, {
@@ -104,6 +104,7 @@ export const getMoviesByGenres = async (
         with_genres: genreIds.join(','),
         include_adult: false,
         page: page,
+        primary_release_year: year,
       },
       headers: getAuthHeaders(),
     });

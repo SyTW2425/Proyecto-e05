@@ -69,7 +69,6 @@ export const useUserStore = defineStore('user', {
         const payload = { userId, followId };
         await axios.put(`http://localhost:5001/api/users/follow`, payload);
         this.following.push(followId);
-        console.log('User followed successfully');
       } catch (error) {
         alertStore.error(
           error.response?.data?.message || 'Failed to follow the user',
@@ -82,10 +81,8 @@ export const useUserStore = defineStore('user', {
       try {
         const userId = localStorage.getItem('userId');
         const payload = { userId, unfollowId };
-        console.log('payload', payload);
         await axios.put(`http://localhost:5001/api/users/unfollow`, payload);
         this.following = this.following.filter((id) => id !== unfollowId); // Update state
-        console.log('User unfollowed successfully');
       } catch (error) {
         alertStore.error(
           error.response?.data?.message || 'Failed to unfollow the user',

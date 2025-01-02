@@ -78,7 +78,6 @@ describe('Movie API Functions', () => {
   describe('getPopularMovies', () => {
     it('should return popular movies for the current year', async () => {
       const mockData = { results: [{ title: 'Popular Movie' }] };
-      const currentYear = new Date().getFullYear();
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
 
       const result = await getPopularMovies();
@@ -91,7 +90,6 @@ describe('Movie API Functions', () => {
             include_adult: false,
             language: 'en-US',
             page: 1,
-            primary_release_year: currentYear,
             page_size: 20,
           },
           headers: {

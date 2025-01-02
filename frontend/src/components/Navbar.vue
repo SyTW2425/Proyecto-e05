@@ -147,7 +147,6 @@ export default {
       if (isFollowing(user)) {
         await userStore.unfollowUser(user._id);
       } else {
-        console.log('Following user:', user._id);
         await userStore.followUser(user._id);
       }
     };

@@ -114,9 +114,9 @@ tmdbRouter.get('/movie/:id', async (req, res) => {
 });
 
 tmdbRouter.get('/search-popular', async (req, res) => {
-  const { page } = req.query;
+  const { page, year } = req.query;
   try {
-    const data = await getPopularMovies(parseInt(page as string, 10) || 1);
+    const data = await getPopularMovies(parseInt(page as string, 10) || 1, parseInt(year as string, 10));
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch latest movies' });
@@ -147,9 +147,10 @@ tmdbRouter.get('/genres', async (req, res) => {
 tmdbRouter.get('/genres/:id', async (req, res) => {
   const { id } = req.params;
   const { page } = req.query;
+  const { year } = req.query;
 
   try {
-    const data = await getMoviesByGenres([parseInt(id, 10)], parseInt(page as string, 10) || 1);
+    const data = await getMoviesByGenres([parseInt(id, 10)], parseInt(page as string, 10) || 1, parseInt(year as string, 10));
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch movies by genre' });
@@ -224,14 +225,14 @@ tmdbRouter.get('/movie/:id/videos', async (req, res) => {
 
 // Get movies by one or more genres
 tmdbRouter.get('/movies-by-genres', async (req, res) => {
-  const { genres, page } = req.query;
+  const { genres, page, year } = req.query;
 
   try {
     const genreIds = genres
       ? (genres as string).split(',').map((id) => parseInt(id.trim(), 10))
       : [];
 
-    const data = await getMoviesByGenres(genreIds, parseInt(page as string, 10) || 1);
+    const data = await getMoviesByGenres(genreIds, parseInt(page as string, 10) || 1, parseInt(year as string, 10));
     res.json(data);
   } catch (error) {
     console.error('Error fetching movies by genres:', error);

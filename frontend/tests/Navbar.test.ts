@@ -23,24 +23,28 @@ vi.mock('../src/stores/auth', () => ({
 vi.mock('../src/stores/userStore', () => ({
   useUserStore: vi.fn(() => ({
     user: {
-      profilePicture: '/default-profile.png', // Ensure this is set correctly
-      username: 'Test User',
+      profilePicture: '/default-profile.png',
+      username: 'TestUser',
     },
+    users: [{ _id: 'user123', username: 'TestUser' }],
     fetchUser: vi.fn(),
     fetchUsers: vi.fn(),
     fetchFollowing: vi.fn(),
+    following: [],
+    showSearchModal: false,
+    searchQuery: '',
+    filteredUsers: [],
   })),
 }));
 
 describe('Navbar.vue', () => {
   let wrapper;
-  let mockAuthStore;
   let mockRouter;
-  let mockUserStore;
   let mockRoute;
+  let mockAuthStore;
+  let mockUserStore;
 
   beforeEach(() => {
-    // Create and set up the Pinia store
     const pinia = createPinia();
     setActivePinia(pinia);
 
@@ -49,18 +53,15 @@ describe('Navbar.vue', () => {
     };
 
     mockRoute = {
-      name: 'Home', // Simulate the current route
+      name: 'Home', // Simulate current route name
     };
 
     vi.clearAllMocks();
-
-    // Mock router and stores
     useRouter.mockReturnValue(mockRouter);
     useRoute.mockReturnValue(mockRoute);
     mockAuthStore = useAuthStore();
     mockUserStore = useUserStore();
 
-    // Mocking the localStorage to return a valid userId for the test
     vi.spyOn(global.localStorage.__proto__, 'getItem').mockImplementation((key) => {
       if (key === 'userId') return 'user123'; // Mock user ID
       return null;
@@ -73,15 +74,46 @@ describe('Navbar.vue', () => {
     });
   });
 
-  it('renders the profile image', () => {
-    const img = wrapper.find('img');
-    expect(img.exists()).toBe(true); // Check if the image element exists
-    expect(img.attributes('src')).toBe('/logo.svg'); // Verify the image src attribute
+  it('renders the logo correctly', () => {
+    const logo = wrapper.find('img[alt="CineTrunk Logo"]');
+    expect(logo.exists()).toBe(true);
+    expect(logo.attributes('src')).toBe('/logo.svg');
   });
 
-  it('renders the profile link with the correct route', () => {
-    const profileLink = wrapper.find('router-link');
-    expect(profileLink.exists()).toBe(true); // Ensure the link exists
-    expect(profileLink.attributes('to')).toBe('/home'); // Ensure the correct profile URL
+  it('renders the user profile picture correctly', () => {
+    const profileImage = wrapper.find('img[alt="Profile Picture"]');
+    expect(profileImage.exists()).toBe(true);
+    expect(profileImage.attributes('src')).toBe('/default-profile.png');
   });
+
+  it('toggles mobile menu visibility on button click', async () => {
+    const button = wrapper.find('button.md\\:hidden');
+    expect(wrapper.vm.isMobileMenuOpen).toBe(false);
+
+    await button.trigger('click');
+    expect(wrapper.vm.isMobileMenuOpen).toBe(true);
+
+    await button.trigger('click');
+    expect(wrapper.vm.isMobileMenuOpen).toBe(false);
+  });
+
+
+  it('hides navbar on scroll down and shows on scroll up', async () => {
+    const initialValue = wrapper.vm.isNavbarHidden;
+
+    // Simulate scrolling down
+    window.scrollY = 100;
+    window.dispatchEvent(new Event('scroll'));
+    expect(wrapper.vm.isNavbarHidden).not.toBe(initialValue);
+
+    // Simulate scrolling up
+    window.scrollY = 0;
+    window.dispatchEvent(new Event('scroll'));
+    expect(wrapper.vm.isNavbarHidden).toBe(false);
+  });
+
+  it('computes username correctly based on userStore', () => {
+    expect(wrapper.vm.username).toBe('TestUser');
+  });
+
 });

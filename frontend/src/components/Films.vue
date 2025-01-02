@@ -15,6 +15,16 @@
         {{ genre.name }}
       </button>
 
+      <!-- Year Filter -->
+      <div class="flex justify-center items-center gap-4 mb-6">
+        <label for="yearFilter" class="text-white font-poppins mt-6">Year:</label>
+        <select id="yearFilter" v-model="selectedYear" @change="handleYearFilter"
+          class="px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400 text-sm font-[poppins] bg-gray-700 text-white mt-6">
+          <option value="">All Years</option>
+          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+        </select>
+      </div>
+
       <!-- Clear Filters Button -->
       <button v-if="selectedGenres.length > 0 || searchQuery.trim() !== ''" @click="clearFilters"
         class="px-4 py-2 rounded-lg bg-red-600 text-white font-poppins hover:bg-red-500 transition-all duration-200">
@@ -33,7 +43,8 @@
               'h-auto': movie.poster_path
             }" />
           <h2 class="text-white mt-2 font-bold text-sm sm:text-base">{{ movie.title }}</h2>
-          <p class="text-gray-400 text-xs sm:text-sm">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A' }}</p>
+          <p class="text-gray-400 text-xs sm:text-sm">{{ movie.release_date ? movie.release_date.split('-')[0] : 'N/A'
+            }}</p>
 
           <!-- Average Rating Section -->
           <div class="flex items-center gap-2 justify-center mt-1">
@@ -48,7 +59,8 @@
     </div>
 
     <!-- No Movies Found -->
-    <div v-else-if="!loading && !error" class="text-center text-gray-400 text-sm sm:text-base">No movies found. Try another search!</div>
+    <div v-else-if="!loading && !error" class="text-center text-gray-400 text-sm sm:text-base">No movies found. Try
+      another search!</div>
 
     <!-- Loading Indicator -->
     <div v-if="loading" class="text-center text-yellow-400 text-sm sm:text-base">Loading movies...</div>
@@ -58,7 +70,8 @@
 
     <!-- Pagination Controls -->
     <div v-if="totalPages > 1" class="flex justify-center mt-8 flex-wrap">
-      <button v-for="page in pagesToShow" :key="page" @click="changePage(page)" class="mx-2 px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-sm sm:text-base"
+      <button v-for="page in pagesToShow" :key="page" @click="changePage(page)"
+        class="mx-2 px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-sm sm:text-base"
         :class="page === currentPage ? 'bg-yellow-400 text-black' : 'bg-gray-700 text-white hover:bg-gray-500'">
         {{ page }}
       </button>
@@ -91,6 +104,8 @@ export default defineComponent({
       searchQuery: "",
       movies: [] as Movie[],
       currentPage: 1,
+      selectedYear: "",
+      years: [] as number[],
       totalPages: 0,
       loading: false,
       error: "",
@@ -124,31 +139,34 @@ export default defineComponent({
     async fetchMovies() {
       this.loading = true;
       this.error = "";
+
       try {
         const isSearchMode = this.searchQuery.trim().length > 0;
 
-        let endpoint: string;
-        let params: Record<string, any> = { page: this.currentPage };
+        // Default endpoint and params
+        let endpoint = "http://localhost:5001/api/moviesdb/search-popular";
+        let params: Record<string, any> = {
+          page: this.currentPage,
+          year: parseInt(this.selectedYear, 10) || undefined, // Include year filter if selected
+        };
 
-        // Decide the endpoint and parameters
+        // Determine endpoint and add filters
         if (isSearchMode) {
           endpoint = "http://localhost:5001/api/moviesdb/search";
-          params.query = this.searchQuery;
+          params.query = this.searchQuery; // Add search query
         } else if (this.selectedGenres.length > 0) {
           endpoint = "http://localhost:5001/api/moviesdb/movies-by-genres";
-          params.genres = this.selectedGenres.join(",");
-        } else {
-          endpoint = "http://localhost:5001/api/moviesdb/search-popular";
+          params.genres = this.selectedGenres.join(","); // Add genres filter
         }
 
-        // Fetch data from the endpoint
+        // Make the API request
         const response = await axios.get<{
           results: Movie[];
           page: number;
           total_pages: number;
         }>(endpoint, { params });
 
-        // Update movies and pagination
+        // Update the movies and pagination data
         this.movies = response.data.results.map((movie: Movie) => ({
           id: movie.id,
           title: movie.title,
@@ -165,6 +183,8 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
+
+      // Smooth scroll to the top of the page
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
 
@@ -192,6 +212,7 @@ export default defineComponent({
       this.searchQuery = "";
       this.selectedGenres = [];
       this.currentPage = 1;
+      this.selectedYear = "";
       this.updateQueryParams();
       this.fetchMovies();
     },
@@ -201,9 +222,15 @@ export default defineComponent({
         query: {
           page: this.currentPage.toString(),
           genres: this.selectedGenres.join(","),
-          query: this.searchQuery.trim() || undefined, // Remove `query` if empty
+          query: this.searchQuery.trim() || undefined,
+          year: this.selectedYear || undefined, // Incluir el año seleccionado si existe
         },
       });
+    },
+    handleYearFilter() {
+      this.currentPage = 1; // Reiniciar la paginación al aplicar un filtro
+      this.updateQueryParams();
+      this.fetchMovies();
     },
   },
   watch: {
@@ -213,6 +240,7 @@ export default defineComponent({
         ? (newQuery.genres as string).split(",").map((id) => parseInt(id.trim(), 10))
         : [];
       this.searchQuery = newQuery.query ? (newQuery.query as string) : "";
+      this.selectedYear = newQuery.year || ""; // Sincronizar el año
 
       this.fetchMovies();
     },
@@ -220,6 +248,9 @@ export default defineComponent({
   mounted() {
     // Extract state from query parameters
     const { page, genres, query } = this.$route.query;
+    const currentYear = new Date().getFullYear();
+    this.years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => 1900 + i).reverse();
+
 
     this.currentPage = parseInt(page as string, 10) || 1;
     this.selectedGenres = genres
@@ -229,8 +260,12 @@ export default defineComponent({
 
     this.fetchGenres();
     this.fetchMovies();
-  }
+  },
+
+
 });
+
+
 </script>
 
 
