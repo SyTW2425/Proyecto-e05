@@ -11,6 +11,15 @@ import { login,
 
 export const userRouter = express.Router();
 
+userRouter.get('/', async (req: Request, res: Response) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch users', error });
+  }
+});
+
 /**
  * @swagger
  */
