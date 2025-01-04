@@ -23,7 +23,7 @@ export const searchMovies = async (query: string, page: number = 1) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error searching movies:', error);
+    //console.error('Error searching movies:', error);
     throw error;
   }
 };
@@ -36,7 +36,7 @@ export const getMovieDetails = async (movieId: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error getting movie details:', error);
+    //console.error('Error getting movie details:', error);
     throw error;
   }
 };
@@ -57,7 +57,7 @@ export const getPopularMovies = async (page: number = 1, year?: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching most popular movies:', error);
+    //console.error('Error fetching most popular movies:', error);
     throw error;
   }
 };
@@ -74,7 +74,7 @@ export const getNowPlayingMovies = async (page: number = 1) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching now playing movies:', error);
+    //console.error('Error fetching now playing movies:', error);
     throw error;
   }
 };
@@ -87,7 +87,7 @@ export const getGenres = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching genres:', error);
+    //console.error('Error fetching genres:', error);
     throw error;
   }
 };
@@ -110,7 +110,7 @@ export const getMoviesByGenres = async (
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching movies by genre:', error);
+    //console.error('Error fetching movies by genre:', error);
     throw error;
   }
 };
@@ -129,7 +129,7 @@ export const getMovieTrailers = async (movieId: number) => {
     );
     return trailers;
   } catch (error) {
-    console.error('Error fetching movie trailers:', error);
+    //console.error('Error fetching movie trailers:', error);
     throw error;
   }
 };
@@ -142,7 +142,7 @@ export const getMovieCredits = async (movieId: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching movie credits:', error);
+    //console.error('Error fetching movie credits:', error);
     throw error;
   }
 };
@@ -155,7 +155,7 @@ export const getMovieImages = async (movieId: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching movie images:', error);
+    //console.error('Error fetching movie images:', error);
     throw error;
   }
 };
@@ -167,7 +167,7 @@ export const getMovieReviews = async (movieId: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching movie reviews:', error);
+    //console.error('Error fetching movie reviews:', error);
     throw error;
   }
 };
@@ -187,7 +187,7 @@ export const getSimilarMovies = async (movieId: number) => {
 
     return sortedMovies;
   } catch (error) {
-    console.error('Error fetching similar movies:', error);
+    //console.error('Error fetching similar movies:', error);
     throw error;
   }
 };
@@ -199,7 +199,7 @@ export const getMovieVideos = async (movieId: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching movie videos:', error);
+    //console.error('Error fetching movie videos:', error);
     throw error;
   }
 };

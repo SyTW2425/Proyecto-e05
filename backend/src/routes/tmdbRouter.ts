@@ -235,7 +235,6 @@ tmdbRouter.get('/movies-by-genres', async (req, res) => {
     const data = await getMoviesByGenres(genreIds, parseInt(page as string, 10) || 1, parseInt(year as string, 10));
     res.json(data);
   } catch (error) {
-    console.error('Error fetching movies by genres:', error);
     res.status(500).json({ error: 'Failed to fetch movies by genres' });
   }
 });

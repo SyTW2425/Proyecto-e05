@@ -9,4 +9,3 @@ reviewRouter.put('/review/:reviewId', updateReviewController);
 reviewRouter.delete('/review/:reviewId', deleteReviewController);
 
 export default reviewRouter;
-

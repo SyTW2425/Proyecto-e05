@@ -6,31 +6,11 @@ import { getMovieDetails } from './tmdbController';
 import { ActivityType } from '../types/activityType';
 import { logActivity } from './activityController';
 
-// create review
-export const createReview = async (
-  title: string,
-  body: string,
-  rating: number,
-  userId: mongoose.Types.ObjectId,
-  movieId: mongoose.Types.ObjectId,
-) => {
-  const review = new Review({
-    title,
-    body,
-    rating,
-    user: userId,
-    movie: movieId,
-  });
-  await review.save();
-  await User.findByIdAndUpdate(userId, { $push: { reviews: review._id } });
-  return review;
-};
 
 // get all reviews from a user
 export const getReviewsByUserId = async (userId: string) => {
   // Ensure userId is properly converted to ObjectId
   const userObjectId = new mongoose.Types.ObjectId(userId);
-
   return await Review.find({ user: userObjectId });
 };
 
@@ -47,6 +27,8 @@ export const deleteReview = async (reviewId: mongoose.Types.ObjectId) => {
   const review = await Review.findByIdAndDelete(reviewId);
   if (review) {
     await User.findByIdAndUpdate(review.user, { $pull: { reviews: reviewId } });
+  } else {
+    return null;
   }
   return review;
 };
@@ -59,13 +41,11 @@ export const addReviewToMovie = async (req: Request, res: Response) => {
     const user = await User.findById(userId);
     if (!user) {
       res.status(404).json({ message: 'User not found' });
+      return;
     }
 
     // Fetch the movie from the external API by movieId
     const movieData = await getMovieDetails(movieId);
-    if (!movieData) {
-      res.status(404).json({ message: 'Movie not found' });
-    }
 
     // Check if the user has already reviewed this movie
     const existingReview = await Review.findOne({
@@ -81,6 +61,7 @@ export const addReviewToMovie = async (req: Request, res: Response) => {
         rating,
       });
       res.status(200).json(updatedReview); // Send the updated review
+      return;
     } else {
       // If no existing review, create a new review
       const review = new Review({
@@ -129,6 +110,10 @@ export const updateReviewController = async (req: Request, res: Response) => {
       new mongoose.Types.ObjectId(reviewId),
       updateData,
     );
+    if (!review) {
+      res.status(404).json({ message: 'Review not found' });
+      return;
+    }
     res.status(200).json(review);
   } catch (error) {
     res
@@ -140,7 +125,11 @@ export const updateReviewController = async (req: Request, res: Response) => {
 export const deleteReviewController = async (req: Request, res: Response) => {
   const { reviewId } = req.params;
   try {
-    await deleteReview(new mongoose.Types.ObjectId(reviewId));
+    const deleted = await deleteReview(new mongoose.Types.ObjectId(reviewId));
+    if (!deleted) {
+      res.status(404).json({ message: 'Review not found' });
+      return;
+    }
     res.status(200).json({ message: 'Review deleted successfully' });
   } catch (error) {
     res
