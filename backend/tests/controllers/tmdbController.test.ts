@@ -28,13 +28,12 @@ describe('Movie API Functions', () => {
   });
 
   describe('searchMovies', () => {
+    
     it('should return movies by search query', async () => {
       const mockData = { results: [{ title: 'Gladiator' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const query = 'Gladiator';
       const result = await searchMovies(query);
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         'https://api.themoviedb.org/3/search/movie',
         {
@@ -52,9 +51,11 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     });
+
   });
 
   describe('getMovieDetails', () => {
+
     it('should return movie details by ID', async () => {
       const movieId = 12345;
       const mockData = { id: movieId, title: 'Gladiator' };
@@ -73,9 +74,11 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     });
+
   });
 
   describe('getPopularMovies', () => {
+
     it('should return popular movies for the current year', async () => {
       const mockData = { results: [{ title: 'Popular Movie' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
@@ -100,15 +103,15 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     });
+
   });
 
   describe('getNowPlayingMovies', () => {
+
     it('should return now playing movies', async () => {
       const mockData = { results: [{ title: 'Now Playing Movie' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getNowPlayingMovies();
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         'https://api.themoviedb.org/3/movie/now_playing',
         {
@@ -124,15 +127,15 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     });
+
   });
 
   describe('getGenres', () => {
+
     it('should return movie genres', async () => {
       const mockData = { genres: [{ id: 1, name: 'Action' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getGenres();
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         'https://api.themoviedb.org/3/genre/movie/list',
         {
@@ -144,16 +147,16 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     });
+
   });
 
   describe('getMoviesByGenres', () => {
+
     it('should return movies by genre', async () => {
       const genreId = 1;
       const mockData = { results: [{ title: 'Action Movie' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getMoviesByGenres([genreId]);
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `https://api.themoviedb.org/3/discover/movie`,
         {
@@ -170,14 +173,13 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     });
+
     it('should return movies by genre and page', async () => {
       const genreId = 1;
       const page = 2;
       const mockData = { results: [{ title: 'Action Movie' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getMoviesByGenres([genreId], page);
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `https://api.themoviedb.org/3/discover/movie`,
         {
@@ -193,10 +195,12 @@ describe('Movie API Functions', () => {
         },
       );
       expect(result).toEqual(mockData);
-    }); 
+    });
+
   });
 
   describe('getMovieCredits', () => {
+
     it ('should return movie credits by ID', async () => {
       const movieId = 12345;
       const mockData = { id: movieId, title: 'Gladiator' };
@@ -215,9 +219,11 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     }); 
+
   });
 
   describe('getMovieImages', () => {
+
     it ('should return movie images by ID', async () => {
       const movieId = 12345;
       const mockData = { id: movieId, title: 'Gladiator' };
@@ -236,7 +242,7 @@ describe('Movie API Functions', () => {
       );
       expect(result).toEqual(mockData);
     });
-  });
 
+  });
 
 });
