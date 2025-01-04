@@ -63,7 +63,6 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
     }
     res.json(user);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Failed to fetch user' });
   }
 });
