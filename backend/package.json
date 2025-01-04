@@ -6,7 +6,8 @@
     "start": "tsc; node dist/server.js",
     "dev": "ts-node-dev src/server.ts",
     "build": "rm -rf dist && tsc",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "c8 npm test && c8 report --reporter=lcov"
   },
   "keywords": [],
   "author": "",
