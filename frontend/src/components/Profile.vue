@@ -305,7 +305,6 @@
               <!-- Add to list activity -->
               <template v-else-if="activity.type === 'add_to_list'">
                 <span class="text-gray-300"> added </span>
-                <!-- Plus Icon for add to list activity -->
                 <i class="fas fa-plus-circle text-yellow-400 mx-1"></i>
                 <span class="font-semibold text-yellow-400">{{ activity.movieName }}</span>
                 <span class="text-gray-300"> to the list </span>
@@ -320,7 +319,6 @@
               <!-- Follow activity -->
               <template v-else-if="activity.type === 'follow'">
                 <span class="text-gray-300"> followed </span>
-                <!-- Follow Icon for follow activity -->
                 <i class="fas fa-user-plus text-yellow-400 mx-1"></i>
                 <span class="font-semibold text-yellow-400">{{ activity.followed.name }}</span>.
               </template>
@@ -481,6 +479,7 @@ onMounted(async () => {
   userStore.fetchUsers();
 
   userStore.fetchActivities();
+  console.log('Activities:', userStore.activities);
 });
 
 
