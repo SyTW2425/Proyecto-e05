@@ -54,10 +54,7 @@ export const getUserListsController = async (
 
 
 // Delete a list
-export const deleteListController = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const deleteListController = async (req: Request, res: Response,): Promise<void> => {
   const { listId } = req.params;
   try {
     if (!mongoose.Types.ObjectId.isValid(listId)) {
