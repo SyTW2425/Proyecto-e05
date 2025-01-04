@@ -404,7 +404,152 @@ describe('User Controller Tests', () => {
 
   });
 
-  
+  describe('GET /info', () => {
+
+    it('should return user info without password and email', async () => {
+      const user1 = new User({
+        name: 'User 1',
+        username: 'user1',
+        password: 'password',
+        email: 'user1@example.com',
+      });
+      await user1.save();
+      const user2 = new User({
+        name: 'User 2',
+        username: 'user2',
+        password: 'password',
+        email: 'user2@example.com',
+      });
+      await user2.save();
+      const testUser = new User({
+        name: 'Test User',
+        username: 'testUser',
+        password: 'password',
+        email: 'testuser@example.com',
+        following: [user1._id],
+        followers: [user2._id],
+        profilePicture: '/default-profile.png',
+      });
+      await testUser.save();
+      const res = await request(app).get(`/api/users/info/${testUser._id}`);
+      expect(res.status).toBe(200);
+      expect(res.body.password).toBeUndefined();
+      expect(res.body.email).toBeUndefined();
+      expect(res.body.following.length).toBe(1);
+      expect(res.body.followers.length).toBe(1);
+      expect(res.body.following[0].username).toBe(user1.username);
+      expect(res.body.followers[0].username).toBe(user2.username);
+      expect(res.body.profilePicture).toBe('/default-profile.png');
+    });
+
+    it('should return error if user not found', async () => {
+      const res = await request(app).get(`/api/users/info/${new mongoose.Types.ObjectId()}`);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe('User not found');
+    });
+
+    it('should return an error if userId format is invalid', async () => {
+      const res = await request(app).get('/api/users/info/123');
+      expect(res.status).toBe(500);
+    });
+
+  });
+
+  describe('GET /user', () => {
+
+    it('should return user by username', async () => {
+      const user = new User({
+        name: 'Test User',
+        username: 'testuser',
+        password: 'password',
+        email: 'testuser@example.com',
+      });
+      await user.save();
+      const res = await request(app).get(`/api/users/user/${user.username}`);
+      expect(res.status).toBe(200);
+      expect(res.body.user.username).toBe(user.username);
+    });
+
+    it('should return error if user not found', async () => {
+      const res = await request(app).get('/api/users/user/nonexistentuser');
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe('User not found');
+    });
+
+  });
+
+  describe('PUT /profile-picture', () => {
+
+    it('should update user profile picture', async () => {
+      const user = new User({
+        name: 'Test User',
+        username: 'testuser',
+        password: 'password',
+        email: 'testuser@example.com',
+      });
+      await user.save();
+      const profilePicture = '/new-profile.png';
+      const res = await request(app).put('/api/users/profile-picture').send({ userId: user._id, profilePicture });
+      expect(res.status).toBe(200);
+      expect(res.body.profilePicture).toBe(profilePicture);
+      const updatedUser = await User.findById(user._id);
+      expect(updatedUser?.profilePicture).toBe(profilePicture);
+    });
+
+    it('should return error if user not found', async () => {
+      const profilePicture = '/new-profile.png';
+      const res = await request(app).put('/api/users/profile-picture').send({ userId: new mongoose.Types.ObjectId(), profilePicture });
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe('User not found');
+    });
+
+    it('should return an error if userId format is invalid', async () => {
+      const profilePicture = '/new-profile.png';
+      const res = await request(app).put('/api/users/profile-picture').send({ userId: '123', profilePicture });
+      expect(res.status).toBe(500);
+    });
+
+  });
+
+  describe('GET /', () => {
+
+    it('should return all users', async () => {
+      const user1 = new User({
+        name: 'User 1',
+        username: 'user1',
+        password: 'password',
+        email: 'user1@example.com',
+      });
+      await user1.save();
+      const user2 = new User({
+        name: 'User 2',
+        username: 'user2',
+        password: 'password',
+        email: 'user2@example.com',
+      });
+      await user2.save();
+      const user3 = new User({
+        name: 'User 3',
+        username: 'user3',
+        password: 'password',
+        email: 'user3@example.com',
+      });
+      await user3.save();
+      const res = await request(app).get('/api/users/');
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(3);
+      expect(res.body[0].username).toBe(user1.username);
+      expect(res.body[1].username).toBe(user2.username);
+      expect(res.body[2].username).toBe(user3.username);
+    });
+
+    it('should return empty array if there are no users', async () => {
+      const res = await request(app).get('/api/users/');
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(0);
+    });
+
+  });
 
 });
 
