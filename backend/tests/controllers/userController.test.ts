@@ -551,6 +551,34 @@ describe('User Controller Tests', () => {
 
   });
 
+  describe('GET /:id', ()=> {
+
+    it('should return user by id', async () => {
+      const user = new User({
+        name: 'Test User',
+        username: 'testuser',
+        password: 'password',
+        email: 'testuser@example.com',
+      });
+      await user.save();
+      const res = await request(app).get(`/api/users/${user._id}`);
+      expect(res.status).toBe(200);
+      expect(res.body.username).toBe(user.username);
+    });
+
+    it('should return error if user not found', async () => {
+      const res = await request(app).get(`/api/users/${new mongoose.Types.ObjectId()}`);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe('User not found');
+    });
+
+    it('should return an error if userId format is invalid', async () => {
+      const res = await request(app).get('/api/users/123');
+      expect(res.status).toBe(500);
+    });
+
+  });
+
 });
 
 
