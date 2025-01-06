@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+frontend/node_modules/
+backedn/node_modules/
+
+# dotenv environment variable files
+.env
+.env.local
+.env.*.local
+
+# Build directories
+**/dist
+/build
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+
+# IDE configuration files
+.vscode/
+
+# Coverage reports (for Jest, etc.)
+coverage/
+.nyc_output/

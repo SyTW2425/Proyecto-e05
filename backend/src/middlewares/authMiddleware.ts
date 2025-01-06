@@ -1,0 +1,1 @@
+// Configuration of the authentication with jwt

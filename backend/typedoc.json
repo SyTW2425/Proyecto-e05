@@ -1,0 +1,12 @@
+{
+  "name": "CineTrunk",
+  "out": "./docs",
+  "exclude": ["**/node_modules/**", "test", "dist", "docs", "coverage"],
+  "includeDeclarations": true,
+  "ignoreCompilerErros": true,
+  "theme": "default",
+  "entryPoints": ["./src/**/*.ts"],
+  "readme": "./README.md",
+  "excludePrivate": true,
+  "excludeProtected": true
+}

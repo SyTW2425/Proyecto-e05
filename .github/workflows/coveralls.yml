@@ -1,0 +1,48 @@
+name: Backend Coverage
+
+on:
+  push:
+    branches: [ "dev", "main" ]
+  pull_request:
+    branches: [ "dev", "main" ]
+
+jobs:
+  backend-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: '5.0'
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: backend
+
+      - name: Set Environment Variables
+        run: |
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> $GITHUB_ENV
+          echo "TMDB_APIKEY=${{ secrets.TMDB_API_KEY }}" >> $GITHUB_ENV
+          echo "COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_REPO_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Run Coverage
+        env:
+          MONGODB_URI: ${{ env.MONGODB_URI }}
+          TMDB_API_KEY: ${{ env.TMDB_APIKEY }}
+        run: npm run coverage
+        working-directory: backend
+
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v2.2.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./backend/coverage/lcov.info

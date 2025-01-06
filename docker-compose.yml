@@ -1,0 +1,36 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5001:5000"
+    depends_on:
+      - database
+    environment:
+      - MONGODB_URI=mongodb://database:27017/CineTrunk
+
+  database:
+    image: mongo:latest
+    container_name: mongodb_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./backend/dist/databases/init_db.js:/docker-entrypoint-initdb.d/init_db.js:ro
+    environment:
+      MONGO_INITDB_DATABASE: CineTrunk
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:
