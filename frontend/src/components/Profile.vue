@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-900 text-white flex flex-col md:flex-row font-[poppins]">
     <!-- Sidebar -->
-    <aside class="w-full md:w-72 bg-gray-800 p-6 mt-20 flex flex-col gap-8 overflow-auto max-h-screen">
+    <aside class="w-full md:w-80 bg-gray-800 p-6 mt-20 flex flex-col gap-8 overflow-auto max-h-screen">
 
       <!-- Profile Section -->
-      <div class="bg-gray-700 p-6 rounded-lg text-center relative overflow-hidden">
+      <div class="bg-gray-700 p-6 rounded-lg text-center relative">
         <!-- Background Image -->
         <div class="absolute top-0 left-0 w-full h-20 bg-cover bg-center"
           :style="{ backgroundImage: 'url(/background-pattern.png)' }"></div>
@@ -96,8 +96,6 @@
             </button>
           </div>
         </div>
-
-
 
         <!-- Profile Details -->
         <h2 class="mt-4 text-lg font-semibold">{{ name }}</h2>
@@ -295,11 +293,11 @@
                 <span class="text-gray-300"> reviewed and rated </span>
                 <!-- Movie Icon for review activity -->
                 <i class="fas fa-film text-yellow-400 mx-1"></i>
-                <router-link :to="`/movie/${activity.review.movie.TMDid}`"
+                <router-link :to="`/movie/${activity.review?.movie?.TMDid}`"
                   class="font-semibold text-yellow-400 hover:text-yellow-300 transition-colors">
-                  {{ activity.review.movie.title }}
+                  {{ activity.review?.movie?.title }}
                 </router-link>
-                <span class="text-yellow-500 font-bold"> ({{ activity.review.rating }}/10)</span>
+                <span class="text-yellow-500 font-bold"> ({{ activity.review?.rating }}/10)</span>
               </template>
 
               <!-- Add to list activity -->
@@ -308,11 +306,11 @@
                 <i class="fas fa-plus-circle text-yellow-400 mx-1"></i>
                 <span class="font-semibold text-yellow-400">{{ activity.movieName }}</span>
                 <span class="text-gray-300"> to the list </span>
-                <span class="font-semibold text-yellow-400">{{ activity.list.name }}</span>
+                <span class="font-semibold text-yellow-400">{{ activity.list?.name }}</span>
                 <span class="text-gray-300"> the film </span>
-                <router-link :to="`/movie/${activity.movie.TMDid}`"
+                <router-link :to="`/movie/${activity.movie?.TMDid}`"
                   class="font-semibold text-yellow-400 hover:text-yellow-300 transition-colors">
-                  {{ activity.movie.title }}
+                  {{ activity.movie?.title }}
                 </router-link>.
               </template>
 
@@ -326,7 +324,7 @@
 
             <!-- Review body text -->
             <p v-if="activity.type === 'review'" class="text-gray-400 text-sm mt-2 italic">
-              "{{ activity.review.body }}"
+              "{{ activity.review?.body }}"
             </p>
           </div>
 
@@ -425,7 +423,7 @@ const avatars = [
   '/avatars/avatar13.jpeg',
 ];
 
-const activities = ref([]); // Keep this reactive
+// const activities = ref([]); // Keep this reactive
 
 const reviewStore = useReviewStore();
 const listsStore = useListStore();
@@ -477,6 +475,8 @@ onMounted(async () => {
   listsStore.fetchLists();
 
   userStore.fetchUsers();
+
+  console.log('User:', userStore.user);
 
   userStore.fetchActivities();
   console.log('Activities:', userStore.activities);
