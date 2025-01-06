@@ -12,6 +12,9 @@ import {
   getMovieTrailers,
   getMovieCredits,
   getMovieImages,
+  getMovieReviews,
+  getSimilarMovies,
+  getMovieVideos
 } from '../../src/controllers/tmdbController';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 
@@ -194,12 +197,12 @@ describe('Movie external API Functions', () => {
     });
 
   });
-/*
+
   describe('getMovieTrailers', () => {
 
     it('should return movie trailers by ID', async () => {
       const movieId = 12345;
-      const mockData = { results: [{id: movieId, title: 'Gladiator'}] };
+      const mockData = { results: [{id: movieId, type: 'Trailer'}] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
       const result = await getMovieTrailers(movieId);
       expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -214,11 +217,10 @@ describe('Movie external API Functions', () => {
           },
         },
       );
-      expect(result).toEqual(mockData);
+      expect(result).toEqual([{id: movieId, type: 'Trailer'}]);
     });
 
   });
-  */
 
   describe('getMovieCredits', () => {
 
@@ -226,9 +228,7 @@ describe('Movie external API Functions', () => {
       const movieId = 12345;
       const mockData = { id: movieId, title: 'Gladiator' };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getMovieCredits(movieId);
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `https://api.themoviedb.org/3/movie/${movieId}/credits`,
         {
@@ -249,9 +249,7 @@ describe('Movie external API Functions', () => {
       const movieId = 12345;
       const mockData = { id: movieId, title: 'Gladiator' };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getMovieImages(movieId);
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `https://api.themoviedb.org/3/movie/${movieId}/images`,
         {
@@ -259,6 +257,69 @@ describe('Movie external API Functions', () => {
             accept: 'application/json',
             Authorization: `Bearer ${API_KEY}`,
           },
+        },
+      );
+      expect(result).toEqual(mockData);
+    });
+
+  });
+
+  describe('getMovieReviews', () => {
+
+    it ('should return movie reviews by ID', async () => {
+      const movieId = 12345;
+      const mockData = { id: movieId, title: 'Gladiator' };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+      const result = await getMovieReviews(movieId);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/movie/${movieId}/reviews`,
+        {
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        },
+      );
+      expect(result).toEqual(mockData);
+    });
+
+  });
+
+  describe('getSimilarMovies', () => {
+
+    it('should return similar movies by ID', async () => {
+      const movieId = 12345;
+      const mockData = { results: [{ title: 'Similar Movie' }] };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+      const result = await getSimilarMovies(movieId);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/movie/${movieId}/similar`,
+        {
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          }
+        },
+      );
+      expect(result).toEqual([{ title: 'Similar Movie' }]);
+    });
+
+  });
+
+  describe('getMovieVideos', () => {
+
+    it('should return movie videos by ID', async () => {
+      const movieId = 12345;
+      const mockData = { results: [{ id: movieId, type: 'Video' }] };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+      const result = await getMovieVideos(movieId);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+        {
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          }
         },
       );
       expect(result).toEqual(mockData);
