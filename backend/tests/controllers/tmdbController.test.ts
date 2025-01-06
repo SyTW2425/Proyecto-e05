@@ -20,7 +20,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 const mockResponse = (data: any) => ({ data });
 
-describe('Movie API Functions', () => {
+describe('Movie external API Functions', () => {
   const API_KEY = process.env.TMDB_API_KEY;
 
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('Movie API Functions', () => {
   });
 
   describe('searchMovies', () => {
-    
+
     it('should return movies by search query', async () => {
       const mockData = { results: [{ title: 'Gladiator' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
@@ -60,9 +60,7 @@ describe('Movie API Functions', () => {
       const movieId = 12345;
       const mockData = { id: movieId, title: 'Gladiator' };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getMovieDetails(movieId);
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `https://api.themoviedb.org/3/movie/${movieId}`,
         {
@@ -82,9 +80,7 @@ describe('Movie API Functions', () => {
     it('should return popular movies for the current year', async () => {
       const mockData = { results: [{ title: 'Popular Movie' }] };
       mockedAxios.get.mockResolvedValue(mockResponse(mockData));
-
       const result = await getPopularMovies();
-
       expect(mockedAxios.get).toHaveBeenCalledWith(
         'https://api.themoviedb.org/3/discover/movie',
         {
@@ -198,6 +194,31 @@ describe('Movie API Functions', () => {
     });
 
   });
+/*
+  describe('getMovieTrailers', () => {
+
+    it('should return movie trailers by ID', async () => {
+      const movieId = 12345;
+      const mockData = { results: [{id: movieId, title: 'Gladiator'}] };
+      mockedAxios.get.mockResolvedValue(mockResponse(mockData));
+      const result = await getMovieTrailers(movieId);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+        {
+          params: {
+            language: 'en-US',
+          },
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        },
+      );
+      expect(result).toEqual(mockData);
+    });
+
+  });
+  */
 
   describe('getMovieCredits', () => {
 
